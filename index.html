@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERGO NEXT — AI Instant-Quote Funnel · Case Study</title>
+<style>
+  @font-face {
+    font-family: 'FS Me Neue';
+    src: url('fonts/FSMeNeue.woff2') format('woff2');
+    font-weight: 400; font-display: swap;
+  }
+  @font-face {
+    font-family: 'FS Me Neue';
+    src: url('fonts/FSMeNeue-Bold.woff2') format('woff2');
+    font-weight: 700; font-display: swap;
+  }
+
+  :root {
+    --ink: #231F20;
+    --ink-soft: #6D6A6B;
+    --maroon: #8E0038;
+    --maroon-soft: rgba(142,0,56,0.06);
+    --ai: #187CAA;
+    --ai-bg: #E8F4F8;
+    --line: #E4E0E1;
+    --bg: #F5F3F4;
+    --paper: #FFFFFF;
+    --green: #0B8043;
+    --warning: #9A5000;
+    --font: 'FS Me Neue', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font);
+    color: var(--ink);
+    background: #1a1718;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Stage / scaling ---------- */
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide {
+    position: absolute;
+    width: 1280px;
+    height: 720px;
+    background: var(--paper);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    padding: 72px 88px;
+    transform-origin: center center;
+  }
+  .slide.active { display: flex; animation: fade .45s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(10px) scale(var(--s,1)); } to { opacity: 1; } }
+
+  /* ---------- Shared type ---------- */
+  .eyebrow {
+    font-size: 15px; font-weight: 700; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--maroon); margin-bottom: 22px;
+  }
+  .eyebrow.ai { color: var(--ai); }
+  h1 { font-size: 64px; font-weight: 700; line-height: 1.05; letter-spacing: -1px; }
+  h2 { font-size: 44px; font-weight: 700; line-height: 1.12; letter-spacing: -0.5px; }
+  .lead { font-size: 23px; line-height: 1.5; color: var(--ink-soft); font-weight: 400; }
+  .big-statement { font-size: 52px; font-weight: 700; line-height: 1.15; letter-spacing: -0.5px; }
+  .accent { color: var(--maroon); }
+  .accent-ai { color: var(--ai); }
+  strong { font-weight: 700; }
+
+  /* ---------- Title slide ---------- */
+  .title-slide { justify-content: space-between; }
+  .brandmark { display: flex; align-items: center; gap: 14px; }
+  .brandmark img { height: 30px; }
+  .title-main h1 { font-size: 70px; max-width: 1000px; }
+  .title-main .lead { margin-top: 26px; max-width: 820px; font-size: 25px; }
+  .title-foot { display: flex; justify-content: space-between; align-items: flex-end; font-size: 17px; color: var(--ink-soft); }
+  .title-foot strong { color: var(--ink); }
+
+  /* ---------- Layout helpers ---------- */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; flex: 1; align-items: center; }
+  .row.media { grid-template-columns: 0.92fr 1.08fr; }
+  .stack-head h2 { margin-bottom: 18px; }
+  .body-text { font-size: 21px; line-height: 1.55; color: var(--ink-soft); }
+  .body-text strong { color: var(--ink); }
+
+  ul.points { list-style: none; margin-top: 8px; }
+  ul.points li {
+    font-size: 20px; line-height: 1.4; color: var(--ink); margin-bottom: 18px;
+    padding-left: 30px; position: relative;
+  }
+  ul.points li::before {
+    content: ''; position: absolute; left: 0; top: 9px;
+    width: 11px; height: 11px; border-radius: 3px; background: var(--maroon);
+  }
+  ul.points li span { color: var(--ink-soft); }
+
+  /* ---------- Device frame for screenshots ---------- */
+  .device {
+    width: 100%; height: 560px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.16);
+    display: flex; flex-direction: column;
+  }
+  .device-bar {
+    height: 38px; flex-shrink: 0; background: #fff;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 7px; padding: 0 16px;
+  }
+  .device-bar i { width: 11px; height: 11px; border-radius: 50%; background: #DDD9DA; display: block; }
+  .device-bar .url {
+    margin-left: 14px; font-size: 12px; color: var(--ink-soft);
+    background: var(--bg); padding: 4px 14px; border-radius: 20px; letter-spacing: .2px;
+  }
+  .device-view { flex: 1; overflow: hidden; background: #fff; }
+  .device-view img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .device-view img.contain { object-fit: contain; background: #fff; }
+
+  /* ---------- Big idea slide ---------- */
+  .idea { justify-content: center; align-items: flex-start; }
+  .ask-gather { display: flex; align-items: center; gap: 32px; margin-top: 40px; }
+  .pill {
+    font-size: 26px; font-weight: 700; padding: 18px 34px; border-radius: 100px;
+  }
+  .pill.old { background: var(--bg); color: var(--ink-soft); text-decoration: line-through; text-decoration-thickness: 2px; }
+  .pill.new { background: var(--maroon); color: #fff; }
+  .arrow { font-size: 40px; color: var(--maroon); }
+
+  /* ---------- Flow steps ---------- */
+  .flow { display: flex; gap: 0; margin-top: 30px; align-items: stretch; }
+  .flow-step { flex: 1; padding: 0 18px; position: relative; }
+  .flow-step:not(:last-child)::after {
+    content: '→'; position: absolute; right: -10px; top: 18px; color: var(--line); font-size: 22px;
+  }
+  .flow-num {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--maroon-soft);
+    color: var(--maroon); font-weight: 700; font-size: 19px;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  }
+  .flow-step.ai .flow-num { background: var(--ai-bg); color: var(--ai); }
+  .flow-title { font-size: 19px; font-weight: 700; margin-bottom: 8px; line-height: 1.2; }
+  .flow-desc { font-size: 15.5px; color: var(--ink-soft); line-height: 1.4; }
+  .phase-tags { display: flex; gap: 10px; margin-top: 34px; }
+  .phase-tag { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* ---------- Tag / chip ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+    padding: 6px 13px; border-radius: 6px; background: var(--ai-bg); color: var(--ai);
+    margin-bottom: 22px;
+  }
+  .chip.warn { background: #FEF3E0; color: var(--warning); }
+
+  /* ---------- Metrics ---------- */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 46px; flex: 1; align-content: center; }
+  .metric { border-top: 4px solid var(--maroon); padding-top: 22px; }
+  .metric .num { font-size: 58px; font-weight: 700; line-height: 1; letter-spacing: -1.5px; }
+  .metric .num small { font-size: 30px; }
+  .metric .lbl { font-size: 17px; color: var(--ink-soft); margin-top: 12px; line-height: 1.35; }
+  .metric.context { border-top-color: var(--line); }
+  .metric.context .num { color: var(--ink-soft); }
+
+  .footnote { font-size: 15px; color: var(--ink-soft); margin-top: auto; padding-top: 28px; border-top: 1px solid var(--line); }
+
+  /* ---------- Craft / tokens strip ---------- */
+  .token-strip { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+  .swatch { display: flex; flex-direction: column; gap: 8px; }
+  .swatch .dot { width: 64px; height: 64px; border-radius: 12px; border: 1px solid var(--line); }
+  .swatch .name { font-size: 12px; color: var(--ink-soft); }
+  .tool-row { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+  .tool {
+    font-size: 16px; font-weight: 600; padding: 10px 18px; border-radius: 100px;
+    border: 1.5px solid var(--line); color: var(--ink);
+  }
+  .tool.hl { border-color: var(--maroon); color: var(--maroon); background: var(--maroon-soft); }
+
+  /* ---------- Closing ---------- */
+  .closing { justify-content: center; }
+  .closing .big-statement { max-width: 1000px; }
+  .closing ul.points { margin-top: 36px; columns: 2; column-gap: 56px; }
+  .closing ul.points li { break-inside: avoid; }
+
+  /* ---------- Next steps ---------- */
+  .next-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+  .next-card {
+    border: 1.5px solid var(--line); border-radius: 16px; padding: 30px 28px;
+    display: flex; flex-direction: column;
+  }
+  .next-card.lead { border-color: var(--maroon); background: var(--maroon-soft); }
+  .next-card .step-k {
+    font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 16px;
+  }
+  .next-card.lead .step-k { color: var(--maroon); }
+  .next-card h3 { font-size: 25px; font-weight: 700; line-height: 1.15; margin-bottom: 14px; }
+  .next-card p { font-size: 16.5px; line-height: 1.5; color: var(--ink-soft); }
+  .next-card p strong { color: var(--ink); }
+
+  /* ---------- Problem (flow board) ---------- */
+  .problem-slide { padding: 50px 64px 44px; }
+  .prob-head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: end; margin-bottom: 22px; }
+  .prob-sub { font-size: 18px; line-height: 1.5; color: var(--ink-soft); }
+  .prob-sub strong { color: var(--ink); }
+  .flow-shot { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .flow-canvas {
+    position: relative; flex: 1; min-height: 0;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; padding: 18px;
+  }
+  .flow-canvas img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  .flow-badge {
+    position: absolute; left: 20px; bottom: 20px;
+    background: var(--maroon); color: #fff; font-weight: 700; font-size: 14px;
+    letter-spacing: .3px; padding: 9px 17px; border-radius: 100px;
+    box-shadow: 0 6px 18px rgba(142,0,56,0.3);
+  }
+  .flow-cap { font-size: 13px; color: var(--ink-soft); margin-top: 12px; letter-spacing: .2px; }
+
+  /* ---------- Chrome: progress, counter, hint ---------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 4px; background: var(--maroon);
+    z-index: 50; transition: width .3s ease;
+  }
+  #counter {
+    position: fixed; bottom: 18px; right: 22px; z-index: 50;
+    font-family: var(--font); font-size: 13px; color: rgba(255,255,255,0.55);
+    letter-spacing: .5px;
+  }
+  #hint {
+    position: fixed; bottom: 18px; left: 22px; z-index: 50;
+    font-family: var(--font); font-size: 13px; color: rgba(255,255,255,0.4);
+  }
+  /* Speaker notes */
+  #notes {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    background: rgba(20,17,18,0.97); color: #EDEAEA;
+    padding: 22px 30px 26px; border-top: 2px solid var(--maroon);
+    font-size: 16px; line-height: 1.55; display: none;
+    max-height: 42vh; overflow-y: auto;
+  }
+  #notes.show { display: block; }
+  #notes h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px; color: #C98AA3; margin-bottom: 10px; }
+  #notes p { margin-bottom: 8px; max-width: 1100px; }
+  #notes strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="stage">
+
+  <!-- 1 · TITLE -->
+  <section class="slide title-slide active">
+    <div class="brandmark"><img src="img/ergo-logo.png" alt="ERGO NEXT"></div>
+    <div class="title-main">
+      <div class="eyebrow">Case study · Principal Product Designer</div>
+      <h1>From 16 steps to 6:<br>the AI instant-quote funnel</h1>
+      <p class="lead">A small-business insurance flow that <strong>gathers data instead of asking for it.</strong> Built in Claude Code, on a design system made for AI agents.</p>
+    </div>
+    <div class="title-foot">
+      <div>ERGO NEXT Insurance <span style="color:var(--line)">·</span> Express Funnel V5</div>
+      <div><strong>Jorge Maya</strong> &nbsp;·&nbsp; prepared for Klarity &nbsp;·&nbsp; June 2026</div>
+    </div>
+  </section>
+
+  <!-- 2 · CONTEXT -->
+  <section class="slide">
+    <div class="eyebrow">The company &amp; my role</div>
+    <div class="row">
+      <div>
+        <h2>AI underwriting that gives a quote in minutes.</h2>
+        <p class="body-text" style="margin-top:22px">Next Insurance sells policies to small and medium businesses, who often need coverage the same day. What sets it apart is <strong>AI underwriting</strong>: we read public data and price risk on the spot. Competitors take a day or more. <strong>ERGO Group</strong> bought the company in 2025 and rebranded it ERGO NEXT.</p>
+      </div>
+      <div>
+        <ul class="points">
+          <li><strong>My role.</strong> <span>Principal Product Designer. The only designer on the rebrand, the design system, and this funnel.</span></li>
+          <li><strong>The team.</strong> <span>Me, a product manager, and 2 remote developers. I ran the research and A/B testing and shipped the code to production, with reviews, validation, and implementation from the two developers.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · PROBLEM -->
+  <section class="slide problem-slide">
+    <div class="prob-head">
+      <div>
+        <div class="eyebrow">The problem</div>
+        <h2 style="font-size:36px">Filling out a form is boring and time-consuming.</h2>
+      </div>
+      <p class="prob-sub">The shortest path ran <strong>16+ screens</strong> of manual data entry, data the AI could already find. People dropped off partway, and sometimes the data they typed by hand came in wrong.</p>
+    </div>
+    <figure class="flow-shot">
+      <div class="flow-canvas">
+        <img src="img/current-flow-16-steps.png" alt="The current Express funnel laid out end to end: 16-plus mobile screens, from Line of Business through Business Search and Risk Assessment to the Quote.">
+        <span class="flow-badge">Shortest path · 16+ steps</span>
+      </div>
+      <figcaption class="flow-cap">Current flow (V1.2) · Line of Business → Business Search → Risk Assessment → Quote</figcaption>
+    </figure>
+  </section>
+
+  <!-- 4 · THE REFRAME -->
+  <section class="slide idea">
+    <div class="eyebrow">The reframe</div>
+    <div class="big-statement">AI can find the data,<br><span class="accent">don't ask for it.</span></div>
+    <div class="ask-gather">
+      <div class="pill old">Ask the user to type everything</div>
+      <div class="arrow">→</div>
+      <div class="pill new">Gather, then validate</div>
+    </div>
+    <p class="body-text" style="margin-top:38px; max-width:900px">The funnel pulls what it can from public sources, then asks you to <strong>confirm or fix it</strong>, instead of starting from a blank form.</p>
+  </section>
+
+  <!-- 6 · SCREEN 1 -->
+  <section class="slide">
+    <div class="row media">
+      <div class="stack-head">
+        <div class="eyebrow">Step 1 · Smart search</div>
+        <h2 style="font-size:38px">Ask for the business name to fetch all the data.</h2>
+        <p class="body-text" style="margin-top:18px">A verified match shows up with its category, and there's always a manual route for anyone we can't find.</p>
+        <p class="body-text" style="margin-top:16px">The note under the search explains how the system works: <strong>we use public records, and you review and validate everything before the quote.</strong></p>
+      </div>
+      <div class="device">
+        <div class="device-bar"><i></i><i></i><i></i><span class="url">get.ergonext.com/quote</span></div>
+        <div class="device-view"><img src="img/step1-search.png" alt="Smart search"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · SCREEN 2 -->
+  <section class="slide">
+    <div class="row media">
+      <div class="stack-head">
+        <div class="chip">● Designing for AI</div>
+        <h2 style="font-size:38px">Show the AI working.</h2>
+        <p class="body-text" style="margin-top:18px">Instead of a blank spinner, the gather step tells you what it's checking as it goes: business profile, industry, registration records, size estimates, then savings for the quote.</p>
+        <p class="body-text" style="margin-top:16px">Naming each source <strong>builds trust</strong> in where the data's coming from. It also turns a few seconds of waiting into something that feels like work being done for you.</p>
+      </div>
+      <div class="device">
+        <div class="device-bar"><i></i><i></i><i></i><span class="url">get.ergonext.com/quote</span></div>
+        <div class="device-view"><img src="img/step2-ai.png" alt="AI gathering data"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · SCREEN 3 (the core bet) -->
+  <section class="slide">
+    <div class="row media">
+      <div class="stack-head">
+        <div class="eyebrow">Step 3 · Review &amp; validate</div>
+        <h2 style="font-size:38px">Review instead of typing.</h2>
+        <p class="body-text" style="margin-top:18px">Every field shows up pre-filled and editable in place, tagged <strong>“Prefilled with AI.”</strong> Where it came from is visible.</p>
+        <p class="body-text" style="margin-top:16px">Users trusted the system because they could see the answers and correct them if needed. We highlighted fields with low certainty as estimates to avoid trust issues.</p>
+      </div>
+      <div class="device">
+        <div class="device-bar"><i></i><i></i><i></i><span class="url">get.ergonext.com/quote</span></div>
+        <div class="device-view"><img class="contain" src="img/step3-review.png" alt="Review prefilled data"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · SCREEN 4 -->
+  <section class="slide">
+    <div class="row media">
+      <div class="stack-head">
+        <div class="eyebrow">Step 4 · Direct questions</div>
+        <h2 style="font-size:38px">Only ask what AI can't find.</h2>
+        <p class="body-text" style="margin-top:18px">By only asking for data we couldn't find, we cut the manual part from sixteen screens down to <strong>a few real questions, all on one screen.</strong></p>
+
+      </div>
+      <div class="device">
+        <div class="device-bar"><i></i><i></i><i></i><span class="url">get.ergonext.com/quote</span></div>
+        <div class="device-view"><img src="img/step4-manual.png" alt="Direct questions"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 · SCREEN 5 -->
+  <section class="slide">
+    <div class="row media">
+      <div class="stack-head">
+        <div class="eyebrow">Step 5 · Eligibility</div>
+        <h2 style="font-size:38px">No dead-ends.</h2>
+        <p class="body-text" style="margin-top:18px">A short set of underwriting assumptions, written as plain-language toggles. Most people just agree and keep going.</p>
+        <p class="body-text" style="margin-top:16px">If something rules them out, they don't hit a rejection. They get <strong>handed to a partner who can cover them.</strong> The edge case turns into a handoff instead of a wall.</p>
+      </div>
+      <div class="device">
+        <div class="device-bar"><i></i><i></i><i></i><span class="url">get.ergonext.com/quote</span></div>
+        <div class="device-view"><img src="img/step5-eligibility.png" alt="Eligibility toggles"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · SCREEN 6 -->
+  <section class="slide">
+    <div class="row media">
+      <div class="stack-head">
+        <div class="eyebrow">Step 6 · The quote</div>
+        <h2 style="font-size:38px">Instant quote.</h2>
+        <p class="body-text" style="margin-top:18px">A recommended plan comes pre-selected and marked “industry standard.”</p>
+        <p class="body-text" style="margin-top:16px">The coverage limits are all visible, so the user <strong>understands the price.</strong></p>
+      </div>
+      <div class="device">
+        <div class="device-bar"><i></i><i></i><i></i><span class="url">get.ergonext.com/quote</span></div>
+        <div class="device-view"><img class="contain" src="img/step6-quote.png" alt="Instant quote"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · THE CRAFT (Klarity-aligned) -->
+  <section class="slide">
+    <div class="eyebrow ai">How it was built</div>
+    <div class="row" style="align-items:flex-start">
+      <div>
+        <h2 style="font-size:40px">Designed in code.<br>No Figma file.</h2>
+        <p class="body-text" style="margin-top:20px">I built this whole flow in <strong>Claude Code</strong>, out of the <strong>ERGO NEXT design system I'd also generated with Claude Code</strong>. The component names and tokens map straight to the production code.</p>
+        <p class="body-text" style="margin-top:16px">It was a <strong>production-grade prototype</strong> made from the real component library.</p>
+        <p class="body-text" style="margin-top:16px">This was possible because the design system and semantic tokens were already built, which made it easy to vibe code with the real components and tokens that were in Storybook and GitHub.</p>
+        <div class="tool-row">
+          <span class="tool hl">Claude Code</span>
+          <span class="tool">ERGO NEXT design system</span>
+          <span class="tool">Semantic tokens</span>
+          <span class="tool">Storybook</span>
+        </div>
+      </div>
+      <div>
+        <div class="token-strip">
+          <div class="swatch"><div class="dot" style="background:#8E0038"></div><div class="name">Primary / 8E0038</div></div>
+          <div class="swatch"><div class="dot" style="background:#231F20"></div><div class="name">Ink / 231F20</div></div>
+          <div class="swatch"><div class="dot" style="background:#187CAA"></div><div class="name">AI accent / 187CAA</div></div>
+          <div class="swatch"><div class="dot" style="background:#0B8043"></div><div class="name">Source-verified</div></div>
+          <div class="swatch"><div class="dot" style="background:#F5F3F4"></div><div class="name">Surface</div></div>
+        </div>
+        <p class="body-text" style="margin-top:28px; font-size:19px">Semantic tokens, text styles, components, everything carried over from the design system into the funnel. That's why I was able to focus on the experience instead of the implementation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · RESULTS -->
+  <section class="slide">
+    <div class="eyebrow">Results</div>
+    <h2 style="font-size:38px">Faster to quote, and it converted better.</h2>
+    <div class="metrics">
+      <div class="metric"><div class="num">16<small>→</small>6</div><div class="lbl">steps in the minimum flow <strong>(−62%)</strong></div></div>
+      <div class="metric"><div class="num">~15<small>m</small></div><div class="lbl">to complete, down from ~26m <strong>(−42%)</strong></div></div>
+      <div class="metric"><div class="num">+7<small>%</small></div><div class="lbl">conversion lift on the redesigned flow</div></div>
+      <div class="metric context"><div class="num">50<small>%</small></div><div class="lbl">company ARR growth YoY during this period</div></div>
+    </div>
+    <p class="footnote">Conversion lift measured Jan 2026. ARR growth is company-wide context; the funnel was one contributor among several (conservative attribution).</p>
+  </section>
+
+  <!-- 14 · PRODUCT JUDGMENT -->
+  <section class="slide">
+    <div class="row">
+      <div>
+        <h2 style="font-size:40px">The best-performing iteration came with a catch.</h2>
+      </div>
+      <div>
+        <p class="body-text">The gather step pulls real business data from public sources. In the <strong>three weeks it was live, it lifted conversion 7%.</strong> Then the legal team flagged a risk: the same auto-fill could let someone pull competitive intel on a business they don't own.</p>
+        <p class="body-text" style="margin-top:18px">So we paused it and changed the gate instead of killing it. Now it <strong>only runs for logged-in accounts that have verified they own the business.</strong> We kept the win and closed the hole.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 · NEXT STEPS -->
+  <section class="slide">
+    <div class="eyebrow">Next steps</div>
+    <h2 style="font-size:40px">Where I'd take it next.</h2>
+    <div class="next-grid">
+      <div class="next-card lead">
+        <div class="step-k">Priority · Craft</div>
+        <h3>Mature the visual design</h3>
+        <p>This was built fast, to <strong>test the idea and ship it</strong>. The design system under it was tuned for <strong>speed and 1:1 code parity</strong>, not for visual polish. The next move is to grow and refine that component set so the whole funnel looks sharper.</p>
+      </div>
+      <div class="next-card">
+        <div class="step-k">Unblock</div>
+        <h3>Relaunch the gather flow</h3>
+        <p>Get through the <strong>privacy and legal review</strong> and bring the paused 16→6 gather-and-validate flow back to production.</p>
+      </div>
+      <div class="next-card">
+        <div class="step-k">Scale</div>
+        <h3>Extend to every industry</h3>
+        <p>Take the gather-and-validate model to the other industry flows too: <strong>construction, professional services, retail</strong>, not just food and beverage.</p>
+      </div>
+    </div>
+    <p class="body-text" style="margin-top:auto; padding-top:24px; font-size:21px">Happy to open the <strong>live prototype</strong> and dig into any of this. Where do you want to start?</p>
+  </section>
+
+</div>
+
+<div id="counter"></div>
+<div id="hint">← → navigate &nbsp;·&nbsp; F fullscreen</div>
+
+<div id="notes"></div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let i = 0;
+
+  const speakerNotes = [];
+
+  const stage = document.getElementById('stage');
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  const notes = document.getElementById('notes');
+
+  function fit() {
+    const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    slides.forEach(sl => { sl.style.transform = `scale(${s})`; sl.style.setProperty('--s', s); });
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    progress.style.width = ((i) / (slides.length - 1) * 100) + '%';
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    notes.innerHTML = speakerNotes[i] || '';
+  }
+  function next() { show(i + 1); }
+  function prev() { show(i - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key.toLowerCase() === 'f') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  stage.addEventListener('click', e => { if (e.clientX < window.innerWidth * 0.28) prev(); else next(); });
+
+  window.addEventListener('resize', fit);
+  fit(); show(0);
+</script>
+</body>
+</html>
