@@ -2283,13 +2283,25 @@
   .coverage-section { margin-bottom: var(--stack-section); }
 
   .quote-sidebar { display: flex; flex-direction: column; gap: var(--space-4); }
+  /* No frame. The certificate image already reads as a card, so wrapping it in
+     a second bordered, shadowed box was a card inside a card. The wrapper is
+     now only a centring context: below 1200 the sidebar is full width, and a
+     300px-capped image in a full-width box otherwise sits stranded at the left. */
   .sidebar-card {
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
-    overflow: clip;
-    box-shadow: var(--shadow-lg);
+    display: flex;
+    justify-content: center;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+    margin-bottom: 0;   /* .quote-sidebar's flex gap owns this spacing */
   }
-  .sidebar-card img { display: block; width: 100%; height: auto; }
+  .sidebar-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
   .sidebar-total { display: flex; flex-direction: column; gap: var(--space-1); }
   .total-label { font-size: var(--text-body); font-weight: 400; color: var(--text-secondary); }
   .total-price {
@@ -2572,7 +2584,10 @@
      ============================================================ */
   .quote-layout {
     display: grid;
-    grid-template-columns: 1fr;   /* single column is the default, not an override */
+    /* minmax(0, 1fr), not 1fr. A bare 1fr is minmax(auto, 1fr), so the track
+       floors at the comparison table's min-content width and the whole page
+       scrolls sideways instead of the table scrolling inside its own container. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-8);
     align-items: start;
     max-width: none;
@@ -2582,7 +2597,7 @@
   .sidebar-card img { max-width: 300px; }
 
   @media (min-width: 1200px) {
-    .quote-layout { grid-template-columns: 1fr 300px; }
+    .quote-layout { grid-template-columns: minmax(0, 1fr) 300px; }
     .quote-sidebar { position: sticky; top: calc(var(--header-h) + var(--space-4)); }
   }
 
