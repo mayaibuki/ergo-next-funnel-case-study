@@ -42,51 +42,203 @@
   }
 
   /* ============================================
-     DESIGN TOKENS - Extracted from Next Insurance
+     DESIGN TOKENS
+     Brand anchor #8E0038 (ERGO wine) maps to --brand-700.
+     Neutral anchor #231F20 maps to --n-900.
      ============================================ */
   :root {
-    --color-primary: #8E0038;
-    --color-primary-hover: #6d002b;
-    --color-text: #231F20;
-    --color-text-secondary: #6D6A6B;
-    --color-border: #C9C5C7;
-    --color-border-focus: #231F20;
-    --color-link: #187CAA;
-    --color-white: #FFFFFF;
-    --color-bg: #FFFFFF;
-    --color-bg-light: #F5F3F4;
-    --color-bg-tip: #F0EEEF;
-    --color-success: #0B8043;
-    --color-success-bg: #E6F4EA;
-    --color-warning: #E37400;
-    --color-warning-bg: #FEF3E0;
-    --color-ai-accent: #187CAA;
-    --color-ai-bg: #E8F4F8;
-    --color-error: #DD3636;
-    --color-brand-red: #C8102E;
+    /* ---- Primitives: brand ramp, hue 336 ---- */
+    --brand-50:  #FCF3F6;
+    --brand-100: #F8E2EA;
+    --brand-200: #EFC7D6;
+    --brand-300: #DE96B2;
+    --brand-400: #D04E80;
+    --brand-500: #BA1758;
+    --brand-600: #A60747;
+    --brand-700: #8E0038;   /* ERGO anchor, unchanged */
+    --brand-800: #6B002B;
+    --brand-900: #47001E;
 
+    /* ---- Primitives: warm neutral ramp, hue 340 ---- */
+    --n-0:   #FFFFFF;
+    --n-25:  #FDFCFC;
+    --n-50:  #FBF9FA;
+    --n-100: #F6F4F4;
+    --n-200: #ECE9EA;
+    --n-300: #DBD6D8;
+    --n-400: #BCB3B6;
+    --n-500: #938A8D;
+    --n-600: #6E686A;
+    --n-700: #554E51;
+    --n-800: #3B3537;
+    --n-900: #231F20;   /* ERGO anchor, unchanged */
+
+    /* ---- Primitives: status ---- */
+    --green-50: #E7F3EB;  --green-200: #8CC2A0;  --green-700: #0A6B39;
+    --amber-50: #FDF6EC;  --amber-100: #FCF0DF;  --amber-200: #DCA75F;  --amber-700: #8A4B00;
+    --red-50:   #FBEAE9;  --red-200:   #E5928D;  --red-700:   #A8201C;
+    --blue-50:  #E6F1F7;  --blue-200:  #8AB8D2;  --blue-700:  #0B5E86;
+    --violet-50:#F1EFFB;  --violet-100:#EFEDFA;  --violet-200:#968CD3;  --violet-700:#443A96;
+
+    /* ---- Semantic: surface ---- */
+    --surface:          var(--n-0);
+    --surface-raised:   var(--n-0);
+    --surface-sunken:   var(--n-50);
+    --surface-sunken-2: var(--n-100);
+    --surface-brand:    var(--brand-50);
+    --surface-scrim:    rgba(35,31,32,0.55);
+
+    /* ---- Semantic: border. --border-strong is the only one that may be
+            the sole affordance on an interactive control (3.35:1). ---- */
+    --border-subtle:  var(--n-200);
+    --border-default: var(--n-300);
+    --border-strong:  var(--n-500);
+    --border-brand:   var(--brand-700);
+    --border-focus:   var(--n-900);
+
+    /* ---- Semantic: text ---- */
+    --text-primary:     var(--n-900);   /* 16.30:1 on white */
+    --text-secondary:   var(--n-700);   /*  8.09:1 */
+    --text-tertiary:    var(--n-600);   /*  5.45:1 */
+    --text-placeholder: var(--n-500);   /*  3.35:1, non-content only */
+    --text-on-brand:    var(--n-0);
+    --text-link:        var(--brand-700);
+
+    /* ---- Semantic: status ---- */
+    --success-bg: var(--green-50);  --success-border: var(--green-200);  --success-fg: var(--green-700);
+    --warning-bg: var(--amber-50);  --warning-border: var(--amber-200);  --warning-fg: var(--amber-700);
+    --error-bg:   var(--red-50);    --error-border:   var(--red-200);    --error-fg:   var(--red-700);
+    --info-bg:    var(--blue-50);   --info-border:    var(--blue-200);   --info-fg:    var(--blue-700);
+
+    /* ---- Semantic: AI provenance. Violet never marks anything clickable. ---- */
+    --ai-bg:     var(--violet-100);
+    --ai-border: var(--violet-200);
+    --ai-fg:     var(--violet-700);
+
+    /* ---- Semantic: field confidence (step 3 rails) ---- */
+    --confidence-estimate: var(--amber-700);
+    --confidence-edited:   var(--brand-700);
+
+    /* ============ TYPE ============
+       Ratio 1.2, anchored 17px. All bounds in rem so the scale survives
+       browser text resize to 200%. Never px inside clamp(). */
     --font-family: 'FS Me Neue', 'Segoe UI', system-ui, -apple-system, sans-serif;
-    --font-size-xs: 12px;
-    --font-size-sm: 14px;
-    --font-size-base: 16px;
-    --font-size-md: 18px;
-    --font-size-lg: 24px;
-    --font-size-xl: 32px;
-    --font-size-2xl: 40px;
-    --font-size-3xl: 48px;
 
+    --text-caption:    0.75rem;                                        /* 12 */
+    --text-small:      0.875rem;                                       /* 14 */
+    --text-body:       clamp(1rem,     0.974rem + 0.110vw, 1.0625rem); /* 16 -> 17 */
+    --text-lead:       clamp(1.125rem, 1.073rem + 0.221vw, 1.25rem);   /* 18 -> 20 */
+    --text-heading:    clamp(1.25rem,  1.146rem + 0.442vw, 1.5rem);    /* 20 -> 24 */
+    --text-display-sm: clamp(1.5rem,   1.345rem + 0.663vw, 1.875rem);  /* 24 -> 30 */
+    --text-display:    clamp(1.75rem,  1.543rem + 0.884vw, 2.25rem);   /* 28 -> 36 */
+
+    --lh-display:    1.10;
+    --lh-display-sm: 1.15;
+    --lh-heading:    1.25;
+    --lh-lead:       1.35;
+    --lh-body:       1.55;
+    --lh-ui:         1.20;
+    --lh-small:      1.45;
+    --lh-caption:    1.35;
+
+    --tracking-display: -0.02em;
+    --tracking-heading: -0.01em;
+    --tracking-lead:    -0.005em;
+    --tracking-caps:     0.06em;
+
+    /* Only 400 and 700 exist in FS Me Neue. There is no 500 and no 600. */
+    --weight-regular: 400;
+    --weight-bold:    700;
+
+    --measure-prose: 51ch;   /* ~66 rendered chars: 1ch is 1.3 avg chars in this face */
+    --measure-tight: 36ch;
+
+    /* ============ SPACE ============ suffix = multiple of 4px */
+    --space-1:  0.25rem;  --space-2:  0.5rem;   --space-3:  0.75rem;
+    --space-4:  1rem;     --space-5:  1.25rem;  --space-6:  1.5rem;
+    --space-7:  1.75rem;  --space-8:  2rem;     --space-10: 2.5rem;
+    --space-12: 3rem;     --space-16: 4rem;     --space-20: 5rem;
+
+    --page-pad-top:    var(--space-12);
+    --page-pad-bottom: 6rem;
+
+    --stack-display-lead:  var(--space-2);
+    --stack-lead-body:     var(--space-8);
+    --stack-section-title: var(--space-3);
+    --stack-section:       var(--space-8);
+    --stack-group:         var(--space-6);
+    --stack-label:         var(--space-2);
+    --stack-actions:       var(--space-8);
+
+    /* ============ RADIUS ============ */
+    --radius-2xs: 2px;
     --radius-xs: 4px;
     --radius-sm: 8px;
     --radius-md: 12px;
-    --radius-lg: 15px;
+    --radius-lg: 16px;
     --radius-pill: 100px;
 
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    /* ============ ELEVATION ============ warm-tinted, keyed to n-900 */
+    --shadow-xs: 0 1px 2px rgba(35,31,32,0.06);
+    --shadow-sm: 0 1px 3px rgba(35,31,32,0.08), 0 1px 2px rgba(35,31,32,0.04);
+    --shadow-md: 0 4px 12px rgba(35,31,32,0.08), 0 1px 3px rgba(35,31,32,0.06);
+    --shadow-lg: 0 12px 28px rgba(35,31,32,0.12), 0 2px 6px rgba(35,31,32,0.06);
+    --shadow-xl: 0 24px 60px rgba(35,31,32,0.20);
 
-    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --focus-ring: 0 0 0 3px var(--n-0), 0 0 0 5px var(--border-focus);
+    --ring-brand: 0 0 0 3px rgba(142,0,56,0.18);
+    --ring-error: 0 0 0 3px rgba(168,32,28,0.16);
+
+    /* ============ MOTION ============ */
+    --dur-instant: 80ms;
+    --dur-fast:   140ms;
+    --dur-base:   220ms;
+    --dur-slow:   320ms;
+    --dur-exit:   120ms;
+    --dur-enter:  260ms;
+
+    --ease-standard:   cubic-bezier(0.2, 0, 0, 1);
+    --ease-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+    --ease-emphasized: cubic-bezier(0.34, 1.26, 0.64, 1);
+
+    --t-fast:  var(--dur-fast) var(--ease-standard);
+    --t-base:  var(--dur-base) var(--ease-standard);
+    --t-enter: var(--dur-enter) var(--ease-decelerate);
+    --t-exit:  var(--dur-exit) var(--ease-accelerate);
+
     --content-width: 680px;
+
+    /* ============ LEGACY ALIASES ============
+       Kept so no existing rule orphans mid-migration. */
+    --color-primary:        var(--brand-700);
+    --color-primary-hover:  var(--brand-800);
+    --color-text:           var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-border:         var(--border-strong);
+    --color-border-focus:   var(--border-focus);
+    --color-link:           var(--text-link);
+    --color-white:          var(--n-0);
+    --color-bg:             var(--surface);
+    --color-bg-light:       var(--surface-sunken);
+    --color-bg-tip:         var(--surface-sunken-2);
+    --color-divider:        var(--border-subtle);
+    --color-surface-hover:  var(--surface-sunken);
+    --color-success:        var(--success-fg);
+    --color-success-bg:     var(--success-bg);
+    --color-warning:        var(--warning-fg);
+    --color-warning-bg:     var(--warning-bg);
+    --color-ai-accent:      var(--ai-fg);
+    --color-ai-bg:          var(--ai-bg);
+    --color-error:          var(--error-fg);
+    --font-size-xs: var(--text-caption);
+    --font-size-sm: var(--text-small);
+    --font-size-base: var(--text-body);
+    --font-size-md: var(--text-body);
+    --font-size-lg: var(--text-heading);
+    --font-size-xl: var(--text-display-sm);
+    --font-size-3xl: var(--text-display);
+    --transition: var(--t-base);
   }
 
   /* ============================================
@@ -94,17 +246,45 @@
      ============================================ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  /* Several components set an explicit display and are toggled with the
+     `hidden` attribute, which loses by specificity without this. */
+  [hidden] { display: none !important; }
+
+  /* Instant by default. Smooth scrolling is opt-in and motion-gated, because
+     `scroll-behavior: smooth` on html is a common vestibular trigger and it
+     also fights the step-enter animation. */
+  html { scroll-behavior: auto; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
 
   body {
     font-family: var(--font-family);
-    font-size: var(--font-size-md);
-    color: var(--color-text);
-    background: var(--color-bg);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    font-size: var(--text-body);
+    color: var(--text-primary);
+    background: var(--surface);
+    line-height: var(--lh-body);
+    /* No -webkit-font-smoothing: antialiased. FS Me Neue is a legibility-first
+       face; antialiasing thins its stems and only applies on WebKit/macOS, so
+       the artifact would render at two different weights. Deliberate. */
+    font-synthesis: none;
     min-height: 100vh;
   }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+
+  /* One focus treatment for everything. The white inner ring guarantees
+     separation on tinted and brand-coloured backgrounds. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: inherit;
+  }
+  h1:focus-visible, h2:focus-visible { outline: none; box-shadow: none; }
 
   /* ============================================
      HEADER
@@ -141,9 +321,6 @@
     width: auto;
     display: block;
   }
-  @media (max-width: 768px) {
-    .logo img { height: 24px; }
-  }
 
   /* ============================================
      SEGMENTED STEPPER
@@ -166,32 +343,34 @@
   .stepper-segment[data-segment="3"] { flex: 1; }
 
   .segment-track {
-    background: var(--color-bg-light);
+    background: var(--surface-sunken-2);
+    /* A 4px light-grey bar on white is otherwise imperceptible. */
+    box-shadow: inset 0 0 0 1px var(--border-subtle);
     height: 4px;
-    border-radius: 2px;
+    border-radius: var(--radius-2xs);
     width: 100%;
     overflow: hidden;
   }
   .segment-fill {
+    width: 0;                 /* JS owns this; the markup no longer does */
     height: 100%;
-    background: var(--color-primary);
-    border-radius: 2px;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--brand-700);
+    border-radius: var(--radius-2xs);
+    transition: width var(--dur-slow) var(--ease-standard);
   }
   .segment-label {
-    font-size: var(--font-size-sm);
-    color: var(--color-border);
-    font-weight: 600;
+    font-size: var(--text-small);
+    /* Was --color-border at 1.71:1, which made upcoming steps invisible and
+       made them read as disabled rather than as not-yet-reached. */
+    color: var(--text-tertiary);
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: var(--transition);
+    letter-spacing: var(--tracking-caps);
+    transition: color var(--t-fast);
   }
-  .segment-label.active {
-    color: var(--color-primary);
-  }
-  .segment-label.completed {
-    color: var(--color-text-secondary);
-  }
+  /* Weight, not only hue, marks the current step. */
+  .segment-label.active { color: var(--brand-700); font-weight: 700; }
+  .segment-label.completed { color: var(--text-secondary); }
 
   /* ============================================
      STEPS CONTAINER
@@ -210,9 +389,6 @@
   }
   .step.active { display: block; }
 
-  #step6 {
-    max-width: 900px;
-  }
 
   @keyframes fadeSlideIn {
     from { opacity: 0; transform: translateY(16px); }
@@ -236,104 +412,183 @@
   /* ============================================
      SEARCH INPUT (Step 1)
      ============================================ */
-  .search-wrapper {
-    position: relative;
-    margin-bottom: 24px;
-  }
+  .search-wrapper { margin-bottom: var(--space-6); }
+  .search-field { position: relative; }
+  .search-input-row { position: relative; }
+
   .search-icon {
     position: absolute;
-    left: 18px;
+    left: var(--space-5);
     top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-text-secondary);
+    /* Optically centred: a magnifier reads ~1px low when geometrically centred. */
+    transform: translateY(calc(-50% - 1px));
+    color: var(--text-tertiary);
     pointer-events: none;
   }
   .search-input {
     width: 100%;
-    height: 60px;
-    padding: 0 18px 0 50px;
-    font-size: var(--font-size-md);
+    min-height: 60px;
+    /* 20px gutter + 20px icon + 12px gap. Decided as a pair with .search-icon. */
+    padding: 0 var(--space-5) 0 3.25rem;
+    font-size: var(--text-body);
+    line-height: var(--lh-ui);
     font-family: var(--font-family);
-    border: 2px solid var(--color-border);
+    border: 1.5px solid var(--border-strong);
     border-radius: var(--radius-lg);
     outline: none;
-    transition: var(--transition);
-    color: var(--color-text);
-    background: var(--color-white);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    color: var(--text-primary);
+    background: var(--surface);
   }
-  .search-input:focus {
-    border-color: var(--color-border-focus);
-    box-shadow: 0 0 0 3px rgba(35,31,32,0.08);
+  .search-input:focus-visible {
+    border-color: var(--border-focus);
+    box-shadow: var(--focus-ring);
   }
-  .search-input::placeholder { color: var(--color-border); }
+  .search-input::placeholder { color: var(--text-placeholder); }
 
-  /* Search Dropdown */
+  /* ---- Dropdown as a state machine.
+     `data-state` on the dropdown selects which children are shown, so search
+     has real searching / results / no-match states instead of one static
+     panel that appeared on any input. ---- */
   .search-dropdown {
     display: none;
     position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    top: calc(100% + var(--space-1));
+    left: 0; right: 0;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 4px;
     z-index: 50;
   }
-  .search-dropdown.visible { display: block; animation: dropdownIn 0.2s ease-out; }
+  .search-dropdown.visible { display: block; animation: dropdownIn var(--dur-base) var(--ease-decelerate); }
   @keyframes dropdownIn {
     from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
   }
+  .search-dropdown > [data-when] { display: none; }
+  .search-dropdown[data-state="searching"] > [data-when="searching"],
+  .search-dropdown[data-state="results"]   > [data-when="results"],
+  .search-dropdown[data-state="no-match"]  > [data-when="no-match"] { display: flex; }
+  .search-dropdown > .search-status[data-when] { display: none; }
+  .search-dropdown[data-state="searching"] > .search-status[data-when="searching"],
+  .search-dropdown[data-state="no-match"]  > .search-status[data-when="no-match"] { display: block; }
+
+  .search-status {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--text-tertiary);
+  }
+  .search-status .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    margin-right: var(--space-2);
+    vertical-align: -2px;
+    border: 2px solid var(--border-default);
+    border-top-color: var(--ai-fg);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .no-match-title { font-size: var(--text-body); font-weight: 700; color: var(--text-primary); }
+  .no-match-hint  { margin-top: var(--space-1); max-width: var(--measure-tight); }
 
   .search-result {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
-    padding: 16px 18px;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
     cursor: pointer;
-    transition: background 0.15s;
-    border-bottom: 1px solid #f0f0f0;
+    transition: background var(--t-fast);
+    border-top: 1px solid var(--border-subtle);
   }
-  .search-result:last-child { border-bottom: none; }
-  .search-result:hover { background: var(--color-bg-light); }
+  .search-dropdown[data-state="results"] > .search-result:first-of-type { border-top: none; }
+  .search-result:hover { background: var(--surface-sunken); }
   .search-result.manual-entry { align-items: center; }
   .search-result.manual-entry .icon { margin-top: 0; }
 
   .search-result .icon {
-    width: 40px;
-    height: 40px;
+    width: 40px; height: 40px;
     border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     margin-top: 2px;
   }
-  .search-result .icon.place { background: #FEE2E2; }
-  .search-result .icon.manual { background: var(--color-bg-light); }
+  /* Was #FEE2E2, a pale red — an error tint on a successful match. */
+  .search-result .icon.place  { background: var(--brand-100); color: var(--brand-700); }
+  .search-result .icon.manual { background: var(--surface-sunken-2); color: var(--text-secondary); }
 
-  .search-result .info { flex: 1; }
-  .search-result .name { font-weight: 600; font-size: var(--font-size-base); }
-  .search-result .address { font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: 2px; }
-  .search-result .tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .search-result .info { flex: 1; min-width: 0; }
+  .search-result .name { font-weight: 700; font-size: var(--text-body); }
+  .search-result .address {
+    font-size: var(--text-small);
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+  }
+  .search-result .tags { display: flex; gap: var(--space-2); margin-top: var(--space-2); flex-wrap: wrap; }
   .search-result .tag {
-    font-size: 11px;
-    padding: 2px 8px;
+    font-size: var(--text-caption);
+    padding: 2px var(--space-2);
     border-radius: var(--radius-xs);
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: var(--tracking-caps);
   }
-  .tag.category { background: #FEF3E0; color: #B45309; }
-  .tag.verified { background: var(--color-success-bg); color: var(--color-success); }
-  .search-result .arrow {
-    color: var(--color-border);
-    font-size: 20px;
-    align-self: center;
+  /* One coloured chip per result. The category drops to neutral so it stops
+     competing with the business name for rank. */
+  .tag.category { background: var(--surface-sunken-2); color: var(--text-tertiary); }
+  .tag.verified { background: var(--success-bg); color: var(--success-fg); }
+  .tag [data-lucide] { width: 12px; height: 12px; vertical-align: -1px; }
+  .search-result .arrow { color: var(--text-tertiary); align-self: center; }
+
+  /* ============================================
+     DISCLOSURE (data-processing notice, step 1)
+     Deliberately not .tip-box: a privacy notice with a lightbulb icon reads
+     as a marketing tip rather than as a disclosure.
+     ============================================ */
+  .disclosure {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    border-left: 3px solid var(--text-secondary);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--text-secondary);
   }
+  .disclosure p { max-width: var(--measure-prose); }
+  .disclosure-icon { flex-shrink: 0; color: var(--text-secondary); }
+  .disclosure-icon [data-lucide] { width: 18px; height: 18px; }
+  .disclosure-link {
+    display: inline-block;
+    margin-top: var(--space-2);
+    color: var(--text-link);
+    font-weight: 700;
+  }
+
+  /* ============================================
+     SKIP LINK
+     ============================================ */
+  .skip-link {
+    position: absolute;
+    left: var(--space-4);
+    top: calc(-1 * var(--space-16));
+    z-index: 200;
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-raised);
+    border: 1.5px solid var(--border-focus);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 700;
+    text-decoration: none;
+    transition: top var(--t-fast);
+  }
+  .skip-link:focus { top: var(--space-4); }
 
   /* ============================================
      AI LOADING STATE (Step 2)
@@ -869,25 +1124,35 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 52px;
-    padding: 0 40px;
-    font-size: var(--font-size-md);
+    min-height: 52px;              /* min-, so it survives increased text spacing */
+    padding: 0 var(--space-10);
+    font-size: var(--text-body);
+    line-height: var(--lh-ui);
     font-weight: 700;
     font-family: var(--font-family);
-    color: white;
-    background: var(--color-primary);
+    color: var(--text-on-brand);
+    background: var(--brand-700);
     border: none;
     border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: var(--transition);
-    gap: 8px;
+    transition: background-color var(--t-fast), transform var(--dur-instant) var(--ease-standard),
+                box-shadow var(--t-fast);
+    gap: var(--space-2);
+    text-decoration: none;
   }
-  .btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--brand-800);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  /* Reads as a press rather than as settling back. */
+  .btn-primary:active:not(:disabled) { transform: scale(0.975); }
   .btn-primary:disabled {
-    background: var(--color-border);
+    /* Was white on #C9C5C7 at 70% opacity: 1.44:1, unreadable, and it is the
+       default state of the first CTA in the funnel. */
+    background: var(--n-200);
+    color: var(--text-tertiary);
     cursor: not-allowed;
-    opacity: 0.7;
   }
 
   .btn-secondary {
@@ -929,19 +1194,54 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 36px;
-    padding-top: 24px;
-    border-top: 1px solid #f0f0f0;
+    gap: var(--space-3);
+    margin-top: var(--stack-actions);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-subtle);
+  }
+  /* The primary button used to land at 24 / 76 / 84 / 92 / 92px from the
+     preceding block across the five steps, so it jumped on every transition.
+     Collapsing the previous block's bottom margin makes the offset a uniform
+     56px everywhere, from one rule. */
+  :where(.prefill-section, .assumption-card, .form-group,
+         .partner-info-card, .search-wrapper, .tip-box, .disclosure):has(+ .actions) {
+    margin-bottom: 0;
+  }
+  /* Step 1 stacks its CTA over the legal line. Was five inline properties on
+     the element; now it is in the cascade where media queries can reach it. */
+  .actions--stacked {
+    border-top: none;
+    padding-top: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
   }
 
-  .legal-text {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    line-height: 1.5;
+  .btn-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    margin-top: var(--space-3);
+    padding: var(--space-1) 0;
+    background: none;
+    border: none;
+    font-family: var(--font-family);
+    font-size: var(--text-small);
+    color: var(--text-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
   }
-  .legal-text a { color: var(--color-link); text-decoration: underline; }
-  .legal-text a:hover { text-decoration: underline; }
+  .btn-link:hover { color: var(--brand-800); }
+
+  .legal-text {
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--text-secondary);
+    max-width: var(--measure-tight);
+    text-align: right;
+  }
+  .legal-text a { color: var(--text-link); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ============================================
      QUOTE PAGE (Step 6)
@@ -1146,29 +1446,6 @@
   }
   .error-message.visible { display: block; }
 
-  @media (max-width: 768px) {
-    .header { padding: 0 16px; }
-    .header-inner { padding: 10px 0; gap: 12px; }
-    .logo { font-size: 16px; flex-shrink: 0; }
-    .segmented-stepper { max-width: 100%; padding: 12px 0 10px 0; }
-    .segment-label { font-size: 12px; letter-spacing: 0.2px; }
-    .steps-container { padding: 28px 16px 100px; }
-    h1 { font-size: var(--font-size-xl); }
-    .search-input { height: 52px; font-size: var(--font-size-base); }
-    .prefill-label { width: 130px; font-size: 16px; padding: 12px; }
-    .prefill-value { font-size: 16px; padding: 12px 12px 12px 0; }
-    .prefill-value input { font-size: 16px; }
-    .prefill-select { font-size: 16px; }
-    .source-badge { display: none; }
-    .btn-primary, .btn-secondary { width: 100%; height: 52px; }
-    .actions { flex-direction: column-reverse; }
-    .quote-layout { grid-template-columns: 1fr; }
-    .quote-sidebar { position: static; order: -1; }
-    .plan-col { padding: 14px 10px; }
-    .plan-price { font-size: var(--font-size-md); }
-    .radio-group { flex-direction: row; }
-    .date-input-wrapper { width: 100%; }
-  }
 
   /* ============================================
      LUCIDE ICON DEFAULTS
@@ -1228,13 +1505,10 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
-  .ct-row {
-    display: grid;
-    grid-template-columns: minmax(180px, 1.2fr) repeat(3, 1fr);
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .ct-row:last-child { border-bottom: none; }
-  .ct-header-row { border-bottom: 1px solid var(--color-border); }
+  /* These rows are real <tr>s now. The previous `display: grid` turned every
+     row into its own independent grid, so each one sized its columns from its
+     own content and no two rows lined up. Table layout does that job. */
+  .ct-row { border-bottom: none; }
 
   .ct-label {
     padding: 14px 16px;
@@ -1375,46 +1649,1034 @@
     height: 16px;
   }
 
-  /* Mobile overrides for coverage table */
-  @media (max-width: 768px) {
-    .ct-row {
-      grid-template-columns: minmax(100px, 1fr) repeat(3, minmax(60px, 1fr));
+
+  /* ============================================================
+     V2 COMPONENT LAYER
+     Rules below supersede the originals above where they overlap.
+     ============================================================ */
+
+  /* ---- Typography normalisation.
+     line-height: 1.6 on body used to inherit into 24, 32 and 48px text. ---- */
+  h1 {
+    font-size: var(--text-display);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    font-weight: 700;
+    text-wrap: balance;
+    margin-bottom: var(--stack-display-lead);
+  }
+  h1:focus { outline: none; }
+  .subtitle {
+    font-size: var(--text-lead);
+    line-height: var(--lh-lead);
+    letter-spacing: var(--tracking-lead);
+    color: var(--text-secondary);
+    max-width: var(--measure-prose);
+    text-wrap: pretty;
+    margin-bottom: var(--stack-lead-body);
+  }
+  /* Every step's h1 now lands at the same height. It used to start at 48, 88
+     or 108px depending on which step you were on. */
+  .ai-loading, .quote-header, .partner-page { padding: 0; text-align: left; }
+  .ai-loading h1, .quote-header h1, .partner-page h1 { font-size: var(--text-display); }
+  .quote-header { margin-bottom: var(--stack-lead-body); }
+  .quote-header .subtitle { margin-bottom: 0; }
+
+  .prefill-section-title {
+    font-size: var(--text-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    color: var(--text-tertiary);
+    margin-bottom: var(--stack-section-title);
+  }
+  .coverage-title {
+    font-size: var(--text-lead);
+    line-height: var(--lh-lead);
+    font-weight: 700;
+    margin-bottom: var(--stack-section-title);
+  }
+  .modal-content h2 { font-size: var(--text-heading); line-height: var(--lh-heading); }
+
+  /* Figures share one advance in FS Me Neue, so a fixed slot aligns the
+     column. The declaration is inert in the brand face but corrects the
+     fallback, which has proportional figures. */
+  .figure {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .ct-val .figure, .detail-row .figure {
+    display: inline-block;
+    min-width: 5ch;
+    text-align: right;
+  }
+
+  /* ============================================================
+     STEP 2 — gathering
+     ============================================================ */
+  .ai-powered-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-6);
+    padding: var(--space-2) var(--space-3);
+    background: var(--ai-bg);
+    border: 1px solid var(--ai-border);
+    border-radius: var(--radius-pill);
+    color: var(--ai-fg);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+  }
+  .ai-powered-badge [data-lucide] { width: 14px; height: 14px; }
+
+  .ai-checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    max-width: 420px;
+    margin: var(--space-6) 0;
+  }
+  .ai-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    margin: 0 calc(-1 * var(--space-3));
+    border-radius: var(--radius-sm);
+    transition: background var(--t-fast);
+  }
+  /* One highlighted row. That is the whole hierarchy. */
+  .ai-check-item[data-state="checking"] { background: var(--ai-bg); }
+  .ai-check-text {
+    font-size: var(--text-body);
+    line-height: var(--lh-ui);
+    color: var(--text-placeholder);
+    transition: color var(--t-base);
+  }
+  .ai-check-item[data-state="checking"] .ai-check-text { color: var(--text-primary); font-weight: 700; }
+  .ai-check-item[data-state="found"] .ai-check-text,
+  .ai-check-item[data-state="unresolved"] .ai-check-text { color: var(--text-secondary); }
+  .ai-check-source {
+    display: block;
+    font-size: var(--text-caption);
+    line-height: var(--lh-caption);
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+  .ai-check-item[data-state="unresolved"] .ai-check-source::after {
+    content: ' · estimate used';
+    color: var(--warning-fg);
+    font-weight: 700;
+  }
+
+  .check-icon {
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .check-icon.pending    { border: 2px solid var(--border-strong); background: none; }
+  .check-icon.checking   { border: 2px solid var(--border-subtle); border-top-color: var(--ai-fg);
+                           animation: spin 0.8s linear infinite; }
+  .check-icon.found      { background: var(--success-fg); border: none; color: var(--n-0); }
+  .check-icon.found [data-lucide] { width: 14px; height: 14px; }
+  .check-icon.unresolved { border: 2px solid var(--warning-border); background: var(--warning-bg); }
+
+  .gather-outcome {
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+  .gather-duration { font-size: var(--text-small); color: var(--text-tertiary); }
+  .gather-actions {
+    display: flex; align-items: center; gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  .gather-actions .btn-link { margin-top: 0; }
+
+  /* ============================================================
+     STEP 3 — provenance
+     ============================================================ */
+  .provenance-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-6);
+    background: var(--ai-bg);
+    border: 1px solid var(--ai-border);
+    border-radius: var(--radius-md);
+    color: var(--ai-fg);
+    font-size: var(--text-small);
+    font-weight: 700;
+  }
+  .provenance-banner [data-lucide] { width: 16px; height: 16px; flex-shrink: 0; }
+  /* The only amber on the screen, and it is a live count, so amber means
+     "these need checking" rather than decorating every row. */
+  .provenance-banner .count {
+    margin-left: auto;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    font-size: var(--text-caption);
+    white-space: nowrap;
+  }
+
+  .prefill-card {
+    border: 1.5px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    /* clip, not hidden, so focus rings are not cropped by the card. */
+    overflow: clip;
+    overflow-clip-margin: 4px;
+    box-shadow: var(--shadow-xs);
+  }
+  .prefill-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    min-height: 56px;
+    border-bottom: 1px solid var(--border-subtle);
+    border-left: 3px solid transparent;
+    transition: background var(--t-fast), border-left-color var(--t-base);
+  }
+  .prefill-row:last-child { border-bottom: none; }
+  .prefill-row:hover { background: var(--surface-sunken); }
+  .prefill-row[data-confidence="estimate"] { border-left-color: var(--confidence-estimate); }
+  .prefill-row[data-edited="true"]         { border-left-color: var(--confidence-edited); }
+
+  .prefill-label {
+    flex: 0 0 auto;
+    min-width: 160px;
+    max-width: 200px;
+    /* Explicit. An inherited padding-left of 18px was pushing every label's
+       text 18px right of its own value, so the two columns never lined up. */
+    padding: var(--space-2) 0 0;
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--text-tertiary);
+    cursor: pointer;
+  }
+  .prefill-value {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .prefill-value input,
+  .prefill-value textarea,
+  .prefill-select {
+    flex: 1 1 200px;
+    min-width: 0;
+    /* A native select carries its own internal text indent, which set the
+       select values a few px right of the input values in the same column.
+       appearance:none removes it; the chevron is drawn back on below. */
+    appearance: none;
+    -webkit-appearance: none;
+    text-indent: 0;
+    font-family: var(--font-family);
+    /* The value now outweighs the label. Both used to be 16px at the same
+       rendered weight, separated only by colour. */
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: var(--lh-ui);
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid transparent;
+    padding: var(--space-2) 0;
+    resize: vertical;
+  }
+  .prefill-row[data-confidence="estimate"] .prefill-value input {
+    border-bottom-color: var(--border-strong);
+    border-bottom-style: dashed;
+  }
+  .prefill-value input:focus-visible,
+  .prefill-value textarea:focus-visible,
+  .prefill-select:focus-visible {
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-xs);
+  }
+  /* Chevron redrawn as a background so the select's text box starts at the
+     same x as every input in the column. */
+  .prefill-select {
+    padding-right: var(--space-6);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236E686A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+  }
+
+  .prefill-source {
+    flex-basis: 100%;
+    font-size: var(--text-caption);
+    line-height: var(--lh-caption);
+    color: var(--text-tertiary);
+  }
+  .confidence-chip {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-xs);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    white-space: nowrap;
+  }
+  .confidence-chip.estimate {
+    background: var(--warning-bg);
+    color: var(--warning-fg);
+    border: 1px solid var(--warning-border);
+  }
+  .confidence-chip.edited {
+    background: var(--brand-50);
+    color: var(--brand-700);
+    border: 1px solid var(--brand-200);
+  }
+
+  /* ============================================================
+     STEP 4 — native radios
+     ============================================================ */
+  fieldset.form-group { border: none; padding: 0; margin: 0 0 var(--stack-group); }
+  .radio-group { display: flex; gap: var(--space-3); margin-top: var(--stack-label); }
+  .radio-group input[type="radio"] {
+    position: absolute; width: 1px; height: 1px;
+    opacity: 0; pointer-events: none;
+  }
+  .radio-option {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 52px;
+    padding: 0 var(--space-5);
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-body);
+    cursor: pointer;
+    transition: border-color var(--t-fast), background var(--t-fast);
+  }
+  .radio-option:hover { border-color: var(--text-secondary); background: var(--surface-sunken); }
+  .radio-dot {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-strong);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: border-color var(--t-fast);
+  }
+  .radio-dot::after {
+    content: '';
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--brand-700);
+    transform: scale(0);
+    transition: transform var(--dur-base) var(--ease-emphasized);
+  }
+  input[type="radio"]:checked + .radio-option {
+    border-color: var(--brand-700);
+    background: var(--surface-brand);
+  }
+  input[type="radio"]:checked + .radio-option .radio-dot { border-color: var(--brand-700); }
+  input[type="radio"]:checked + .radio-option .radio-dot::after { transform: scale(1); }
+  input[type="radio"]:focus-visible + .radio-option { box-shadow: var(--focus-ring); }
+
+  .claims-summary {
+    margin-top: var(--space-3);
+    font-size: var(--text-small);
+    color: var(--text-secondary);
+  }
+  .claims-summary .btn-link { margin-top: 0; }
+
+  .form-label {
+    display: block;
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: var(--lh-ui);
+    margin-bottom: var(--stack-label);
+  }
+  .form-sublabel {
+    display: block;
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--text-tertiary);
+    max-width: var(--measure-tight);
+    margin: calc(-1 * var(--space-1)) 0 var(--stack-label);
+  }
+  .form-input {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 var(--space-4);
+    font-family: var(--font-family);
+    font-size: var(--text-body);
+    line-height: var(--lh-ui);
+    color: var(--text-primary);
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+  .form-input:focus-visible { box-shadow: var(--focus-ring); border-color: var(--border-focus); }
+  .form-input.error { border-color: var(--error-fg); }
+  /* Reserved, so revealing an error does not shift the layout. */
+  .error-message {
+    min-height: 20px;
+    margin-top: var(--space-1);
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--error-fg);
+  }
+  .date-input-wrapper { position: relative; width: min(260px, 100%); }
+
+  /* ============================================================
+     STEP 5 — assumptions
+     ============================================================ */
+  .assumption-card {
+    border: 1.5px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: clip;
+    overflow-clip-margin: 4px;
+    box-shadow: var(--shadow-xs);
+    margin-bottom: var(--stack-section);
+  }
+  /* Flex, not grid. Each row is its own grid container, so `1fr auto auto`
+     sized its columns from that row's own content and no two rows lined up. */
+  .assumption-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background var(--t-fast);
+  }
+  .assumption-row:last-child { border-bottom: none; }
+  .assumption-row[data-state="not-true"] { background: var(--warning-bg); }
+  .assumption-text {
+    order: 1;
+    flex: 1 1 240px;
+    font-size: var(--text-body);
+    line-height: var(--lh-body);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .assumption-text strong { font-weight: 700; }
+
+  /* Native checkbox styled as a switch: Space works, the label is a real
+     accessible name, and :checked drives the visual with no JS. */
+  .assumption-toggle {
+    appearance: none;
+    order: 2;
+    width: 44px; height: 24px;
+    flex-shrink: 0;
+    border-radius: var(--radius-pill);
+    /* Agreement is the resting state, so it is neutral. Six saturated green
+       toggles made agreeing look like six achievements and spent the screen's
+       only colour on its default. */
+    background: var(--n-700);
+    border: none;
+    position: relative;
+    cursor: pointer;
+    transition: background var(--t-fast);
+  }
+  .assumption-toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--n-0);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur-base) var(--ease-emphasized);
+  }
+  .assumption-toggle:not(:checked) { background: var(--warning-fg); }
+  .assumption-toggle:not(:checked)::after { transform: translateX(20px); }
+  .assumption-toggle:focus-visible { box-shadow: var(--focus-ring); }
+
+  .toggle-label {
+    order: 3;
+    flex: 0 0 62px;
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    text-align: right;
+  }
+  .toggle-label.yes { color: var(--text-tertiary); }
+  .toggle-label.no  { color: var(--warning-fg); }
+
+  /* Stated at the row that caused it, before the CTA changes underneath. */
+  .consequence {
+    order: 4;
+    flex-basis: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--warning-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    color: var(--warning-fg);
+  }
+  .assumption-row.is-eligibility { border-left: 3px solid var(--warning-border); }
+  .step5-summary {
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    color: var(--warning-fg);
+  }
+
+  /* ============================================================
+     STEP 6 — quote
+     ============================================================ */
+  .coverage-scroll { overflow-x: auto; }
+  .coverage-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1.5px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: clip;
+    overflow-clip-margin: 4px;
+    table-layout: fixed;
+  }
+  /* These were flex containers when they were divs. As real cells they must be
+     table-cell, or they drop out of the table's column model and stack. */
+  .coverage-table .ct-label,
+  .coverage-table .ct-val,
+  .coverage-table .ct-plan {
+    display: table-cell;
+    vertical-align: middle;
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+  }
+  .coverage-table .ct-val, .coverage-table .ct-plan { text-align: center; }
+  .coverage-table .ct-plan { vertical-align: bottom; }
+  .coverage-table tbody .ct-row > * { border-top: 1px solid var(--border-subtle); }
+  .coverage-table thead .ct-row > * { border-bottom: 1px solid var(--border-strong); }
+  .ct-label {
+    width: 34%;
+    font-size: var(--text-small);
+    line-height: var(--lh-small);
+    font-weight: 400;
+    color: var(--text-secondary);
+    vertical-align: middle;
+  }
+  .ct-val {
+    font-size: var(--text-small);
+    color: var(--text-secondary);
+    vertical-align: middle;
+  }
+  /* Weight tracks magnitude, so scanning a row shows the coverage ladder. */
+  .ct-col[data-plan="deluxe"].ct-val  { color: var(--text-primary); font-weight: 700; }
+  .ct-col[data-plan="premier"].ct-val { color: var(--text-primary); }
+  .ct-col[data-plan="basic"].ct-val   { color: var(--text-tertiary); }
+
+  .ct-plan { vertical-align: bottom; }
+  .ct-plan-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    cursor: pointer;
+  }
+  .plan-badge {
+    display: inline-block;
+    min-height: 22px;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-xs);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    white-space: nowrap;
+  }
+  /* The old placeholder reserved 40px for a 30px badge, so Basic and Deluxe
+     sat 10px below Premier on both tables. These are real labels now. */
+  .plan-badge.muted { background: var(--surface-sunken-2); color: var(--text-tertiary); }
+  .plan-badge.recommended-badge { background: var(--brand-700); color: var(--text-on-brand); }
+  .plan-name { font-weight: 700; font-size: var(--text-body); }
+  .plan-price {
+    font-size: var(--text-lead);
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: baseline;
+    gap: 0.25em;
+  }
+  .plan-price .per { font-size: var(--text-small); font-weight: 400; color: var(--text-tertiary); }
+  /* The single change that makes the value difference legible at a glance. */
+  .plan-delta {
+    font-size: var(--text-caption);
+    color: var(--text-tertiary);
+    min-height: 1.2em;
+  }
+  .plan-radio {
+    width: 20px; height: 20px;
+    margin-top: var(--space-2);
+    border: 2px solid var(--border-strong);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color var(--t-fast), background var(--t-fast);
+  }
+  .plan-radio::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--n-0);
+    transform: scale(0);
+    transition: transform var(--dur-base) var(--ease-emphasized);
+  }
+  /* The recommended column is a column, not a 1.04:1 tint that was invisible. */
+  .ct-col.is-selected { background: var(--surface-brand); }
+  thead .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--brand-700), inset -2px 0 0 var(--brand-700); }
+  tbody .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--brand-700), inset -2px 0 0 var(--brand-700); }
+  .ct-radio:checked + .plan-badge ~ .plan-radio,
+  .ct-plan-label:has(.ct-radio:checked) .plan-radio {
+    border-color: var(--brand-700);
+    background: var(--brand-700);
+  }
+  .ct-plan-label:has(.ct-radio:checked) .plan-radio::after { transform: scale(1); }
+  .ct-plan-label:has(.ct-radio:checked) .plan-price { color: var(--brand-700); font-size: var(--text-heading); }
+  .ct-plan-label:has(.ct-radio:focus-visible) { box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
+
+  /* Was an inert icon shaped like a control. Now it discloses a definition,
+     which is what the screen's stated purpose needs. */
+  .ct-info {
+    background: none; border: none; padding: 2px; cursor: pointer;
+    color: var(--text-placeholder);
+    vertical-align: -3px;
+  }
+  .ct-info:hover { color: var(--text-secondary); }
+  .ct-info [data-lucide] { width: 14px; height: 14px; }
+  .ct-definition {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-caption);
+    line-height: var(--lh-caption);
+    color: var(--text-tertiary);
+  }
+
+  .included-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    color: var(--text-secondary);
+  }
+  .included-strip [data-lucide] { width: 16px; height: 16px; color: var(--success-fg); flex-shrink: 0; }
+  .coverage-actions { margin-top: var(--space-3); }
+  .coverage-section { margin-bottom: var(--stack-section); }
+
+  .quote-sidebar { display: flex; flex-direction: column; gap: var(--space-4); }
+  .sidebar-card {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: clip;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar-card img { display: block; width: 100%; height: auto; }
+  .sidebar-total { display: flex; flex-direction: column; gap: var(--space-1); }
+  .total-label { font-size: var(--text-body); font-weight: 400; color: var(--text-secondary); }
+  .total-price {
+    display: flex; align-items: baseline; gap: 0.25em;
+    font-size: var(--text-display-sm);
+    line-height: var(--lh-display-sm);
+    font-weight: 700;
+  }
+  .total-price .per { font-size: var(--text-small); font-weight: 400; color: var(--text-tertiary); }
+  .total-annual { font-size: var(--text-small); color: var(--text-tertiary); }
+  .sidebar-terms { font-size: var(--text-caption); line-height: var(--lh-caption); color: var(--text-tertiary); }
+  .btn-checkout {
+    width: 100%;
+    min-height: 56px;
+    font-family: var(--font-family);
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--text-on-brand);
+    background: var(--brand-700);
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background var(--t-fast);
+  }
+  .btn-checkout:hover { background: var(--brand-800); }
+  .sidebar-details { display: flex; flex-direction: column; gap: var(--space-1); }
+  .detail-section {
+    margin-top: var(--space-3);
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    color: var(--text-tertiary);
+  }
+  .detail-row {
+    display: flex; justify-content: space-between; gap: var(--space-3);
+    font-size: var(--text-small);
+    color: var(--text-secondary);
+  }
+  .quote-footer-col { text-align: right; }
+  .quote-footer-contact a { min-height: 24px; padding: var(--space-1) 0; }
+  .coverage-actions a, .coverage-actions .btn-link { min-height: 24px; }
+
+  /* ============================================================
+     MODAL
+     ============================================================ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--space-4);
+    background: var(--surface-scrim);
+    z-index: 200;
+  }
+  .modal-overlay[hidden] { display: none; }
+  .modal-content {
+    position: relative;
+    width: 100%; max-width: 520px;
+    max-height: 90vh; overflow-y: auto;
+    padding: var(--space-8);
+    background: var(--surface-raised);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+  }
+  .modal-content h2 { margin-bottom: var(--space-6); outline: none; }
+  .modal-close {
+    position: absolute;
+    top: var(--space-4); right: var(--space-4);
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; border-radius: var(--radius-sm);
+    color: var(--text-secondary); cursor: pointer;
+  }
+  .modal-close:hover { background: var(--surface-sunken); }
+  .modal-actions { display: flex; gap: var(--space-3); margin-top: var(--space-6); }
+  .modal-actions .btn-primary, .modal-actions .btn-secondary { flex: 1; padding: 0 var(--space-4); }
+  .claim-row { display: contents; }
+  .partner-saved { margin-top: var(--space-4); font-size: var(--text-small); color: var(--text-tertiary); }
+
+  /* ============================================================
+     STEP TRANSITIONS
+     ============================================================ */
+  .step { display: none; }
+  .step.active { display: block; animation: stepIn var(--dur-enter) var(--ease-decelerate) both; }
+  .step.active.is-back { animation-name: stepInBack; }
+  @keyframes stepIn     { from { opacity: 0; transform: translateY(12px); }
+                          to   { opacity: 1; transform: translateY(0); } }
+  @keyframes stepInBack { from { opacity: 0; transform: translateY(-12px); }
+                          to   { opacity: 1; transform: translateY(0); } }
+
+  /* ============================================================
+     REDUCED MOTION
+     Removes movement, not information: the step 2 sequence keeps its pacing
+     and its per-source state changes, only the travel and spin go.
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
+    .step.active { animation: rmFade 160ms linear both !important; }
+    .ai-check-item { transition: background 160ms linear !important; }
+    .segment-fill  { transition: width 160ms linear !important; }
+    .check-icon.checking, .spinner {
+      animation: none !important;
+      border-top-color: var(--ai-fg);
+    }
+    .btn-primary:hover:not(:disabled) { transform: none !important; }
+  }
+  @keyframes rmFade { from { opacity: 0 } to { opacity: 1 } }
+
+  /* ============================================================
+     RESPONSIVE LAYER — mobile first
+     Replaces the two `max-width: 768px` blocks the file used to carry.
+     Every boundary below is derived from a measured content requirement,
+     not from a device name.
+     ============================================================ */
+  :root {
+    --grid-gutter:    var(--space-3);
+    --page-margin:    var(--space-4);
+    --container-form: 100%;
+    --container-wide: 100%;
+    --header-h:       88px;
+    --ct-label-min:   140px;
+  }
+  @media (min-width: 480px) {
+    :root { --grid-gutter: var(--space-4); --page-margin: var(--space-5); }
+  }
+  @media (min-width: 600px) {
+    :root { --page-margin: var(--space-6); }
+  }
+  @media (min-width: 768px) {
+    :root {
+      --grid-gutter: var(--space-6);
+      --page-margin: var(--space-6);
+      --container-form: 680px;
+      --ct-label-min: 180px;
+      --header-h: 104px;
+    }
+  }
+  @media (min-width: 1024px) {
+    :root { --page-margin: var(--space-10); --container-wide: 880px; }
+  }
+  @media (min-width: 1200px) {
+    :root { --container-wide: 1000px; --ct-label-min: 200px; }
+  }
+  @media (min-width: 1440px) {
+    :root {
+      --grid-gutter: var(--space-8);
+      --page-margin: var(--space-12);
+      --container-form: 720px;
+      --container-wide: 1080px;
+    }
+  }
+
+  /* One container primitive. --container-* is CONTENT width; the page margin
+     is added outside it. The header adopts the container of the step it sits
+     above, which is what finally puts the logo on the same axis as the form:
+     at 1280 it lands on x=293, the exact left edge the content already had. */
+  .container,
+  .header-inner,
+  .segmented-stepper,
+  .step,
+  .quote-sticky-inner {
+    width: 100%;
+    max-width: calc(var(--container-current, var(--container-form)) + 2 * var(--page-margin));
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+  body { --container-current: var(--container-form); }
+  body[data-step="6"] { --container-current: var(--container-wide); }
+
+  .header { padding: 0; }
+  .header-inner { padding-block: var(--space-3); }
+  .logo img { height: 24px; }
+  @media (min-width: 768px) { .logo img { height: 32px; } }
+
+  .segmented-stepper { padding-block: var(--space-3); }
+  /* Was 3/1/1, which gave the first segment 57% of the bar and made "Details"
+     look like the whole product. All three labels fit at 320px, measured. */
+  .stepper-segment[data-segment="1"],
+  .stepper-segment[data-segment="2"],
+  .stepper-segment[data-segment="3"] { flex: 1; }
+
+  .steps-container {
+    max-width: none;
+    padding: var(--space-8) 0 var(--space-16);
+    min-height: calc(100vh - var(--header-h));
+  }
+
+  /* ---- Step 1 dropdown.
+     At phone widths the overlay covered both the data notice and the primary
+     action, on a screen where the soft keyboard already owns the bottom half.
+     Inline expansion pushes them down instead. ---- */
+  .search-wrapper { position: relative; z-index: 60; }
+  .search-dropdown {
+    position: static;
+    margin-top: var(--space-1);
+    box-shadow: none;
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+  @media (min-width: 600px) {
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + var(--space-1));
+      left: 0; right: 0;
+      box-shadow: var(--shadow-lg);
+      max-height: min(60vh, 420px);
+    }
+  }
+
+  /* ---- Step 3 rows stack until there is room for two columns ---- */
+  .prefill-row { flex-direction: column; gap: var(--space-1); }
+  .prefill-label { max-width: none; padding-top: 0; }
+  @media (min-width: 768px) {
+    .prefill-row { flex-direction: row; gap: var(--space-4); }
+    .prefill-label { flex: 0 0 var(--ct-label-min); max-width: 200px; padding-top: var(--space-2); }
+  }
+
+  /* ---- Step 4 calendar.
+     The day cells became <button>s so the grid is keyboard operable, which
+     meant they inherited the UA button background and border: every date
+     rendered as a grey disc inside a box. Reset to a bare cell and let the
+     circle come only from a real state. ---- */
+  .calendar-dropdown {
+    border: 1px solid var(--border-default);
+    padding: var(--space-4);
+  }
+  .calendar-day {
+    appearance: none;
+    background: none;
+    border: none;
+    box-shadow: none;
+    font-family: var(--font-family);
+    font-size: var(--text-small);
+    color: var(--text-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color var(--t-fast), color var(--t-fast);
+  }
+  .calendar-day:hover:not(:disabled) { background: var(--surface-sunken-2); }
+  .calendar-day.today,
+  .calendar-day.selected { background: var(--brand-700); color: var(--text-on-brand); font-weight: 700; }
+  .calendar-day:disabled {
+    background: none;
+    color: var(--text-placeholder);
+    cursor: default;
+  }
+  .calendar-day.empty { background: none; pointer-events: none; }
+  .calendar-weekdays span { color: var(--text-tertiary); font-weight: 400; }
+  .cal-nav:disabled { opacity: 0.35; cursor: default; }
+
+  /* ---- Step 4 ---- */
+  .date-input-wrapper { width: 100%; }
+  @media (min-width: 768px) { .date-input-wrapper { width: min(340px, 100%); } }
+  .calendar-dropdown { width: min(320px, calc(100vw - 2 * var(--page-margin))); }
+  .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .calendar-day { width: 100%; min-height: 44px; }
+  @media (min-width: 768px) { .calendar-day { min-height: 40px; } }
+
+  /* ---- Step 5: the whole row is the target, not just the 48x28 switch ---- */
+  .assumption-row { min-height: 60px; }
+
+  /* ---- Buttons stack on the narrowest band only ---- */
+  @media (max-width: 599px) {
+    .btn-primary, .btn-secondary { width: 100%; }
+    .actions { flex-direction: column-reverse; align-items: stretch; }
+    .actions--stacked { flex-direction: column; align-items: stretch; }
+    .legal-text { text-align: left; max-width: none; }
+  }
+
+  /* ============================================================
+     STEP 6 — the hard case
+     Measured: the table's min-content is 586px, so a two-column layout needs
+     918px of container content. Side-by-side is only honest at >=1200px.
+     Below that the sidebar was crushed to 71px and the page overflowed
+     horizontally by 46px at 800px.
+     ============================================================ */
+  .quote-layout {
+    display: grid;
+    grid-template-columns: 1fr;   /* single column is the default, not an override */
+    gap: var(--space-8);
+    align-items: start;
+    max-width: none;
+    padding: 0;
+  }
+  .quote-main { min-width: 0; }
+  .sidebar-card img { max-width: 300px; }
+
+  @media (min-width: 1200px) {
+    .quote-layout { grid-template-columns: 1fr 300px; }
+    .quote-sidebar { position: sticky; top: calc(var(--header-h) + var(--space-4)); }
+  }
+
+  .coverage-table { min-width: 0; }
+  /* table-layout:fixed sizes columns from the first row's *width*, and ignores
+     min-width. With only a min-width set, the header row and the body rows
+     resolved their columns independently and the plan columns drifted out of
+     alignment with the rows above them. An explicit width on the first column
+     pins it; the remaining three then split what is left, evenly, for every row. */
+  .ct-label { width: var(--ct-label-min); min-width: 0; }
+  .ct-plan, .ct-val { width: auto; }
+
+  /* Below 600 the plan columns measured 61px at 320 and 80px at 375, which is
+     not a comparison, it is a rendering artefact. A sticky label column plus
+     horizontal scroll keeps every value at legible width. */
+  @media (max-width: 599px) {
+    /* max-width plus min-width:0 keeps the scroll inside the container instead
+       of pushing the whole page sideways. */
+    .coverage-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      min-width: 0;
+    }
+    .coverage-section, .quote-main { min-width: 0; max-width: 100%; }
+    .coverage-table { table-layout: auto; min-width: max-content; }
     .ct-label {
-      font-size: var(--font-size-xs);
-      padding: 10px 8px;
+      position: sticky; left: 0; z-index: 1;
+      /* Fixed, not min-. With table-layout:auto the label column sized to its
+         own content and took 218px of a 343px viewport, leaving the first plan
+         clipped before the user had scrolled at all. */
+      width: 148px; min-width: 148px; max-width: 148px;
+      background: var(--surface);
+      box-shadow: 1px 0 0 var(--border-subtle);
     }
-    .ct-val {
-      padding: 10px 4px;
-      font-size: var(--font-size-xs);
-    }
-    .ct-plan {
-      padding: 12px 6px;
-    }
-    .ct-plan .plan-name {
-      font-size: var(--font-size-sm);
-    }
-    .ct-plan .plan-price {
-      font-size: var(--font-size-base);
-    }
-    .ct-plan .plan-price span {
-      font-size: var(--font-size-xs);
-    }
-    .quote-layout {
-      padding: 0;
-    }
-    .quote-footer-content {
-      flex-direction: column;
-      gap: 16px;
-      text-align: left;
-    }
-    .quote-footer-hours {
-      text-align: left;
-    }
-    .quote-footer-contact {
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+    /* Fixed, not min-. Under table-layout:auto the "Industry standard" badge
+       made the middle plan column 40px wider than its neighbours, so the three
+       plans read as different sizes rather than as a comparison. */
+    .ct-plan, .ct-val { width: 132px; min-width: 132px; max-width: 132px; }
+    .coverage-table thead .ct-label { background: var(--surface); }
+  }
+
+  /* ---- Sticky summary bar.
+     Below 1200 the total and Checkout leave the column and become a bar, so
+     the price is visible while plans are being tapped. That visibility is the
+     mechanism that teaches the comparison once side-by-side is gone. ---- */
+  .quote-sticky-bar { display: none; }
+  body[data-step="6"] .quote-sticky-bar {
+    display: block;
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 90;
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border-default);
+    box-shadow: 0 -2px 12px rgba(35,31,32,0.08);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  body[data-step="6"] .steps-container {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom) + var(--space-6));
+  }
+  .quote-sticky-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-4);
+    height: 72px;
+  }
+  .quote-sticky-bar .total-label {
+    font-size: var(--text-caption);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    color: var(--text-tertiary);
+  }
+  .quote-sticky-bar .total-price { font-size: var(--text-lead); }
+  .quote-sticky-bar .btn-checkout {
+    width: auto; min-width: 132px; min-height: 48px;
+    padding-inline: var(--space-6);
+    flex-shrink: 0;
+  }
+  @media (min-width: 1200px) {
+    body[data-step="6"] .quote-sticky-bar { display: none; }
+    body[data-step="6"] .steps-container { padding-bottom: var(--space-16); }
+  }
+  /* At >=1200 the in-column sidebar carries the total, so hide its duplicate
+     there rather than rendering the price twice. */
+  @media (max-width: 1199px) {
+    .quote-sidebar .sidebar-total,
+    .quote-sidebar .btn-checkout,
+    .quote-sidebar .sidebar-terms { display: none; }
+  }
+
+  @media (max-width: 599px) {
+    .quote-footer-content { flex-direction: column; gap: var(--space-4); text-align: left; }
+    .quote-footer-col { text-align: left; }
+    .quote-footer-contact { flex-wrap: wrap; gap: var(--space-3); }
   }
 </style>
 </head>
@@ -1423,236 +2685,329 @@
 <!-- ============================================
      HEADER
      ============================================ -->
+<a class="skip-link" href="#main">Skip to content</a>
+
 <header class="header">
   <div class="header-inner">
     <div class="logo">
-      <img src="ergo logo.png" alt="ERGO NEXT" draggable="false">
+      <img src="ergo logo.png" alt="ERGO NEXT" width="633" height="96" draggable="false">
     </div>
   </div>
-  <div class="segmented-stepper" id="segmentedStepper">
+  <nav class="segmented-stepper" id="segmentedStepper" aria-label="Progress">
     <div class="stepper-segment" data-segment="1">
       <div class="segment-track">
-        <div class="segment-fill" id="segmentFill1" style="width: 33%;"></div>
+        <div class="segment-fill" id="segmentFill1"></div>
       </div>
-      <span class="segment-label active" data-segment="1">Details</span>
+      <span class="segment-label active" data-segment="1">Business</span>
     </div>
     <div class="stepper-segment" data-segment="2">
       <div class="segment-track">
-        <div class="segment-fill" id="segmentFill2" style="width: 0%;"></div>
+        <div class="segment-fill" id="segmentFill2"></div>
       </div>
-      <span class="segment-label" data-segment="2">Review</span>
+      <span class="segment-label" data-segment="2">Policy</span>
     </div>
     <div class="stepper-segment" data-segment="3">
       <div class="segment-track">
-        <div class="segment-fill" id="segmentFill3" style="width: 0%;"></div>
+        <div class="segment-fill" id="segmentFill3"></div>
       </div>
       <span class="segment-label" data-segment="3">Quote</span>
     </div>
-  </div>
+  </nav>
 </header>
+
+<!-- Single live region. Every state announcement in the funnel routes here. -->
+<p class="sr-only" id="liveRegion" role="status" aria-live="polite"></p>
+<p class="sr-only" id="stepStatus" role="status" aria-live="polite"></p>
 
 <!-- ============================================
      STEPS
      ============================================ -->
-<div class="steps-container">
+<main class="steps-container" id="main">
 
   <!-- ============ STEP 1: Smart Search ============ -->
-  <div class="step active" id="step1">
-    <h1>Let's get you covered!</h1>
-    <p class="subtitle">Just tell us your business name and we'll do the rest.</p>
+  <section class="step active" id="step1" aria-labelledby="step1Title">
+    <h1 id="step1Title" tabindex="-1">Get a quote for your business</h1>
+    <p class="subtitle">Search for your business. We'll fill in what we can find.</p>
+
+    <!-- The data notice sits ABOVE the field, because below it the lookup has
+         already been triggered by the time the user reads it. It is also its
+         own component rather than a lightbulb "tip": a data-processing notice
+         styled as a helpful hint reads as marketing. -->
+    <div class="disclosure" id="dataNotice">
+      <span class="disclosure-icon" aria-hidden="true"><i data-lucide="shield"></i></span>
+      <div>
+        <p>We look up your business in public sources: Google, state business registries, and
+        industry data. You see everything we find, and you can change it before we price anything.</p>
+        <a class="disclosure-link" href="#">How we use your data</a>
+      </div>
+    </div>
 
     <div class="search-wrapper">
-      <span class="search-icon"><i data-lucide="search"></i></span>
-      <input type="text" class="search-input" id="businessSearch" placeholder="Search by business name or address..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchDropdown" aria-label="Search for your business">
-      <div class="search-dropdown" id="searchDropdown" role="listbox" aria-label="Search results">
-        <div class="search-result" role="option" onclick="selectBusiness()">
-          <div class="icon place" aria-hidden="true"><i data-lucide="map-pin"></i></div>
-          <div class="info">
-            <div class="name">Fambrini's Cafe</div>
-            <div class="address">2500 El Camino Real Ste 105, Palo Alto, CA 94306</div>
-            <div class="tags">
-              <span class="tag category">Coffee Shop</span>
-              <span class="tag verified"><i data-lucide="check" style="width:12px;height:12px;"></i> Verified</span>
+      <label class="form-label" for="businessSearch">Business name</label>
+      <div class="search-field">
+        <!-- The icon is positioned against this row, not against .search-field.
+             At phone widths the dropdown expands inline, so .search-field grows
+             to contain it and a 50%-centred icon drifted down over the results. -->
+        <div class="search-input-row">
+          <span class="search-icon" aria-hidden="true"><i data-lucide="search"></i></span>
+          <input type="text" class="search-input" id="businessSearch"
+                 placeholder="Business name or address" autocomplete="off"
+                 role="combobox" aria-expanded="false" aria-controls="searchDropdown"
+                 aria-autocomplete="list" aria-describedby="dataNotice">
+        </div>
+        <div class="search-dropdown" id="searchDropdown" role="listbox"
+             data-state="idle" aria-label="Search results">
+
+          <!-- searching -->
+          <div class="search-status" data-when="searching">
+            <span class="spinner" aria-hidden="true"></span> Searching public records
+          </div>
+
+          <!-- results -->
+          <div class="search-result" data-when="results" role="option" tabindex="-1"
+               aria-selected="false" onclick="selectBusiness()">
+            <div class="icon place" aria-hidden="true"><i data-lucide="map-pin"></i></div>
+            <div class="info">
+              <div class="name">Fambrini's Cafe</div>
+              <div class="address">2500 El Camino Real Ste 105, Palo Alto, CA 94306</div>
+              <div class="tags">
+                <span class="tag category">Coffee shop</span>
+                <span class="tag verified"><i data-lucide="check" aria-hidden="true"></i> Verified listing</span>
+              </div>
             </div>
+            <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
           </div>
-          <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
-        </div>
-        <div class="search-result manual-entry" role="option" onclick="selectManual()">
-          <div class="icon manual" aria-hidden="true"><i data-lucide="pencil"></i></div>
-          <div class="info">
-            <div class="name" style="color:var(--color-text-secondary)">Enter business details manually</div>
+
+          <!-- no match -->
+          <div class="search-status" data-when="no-match">
+            <p class="no-match-title">No match for &ldquo;<span id="noMatchQuery"></span>&rdquo;</p>
+            <p class="no-match-hint">Try the legal name, or add your city.</p>
+            <p class="no-match-hint" id="noMatchPersistent" hidden>Most new businesses aren't in
+            public records yet. Entering details yourself takes about 4 minutes.</p>
           </div>
-          <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+          <div class="search-result manual-entry" data-when="no-match" role="option" tabindex="-1"
+               aria-selected="false" onclick="selectManual()">
+            <div class="icon manual" aria-hidden="true"><i data-lucide="pencil"></i></div>
+            <div class="info"><div class="name">Enter my details instead</div></div>
+            <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+          </div>
         </div>
       </div>
+      <!-- Persistent, not buried in the dropdown. This is the only route
+           through the funnel that involves no lookup at all. -->
+      <button type="button" class="btn-link" onclick="selectManual()">My business isn't listed</button>
     </div>
 
-    <div class="tip-box">
-      <span class="tip-icon"><i data-lucide="lightbulb"></i></span>
-      <span>We'll use public data from Google, state registries, and industry benchmarks to prefill your form. Review and edit everything before you get your quote.</span>
+    <div class="actions actions--stacked">
+      <button class="btn-primary" id="continueBtn" onclick="continueFromSearch()" disabled>Continue</button>
+      <p class="legal-text">By continuing you agree to the <a href="#">Terms of Use</a> and
+      <a href="#">Privacy Policy</a>.</p>
     </div>
+  </section>
 
-    <div class="actions" style="border-top:none;margin-top:24px;flex-direction:column;align-items:flex-end;gap:8px;">
-      <button class="btn-primary" id="continueBtn" onclick="selectBusiness()" disabled>Continue</button>
-      <p class="legal-text">By continuing, you agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></p>
-    </div>
-  </div>
-
-  <!-- ============ STEP 2: AI Loading ============ -->
-  <div class="step" id="step2">
+  <!-- ============ STEP 2: AI gathering ============
+       The attribution now leads rather than trails, because it frames
+       everything below it. Each row names its actual source, which is the
+       trust payload and did not previously exist in the UI. -->
+  <section class="step" id="step2" aria-labelledby="step2Title">
     <div class="ai-loading">
-      <h1>We're gathering your business information...</h1>
-      <div class="ai-checklist" id="aiChecklist">
-        <div class="ai-check-item" data-delay="400">
-          <div class="check-icon pending"></div>
-          <span>Business profile &amp; address</span>
-        </div>
-        <div class="ai-check-item" data-delay="1000">
-          <div class="check-icon pending"></div>
-          <span>Industry classification</span>
-        </div>
-        <div class="ai-check-item" data-delay="1600">
-          <div class="check-icon pending"></div>
-          <span>Owner &amp; registration records</span>
-        </div>
-        <div class="ai-check-item" data-delay="2200">
-          <div class="check-icon pending"></div>
-          <span>Revenue &amp; size estimates</span>
-        </div>
-        <div class="ai-check-item" data-delay="2800">
-          <div class="check-icon pending"></div>
-          <span>Finding savings for your quote</span>
-        </div>
-      </div>
       <div class="ai-powered-badge">
-        Powered by AI data enrichment
+        <i data-lucide="sparkles" aria-hidden="true"></i> AI is checking public sources
+      </div>
+      <h1 id="step2Title" tabindex="-1">Looking up Fambrini's Cafe</h1>
+      <ul class="ai-checklist" id="aiChecklist">
+        <li class="ai-check-item" data-source="profile" data-state="pending">
+          <div class="check-icon pending" aria-hidden="true"></div>
+          <div class="ai-check-text">
+            Business profile and address
+            <span class="ai-check-source">Google Business, Yelp</span>
+          </div>
+          <span class="sr-only sr-state"></span>
+        </li>
+        <li class="ai-check-item" data-source="industry" data-state="pending">
+          <div class="check-icon pending" aria-hidden="true"></div>
+          <div class="ai-check-text">
+            Industry and business type
+            <span class="ai-check-source">NAICS classification</span>
+          </div>
+          <span class="sr-only sr-state"></span>
+        </li>
+        <li class="ai-check-item" data-source="registration" data-state="pending">
+          <div class="check-icon pending" aria-hidden="true"></div>
+          <div class="ai-check-text">
+            Owner and registration records
+            <span class="ai-check-source">CA Secretary of State</span>
+          </div>
+          <span class="sr-only sr-state"></span>
+        </li>
+        <li class="ai-check-item" data-source="size" data-state="pending">
+          <div class="check-icon pending" aria-hidden="true"></div>
+          <div class="ai-check-text">
+            Revenue and size estimates
+            <span class="ai-check-source">Industry benchmarks</span>
+          </div>
+          <span class="sr-only sr-state"></span>
+        </li>
+        <li class="ai-check-item" data-source="savings" data-state="pending">
+          <div class="check-icon pending" aria-hidden="true"></div>
+          <div class="ai-check-text">
+            Available discounts
+            <span class="ai-check-source">ERGO NEXT rating rules</span>
+          </div>
+          <span class="sr-only sr-state"></span>
+        </li>
+      </ul>
+
+      <p class="gather-outcome" id="gatherOutcome" hidden></p>
+      <p class="gather-duration" id="gatherDuration">This usually takes about 10 seconds.</p>
+
+      <div class="gather-actions">
+        <button class="btn-primary" id="gatherContinue" onclick="goToStep(3)" hidden>Continue</button>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ============ STEP 3: Confirm Pre-filled Data ============ -->
-  <div class="step" id="step3">
-    <h1>We found your business!</h1>
-    <p class="subtitle">Review the information below. Click any field to edit.</p>
+  <!-- ============ STEP 3: Review and validate ============
+       Provenance is split across three channels rather than one repeated chip:
+       origin is a screen-level banner, confidence is a per-row rail + chip on
+       the four estimates only, and the specific source is a quiet line under
+       the value. Nine identical badges carried no information; four differing
+       marks tell the user exactly what to check. -->
+  <section class="step" id="step3" aria-labelledby="step3Title">
+    <h1 id="step3Title" tabindex="-1">Here's what we found</h1>
+    <p class="subtitle" id="step3Subtitle">Check each field and change anything that's wrong.</p>
 
-    <!-- Business Information -->
+    <div class="provenance-banner">
+      <i data-lucide="sparkles" aria-hidden="true"></i>
+      <span>Prefilled from public records. You can change any of it.</span>
+      <span class="count" id="estimateCount">4 estimates</span>
+    </div>
+
     <div class="prefill-section">
-      <div class="prefill-section-title">Business Information</div>
+      <h2 class="prefill-section-title">Business details</h2>
       <div class="prefill-card">
-        <div class="prefill-row">
-          <div class="prefill-label">Business Name</div>
+        <div class="prefill-row" data-confidence="verified">
+          <label class="prefill-label" for="f-name">Business name</label>
           <div class="prefill-value">
-            <input type="text" value="Fambrini's Cafe" aria-label="Business Name">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <input type="text" id="f-name" value="Fambrini's Cafe" autocomplete="organization">
+            <span class="prefill-source">Google Business</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Industry</div>
+        <div class="prefill-row" data-confidence="verified">
+          <label class="prefill-label" for="f-industry">Industry</label>
           <div class="prefill-value">
-            <select class="prefill-select" aria-label="Industry">
-              <option value="food" selected>Food &amp; Beverage</option>
+            <select class="prefill-select" id="f-industry">
+              <option value="food" selected>Food and beverage</option>
               <option value="retail">Retail</option>
-              <option value="services">Professional Services</option>
+              <option value="services">Professional services</option>
               <option value="construction">Construction</option>
               <option value="technology">Technology</option>
-              <option value="health">Health &amp; Wellness</option>
+              <option value="health">Health and wellness</option>
             </select>
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <span class="prefill-source">NAICS 722515</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Business Type</div>
+        <div class="prefill-row" data-confidence="verified">
+          <label class="prefill-label" for="f-type">Business type</label>
           <div class="prefill-value">
-            <select class="prefill-select" aria-label="Business Type">
-              <option value="coffee" selected>Coffee Shop</option>
+            <select class="prefill-select" id="f-type">
+              <option value="coffee" selected>Coffee shop</option>
               <option value="restaurant">Restaurant</option>
               <option value="bakery">Bakery</option>
-              <option value="bar">Bar / Lounge</option>
-              <option value="catering">Catering Service</option>
-              <option value="food-truck">Food Truck</option>
+              <option value="bar">Bar or lounge</option>
+              <option value="catering">Catering service</option>
+              <option value="food-truck">Food truck</option>
             </select>
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <span class="prefill-source">Google Business</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Address</div>
+        <div class="prefill-row" data-confidence="verified">
+          <label class="prefill-label" for="f-address">Address</label>
           <div class="prefill-value">
-            <input type="text" value="2500 El Camino Real Ste 105, Palo Alto, CA 94306" aria-label="Address" title="2500 El Camino Real Ste 105, Palo Alto, CA 94306">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <!-- Multi-line. As a single-line input this showed 24% of its value
+                 at 375px, on the screen whose whole premise is the user
+                 checking what the AI found. -->
+            <textarea id="f-address" rows="2" autocomplete="street-address">2500 El Camino Real Ste 105, Palo Alto, CA 94306</textarea>
+            <span class="prefill-source">Google Business</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Owner & Operations -->
     <div class="prefill-section">
-      <div class="prefill-section-title">Owner &amp; Operations</div>
+      <h2 class="prefill-section-title">Owner and operations</h2>
       <div class="prefill-card">
-        <div class="prefill-row">
-          <div class="prefill-label">Owner Name</div>
+        <div class="prefill-row" data-confidence="verified">
+          <label class="prefill-label" for="f-owner">Owner name</label>
           <div class="prefill-value">
-            <input type="text" value="Jorge Maya" aria-label="Owner Name">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <input type="text" id="f-owner" value="A. Fambrini" autocomplete="name">
+            <span class="prefill-source">CA Secretary of State</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Employees</div>
+        <div class="prefill-row" data-confidence="estimate">
+          <label class="prefill-label" for="f-employees">Employees, including you</label>
           <div class="prefill-value">
-            <input type="text" value="8" aria-label="Number of Employees">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <input type="text" id="f-employees" value="8" inputmode="numeric">
+            <span class="confidence-chip estimate">Estimate</span>
+            <span class="prefill-source">Industry average for coffee shops this size</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Annual Revenue</div>
+        <div class="prefill-row" data-confidence="estimate">
+          <label class="prefill-label" for="f-revenue">Annual revenue</label>
           <div class="prefill-value">
-            <input type="text" value="$500,000" aria-label="Annual Revenue">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <input type="text" id="f-revenue" value="$500,000" inputmode="numeric">
+            <span class="confidence-chip estimate">Estimate</span>
+            <span class="prefill-source">Industry average for coffee shops this size</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Alcohol Sales</div>
+        <div class="prefill-row" data-confidence="estimate">
+          <label class="prefill-label" for="f-alcohol">Alcohol as a share of sales</label>
           <div class="prefill-value">
-            <input type="text" value="0%" aria-label="Alcohol Sales Percentage">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <input type="text" id="f-alcohol" value="0%" inputmode="numeric">
+            <span class="confidence-chip estimate">Estimate</span>
+            <span class="prefill-source">Menu analysis</span>
           </div>
         </div>
-        <div class="prefill-row">
-          <div class="prefill-label">Square Footage</div>
+        <div class="prefill-row" data-confidence="estimate">
+          <label class="prefill-label" for="f-sqft">Square footage</label>
           <div class="prefill-value">
-            <input type="text" value="1,500 sq ft" aria-label="Square Footage">
-            <span class="source-badge prefilled">Prefilled with AI</span>
+            <input type="text" id="f-sqft" value="1,500 sq ft" inputmode="numeric">
+            <span class="confidence-chip estimate">Estimate</span>
+            <span class="prefill-source">County records</span>
           </div>
         </div>
       </div>
       <div class="tip-box">
-        <span class="tip-icon"><i data-lucide="lightbulb"></i></span>
-        <span>We've estimated some fields based on public records. Update them for a more accurate quote.</span>
+        <span class="tip-icon" aria-hidden="true"><i data-lucide="lightbulb"></i></span>
+        <span>Fields marked Estimate are our best guess. Correcting them changes your price.</span>
       </div>
     </div>
 
     <div class="actions">
-      <button class="btn-secondary" onclick="goToStep(1)">Edit information</button>
-      <button class="btn-primary" onclick="goToStep(4)">Review coverage</button>
+      <button class="btn-secondary" onclick="goToStep(1)">Search again</button>
+      <button class="btn-primary" onclick="goToStep(4)">Confirm and continue</button>
     </div>
-  </div>
+  </section>
 
-  <!-- ============ STEP 4: Coverage Preferences ============ -->
-  <div class="step" id="step4">
-    <h1>Almost there!</h1>
-    <p class="subtitle">Just a couple of things we need from you directly.</p>
+  <!-- ============ STEP 4: What the AI can't find ============ -->
+  <section class="step" id="step4" aria-labelledby="step4Title">
+    <h1 id="step4Title" tabindex="-1">Three things we couldn't look up</h1>
+    <p class="subtitle">None of these are in public records.</p>
 
     <div class="form-group">
-      <label class="form-label">When would you like your coverage to start?</label>
+      <label class="form-label" for="dateInput">When should coverage start?</label>
       <div class="date-input-wrapper">
-        <input type="text" class="form-input" value="Today" id="dateInput" readonly onclick="toggleCalendar()">
-        <span class="calendar-icon"><i data-lucide="calendar"></i></span>
-        <div class="calendar-dropdown" id="calendarDropdown">
+        <input type="text" class="form-input" value="Today" id="dateInput" readonly
+               aria-haspopup="dialog" aria-expanded="false" onclick="toggleCalendar(this)"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCalendar(this)}">
+        <span class="calendar-icon" aria-hidden="true"><i data-lucide="calendar"></i></span>
+        <div class="calendar-dropdown" id="calendarDropdown" role="dialog" aria-label="Choose a start date">
           <div class="calendar-header">
-            <button class="cal-nav" onclick="changeMonth(-1)">&lt;</button>
+            <button type="button" class="cal-nav" id="calPrev" onclick="changeMonth(-1)" aria-label="Previous month">&lt;</button>
             <span class="cal-title" id="calMonthYear"></span>
-            <button class="cal-nav" onclick="changeMonth(1)">&gt;</button>
+            <button type="button" class="cal-nav" id="calNext" onclick="changeMonth(1)" aria-label="Next month">&gt;</button>
           </div>
-          <div class="calendar-weekdays">
+          <div class="calendar-weekdays" aria-hidden="true">
             <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
           </div>
           <div class="calendar-days" id="calendarDays"></div>
@@ -1660,284 +3015,403 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Any insurance claims in the past 3 years?</label>
+    <!-- Native radios: one tab stop, arrow keys, real group name. -->
+    <fieldset class="form-group">
+      <legend class="form-label">Any insurance claims in the past 3 years?</legend>
       <span class="form-sublabel">Claims filed by or against your business</span>
-      <div class="radio-group" role="radiogroup" aria-label="Insurance claims in past 3 years" data-claims="true">
-        <div class="radio-option" role="radio" aria-checked="false" tabindex="0" onclick="selectClaimsRadio(this, 'yes')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectClaimsRadio(this,'yes')}">
-          <span class="radio-dot"></span> Yes
-        </div>
-        <div class="radio-option selected" role="radio" aria-checked="true" tabindex="0" onclick="selectClaimsRadio(this, 'no')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectClaimsRadio(this,'no')}">
-          <span class="radio-dot"></span> No
-        </div>
+      <div class="radio-group">
+        <input type="radio" name="claims" id="claims-yes" value="yes" onchange="onClaimsChange('yes')">
+        <label class="radio-option" for="claims-yes"><span class="radio-dot" aria-hidden="true"></span> Yes</label>
+        <input type="radio" name="claims" id="claims-no" value="no" checked onchange="onClaimsChange('no')">
+        <label class="radio-option" for="claims-no"><span class="radio-dot" aria-hidden="true"></span> No</label>
       </div>
-    </div>
+      <p class="claims-summary" id="claimsSummary" hidden>
+        <span></span> &middot; <button type="button" class="btn-link" onclick="openClaimsModal()">Edit</button>
+      </p>
+    </fieldset>
 
     <div class="form-group">
-      <label class="form-label">Email for your quote</label>
-      <span class="form-sublabel">We'll save your quote so you can come back anytime</span>
-      <input type="email" class="form-input" id="emailInput" placeholder="you@business.com" value="kindxdesign@gmail.com" aria-label="Email address">
-      <div class="error-message" id="emailError">Please enter a valid email address</div>
+      <label class="form-label" for="emailInput">Email address</label>
+      <span class="form-sublabel">We'll save your quote here so you can come back to it.</span>
+      <input type="email" class="form-input" id="emailInput" placeholder="you@business.com"
+             value="owner@fambrinis.example" autocomplete="email"
+             aria-describedby="emailError">
+      <div class="error-message" id="emailError" role="alert"></div>
       <p class="form-login-link">Already have an account? <a href="#">Log in</a></p>
     </div>
 
     <div class="actions">
       <button class="btn-secondary" onclick="goToStep(3)">Back</button>
-      <button class="btn-primary" onclick="validateAndContinue()">Get my quote</button>
+      <button class="btn-primary" onclick="validateAndContinue()">Review assumptions</button>
     </div>
-  </div>
+  </section>
 
-  <!-- ============ STEP 5: Policy Assumptions ============ -->
-  <div class="step" id="step5">
-    <h1>Review policy assumptions</h1>
-    <p class="subtitle">Toggle any that don't apply to your business.</p>
+  <!-- ============ STEP 5: Policy assumptions ============
+       Every negation moved to the first word so polarity is scannable down the
+       column, and the one statement that flips cleanly to positive does flip.
+       "Agree" became "True": the user is confirming a fact about their own
+       business, not consenting to a term. -->
+  <section class="step" id="step5" aria-labelledby="step5Title">
+    <h1 id="step5Title" tabindex="-1">What we assumed about your business</h1>
+    <p class="subtitle">Mark anything that isn't true.</p>
 
+    <h2 class="prefill-section-title">About the business</h2>
     <div class="assumption-card">
-      <div class="assumption-row">
-        <div class="assumption-text">Business has <strong>no felony</strong> convictions in the past 5 years</div>
-        <div class="toggle" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch(this)}"></div>
-        <span class="toggle-label yes">Agree</span>
+      <div class="assumption-row" data-state="true">
+        <input type="checkbox" role="switch" class="assumption-toggle" id="asm-felony"
+               checked onchange="toggleSwitch(this)">
+        <label class="assumption-text" for="asm-felony"><strong>No felony convictions</strong>
+          by the business or its owners in the past 5 years</label>
+        <span class="toggle-label yes">True</span>
       </div>
-      <div class="assumption-row">
-        <div class="assumption-text">Business has <strong>no bankruptcy</strong> filings in the past 3 years</div>
-        <div class="toggle" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch(this)}"></div>
-        <span class="toggle-label yes">Agree</span>
+      <div class="assumption-row" data-state="true">
+        <input type="checkbox" role="switch" class="assumption-toggle" id="asm-bankruptcy"
+               checked onchange="toggleSwitch(this)">
+        <label class="assumption-text" for="asm-bankruptcy"><strong>No bankruptcy filings</strong>
+          in the past 3 years</label>
+        <span class="toggle-label yes">True</span>
       </div>
-      <div class="assumption-row">
-        <div class="assumption-text"><strong>No pending lawsuits</strong>, mediations, or arbitrations</div>
-        <div class="toggle" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch(this)}"></div>
-        <span class="toggle-label yes">Agree</span>
+      <div class="assumption-row" data-state="true">
+        <input type="checkbox" role="switch" class="assumption-toggle" id="asm-lawsuits"
+               checked onchange="toggleSwitch(this)">
+        <label class="assumption-text" for="asm-lawsuits"><strong>No pending lawsuits</strong>,
+          mediations, or arbitrations</label>
+        <span class="toggle-label yes">True</span>
       </div>
-      <div class="assumption-row">
-        <div class="assumption-text">Business is <strong>not in a rented</strong> commercial space</div>
-        <div class="toggle" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch(this)}"></div>
-        <span class="toggle-label yes">Agree</span>
+    </div>
+
+    <h2 class="prefill-section-title">About the premises</h2>
+    <div class="assumption-card">
+      <div class="assumption-row is-eligibility" data-state="true">
+        <input type="checkbox" role="switch" class="assumption-toggle" id="asm-owned"
+               checked onchange="toggleSwitch(this)">
+        <label class="assumption-text" for="asm-owned"><strong>You own your space</strong>
+          rather than rent it</label>
+        <span class="toggle-label yes">True</span>
+        <p class="consequence" hidden>Renting means we can't quote this online. We'll pass you to a
+        partner who can.</p>
       </div>
-      <div class="assumption-row">
-        <div class="assumption-text">Plumbing, electrical, heating <strong>updated in past 15 years</strong></div>
-        <div class="toggle" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch(this)}"></div>
-        <span class="toggle-label yes">Agree</span>
+      <div class="assumption-row" data-state="true">
+        <input type="checkbox" role="switch" class="assumption-toggle" id="asm-systems"
+               checked onchange="toggleSwitch(this)">
+        <label class="assumption-text" for="asm-systems"><strong>Plumbing, electrical, and
+          heating</strong> updated within the past 15 years</label>
+        <span class="toggle-label yes">True</span>
       </div>
-      <div class="assumption-row">
-        <div class="assumption-text">Your building <strong>isn't undergoing major renovations</strong></div>
-        <div class="toggle" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch(this)}"></div>
-        <span class="toggle-label yes">Agree</span>
+      <div class="assumption-row" data-state="true">
+        <input type="checkbox" role="switch" class="assumption-toggle" id="asm-renovations"
+               checked onchange="toggleSwitch(this)">
+        <label class="assumption-text" for="asm-renovations"><strong>No major renovations</strong>
+          underway</label>
+        <span class="toggle-label yes">True</span>
       </div>
     </div>
 
     <div class="actions">
       <button class="btn-secondary" onclick="goToStep(4)">Back</button>
-      <button class="btn-primary" id="step5Cta" onclick="goToStep(6)">Get my quote</button>
+      <button class="btn-primary" id="step5Cta">See my quote</button>
     </div>
-  </div>
+  </section>
 
-  <!-- ============ STEP 6: Quote ============ -->
-  <div class="step" id="step6">
+  <!-- ============ STEP 6: Quote ============
+       Rebuilt as real tables. As CSS-grid divs a screen reader heard
+       "$500K $1M $500K" with no idea which plan owned which figure, and that
+       is the comparison the purchase rests on.
+       Pricing is illustrative. The previous ladder was not internally
+       consistent: Deluxe cost more than Premier while covering less, Basic and
+       Deluxe were identical, and the subtotal showed one section's price as
+       the total of two. -->
+  <section class="step" id="step6" aria-labelledby="step6Title">
 
     <div class="quote-header">
-      <h1>Here's your quote for coffee shop insurance</h1>
-      <p class="subtitle">Customize your coverage to fit your needs</p>
+      <h1 id="step6Title" tabindex="-1">Here's your quote for coffee shop insurance</h1>
+      <p class="subtitle">Change any plan and the total updates.</p>
     </div>
 
     <div class="quote-layout">
-      <div>
-        <!-- General Liability -->
+      <div class="quote-main">
+
+        <!-- General liability -->
         <div class="coverage-section">
-          <div class="coverage-title">General Liability</div>
-          <div class="coverage-table" data-section="gl">
-            <div class="ct-row ct-header-row">
-              <div class="ct-label"></div>
-              <div class="ct-plan" role="radio" aria-checked="false" tabindex="0" onclick="selectCoveragePlan(this)">
-                <div class="plan-badge placeholder" aria-hidden="true">.</div>
-                <div class="plan-name">Basic</div>
-                <div class="plan-price">$26.25<span> / mo</span></div>
-                <div class="plan-radio" aria-hidden="true"></div>
-              </div>
-              <div class="ct-plan selected" role="radio" aria-checked="true" tabindex="0" onclick="selectCoveragePlan(this)">
-                <div class="plan-badge recommended-badge">Industry standard</div>
-                <div class="plan-name">Premier</div>
-                <div class="plan-price">$29.88<span> / mo</span></div>
-                <div class="plan-radio" aria-hidden="true"></div>
-              </div>
-              <div class="ct-plan" role="radio" aria-checked="false" tabindex="0" onclick="selectCoveragePlan(this)">
-                <div class="plan-badge placeholder" aria-hidden="true">.</div>
-                <div class="plan-name">Deluxe</div>
-                <div class="plan-price">$30.21<span> / mo</span></div>
-                <div class="plan-radio" aria-hidden="true"></div>
-              </div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Limit Per Year <i data-lucide="info"></i></div>
-              <div class="ct-val">$500K</div>
-              <div class="ct-val ct-val-selected"><strong>$1M</strong></div>
-              <div class="ct-val">$500K</div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Customer Injuries On-Site <i data-lucide="info"></i></div>
-              <div class="ct-val">$500K</div>
-              <div class="ct-val ct-val-selected"><strong>$1M</strong></div>
-              <div class="ct-val">$500K</div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Fire Damage Liability <i data-lucide="info"></i></div>
-              <div class="ct-val">$100K</div>
-              <div class="ct-val ct-val-selected"><strong>$100K</strong></div>
-              <div class="ct-val">$100K</div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Expanded Damage Liability <i data-lucide="info"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-              <div class="ct-val ct-val-selected"><i data-lucide="check"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Foodborne Illness <i data-lucide="info"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-              <div class="ct-val ct-val-selected"><i data-lucide="check"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-            </div>
+          <h2 class="coverage-title" id="glTitle">General liability</h2>
+          <div class="coverage-scroll">
+            <table class="coverage-table" data-section="gl" aria-labelledby="glTitle">
+              <thead>
+                <tr class="ct-row ct-header-row">
+                  <td class="ct-label"></td>
+                  <th scope="col" class="ct-plan ct-col" data-plan="basic">
+                    <label class="ct-plan-label">
+                      <input type="radio" name="gl-plan" value="basic" data-section="gl"
+                             class="sr-only ct-radio" onchange="selectCoveragePlan(this)">
+                      <span class="plan-badge muted">Lower limits</span>
+                      <span class="plan-name">Basic</span>
+                      <span class="plan-price"><span class="figure">$18.40</span><span class="per">/ mo</span></span>
+                      <span class="plan-delta">&minus;$11.48 / mo</span>
+                      <span class="plan-radio" aria-hidden="true"></span>
+                    </label>
+                  </th>
+                  <th scope="col" class="ct-plan ct-col is-recommended" data-plan="premier">
+                    <label class="ct-plan-label">
+                      <input type="radio" name="gl-plan" value="premier" data-section="gl" checked
+                             class="sr-only ct-radio" onchange="selectCoveragePlan(this)">
+                      <span class="plan-badge recommended-badge">Industry standard</span>
+                      <span class="plan-name">Premier</span>
+                      <span class="plan-price"><span class="figure">$29.88</span><span class="per">/ mo</span></span>
+                      <span class="plan-delta">&nbsp;</span>
+                      <span class="plan-radio" aria-hidden="true"></span>
+                    </label>
+                  </th>
+                  <th scope="col" class="ct-plan ct-col" data-plan="deluxe">
+                    <label class="ct-plan-label">
+                      <input type="radio" name="gl-plan" value="deluxe" data-section="gl"
+                             class="sr-only ct-radio" onchange="selectCoveragePlan(this)">
+                      <span class="plan-badge muted">Higher limits</span>
+                      <span class="plan-name">Deluxe</span>
+                      <span class="plan-price"><span class="figure">$41.15</span><span class="per">/ mo</span></span>
+                      <span class="plan-delta">+$11.27 / mo</span>
+                      <span class="plan-radio" aria-hidden="true"></span>
+                    </label>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="ct-row">
+                  <th scope="row" class="ct-label">Limit per year
+                    <button type="button" class="ct-info" aria-expanded="false"
+                            aria-label="What is limit per year?" onclick="toggleDefinition(this)">
+                      <i data-lucide="info" aria-hidden="true"></i></button>
+                    <span class="ct-definition" hidden>The most we pay out across all claims in a policy year.</span>
+                  </th>
+                  <td class="ct-val ct-col" data-plan="basic"><span class="figure">$500K</span></td>
+                  <td class="ct-val ct-col" data-plan="premier"><span class="figure">$1M</span></td>
+                  <td class="ct-val ct-col" data-plan="deluxe"><span class="figure">$2M</span></td>
+                </tr>
+                <tr class="ct-row">
+                  <th scope="row" class="ct-label">Customer injuries on site
+                    <button type="button" class="ct-info" aria-expanded="false"
+                            aria-label="What is customer injuries on site?" onclick="toggleDefinition(this)">
+                      <i data-lucide="info" aria-hidden="true"></i></button>
+                    <span class="ct-definition" hidden>Medical costs and legal fees if a customer is hurt at your premises.</span>
+                  </th>
+                  <td class="ct-val ct-col" data-plan="basic"><span class="figure">$500K</span></td>
+                  <td class="ct-val ct-col" data-plan="premier"><span class="figure">$1M</span></td>
+                  <td class="ct-val ct-col" data-plan="deluxe"><span class="figure">$2M</span></td>
+                </tr>
+                <tr class="ct-row">
+                  <th scope="row" class="ct-label">Fire damage liability
+                    <button type="button" class="ct-info" aria-expanded="false"
+                            aria-label="What is fire damage liability?" onclick="toggleDefinition(this)">
+                      <i data-lucide="info" aria-hidden="true"></i></button>
+                    <span class="ct-definition" hidden>Damage to a building you rent if a fire starts through your business.</span>
+                  </th>
+                  <td class="ct-val ct-col" data-plan="basic"><span class="figure">$50K</span></td>
+                  <td class="ct-val ct-col" data-plan="premier"><span class="figure">$100K</span></td>
+                  <td class="ct-val ct-col" data-plan="deluxe"><span class="figure">$250K</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <!-- Two rows were identical across all three plans, so they took 40%
+               of the grid's height to say nothing. -->
+          <p class="included-strip">
+            <i data-lucide="check" aria-hidden="true"></i>
+            <span><strong>In every plan:</strong> expanded damage liability, foodborne illness</span>
+          </p>
           <div class="coverage-actions">
-            <a href="#" onclick="goToStep(3); return false;">Customize</a>
+            <button type="button" class="btn-link" onclick="goToStep(3)">Change my details</button>
           </div>
         </div>
 
-        <!-- Commercial Property -->
+        <!-- Commercial property -->
         <div class="coverage-section">
-          <div class="coverage-title">Commercial Property</div>
-          <div class="coverage-table" data-section="prop">
-            <div class="ct-row ct-header-row">
-              <div class="ct-label"></div>
-              <div class="ct-plan" role="radio" aria-checked="false" tabindex="0" onclick="selectCoveragePlan(this)">
-                <div class="plan-badge placeholder" aria-hidden="true">.</div>
-                <div class="plan-name">Basic</div>
-                <div class="plan-price">$26.25<span> / mo</span></div>
-                <div class="plan-radio" aria-hidden="true"></div>
-              </div>
-              <div class="ct-plan selected" role="radio" aria-checked="true" tabindex="0" onclick="selectCoveragePlan(this)">
-                <div class="plan-badge recommended-badge">Industry standard</div>
-                <div class="plan-name">Premier</div>
-                <div class="plan-price">$29.88<span> / mo</span></div>
-                <div class="plan-radio" aria-hidden="true"></div>
-              </div>
-              <div class="ct-plan" role="radio" aria-checked="false" tabindex="0" onclick="selectCoveragePlan(this)">
-                <div class="plan-badge placeholder" aria-hidden="true">.</div>
-                <div class="plan-name">Deluxe</div>
-                <div class="plan-price">$30.21<span> / mo</span></div>
-                <div class="plan-radio" aria-hidden="true"></div>
-              </div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Property loss <i data-lucide="info"></i></div>
-              <div class="ct-val">$500K</div>
-              <div class="ct-val ct-val-selected"><strong>$1M</strong></div>
-              <div class="ct-val">$500K</div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Income protection <i data-lucide="info"></i></div>
-              <div class="ct-val">$500K</div>
-              <div class="ct-val ct-val-selected"><strong>$1M</strong></div>
-              <div class="ct-val">$500K</div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Employee theft <i data-lucide="info"></i></div>
-              <div class="ct-val">$100K</div>
-              <div class="ct-val ct-val-selected"><strong>$100K</strong></div>
-              <div class="ct-val">$100K</div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Food spoilage <i data-lucide="info"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-              <div class="ct-val ct-val-selected"><i data-lucide="check"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-            </div>
-            <div class="ct-row">
-              <div class="ct-label">Foodborne Illness <i data-lucide="info"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-              <div class="ct-val ct-val-selected"><i data-lucide="check"></i></div>
-              <div class="ct-val"><i data-lucide="check"></i></div>
-            </div>
+          <h2 class="coverage-title" id="propTitle">Commercial property</h2>
+          <div class="coverage-scroll">
+            <table class="coverage-table" data-section="prop" aria-labelledby="propTitle">
+              <thead>
+                <tr class="ct-row ct-header-row">
+                  <td class="ct-label"></td>
+                  <th scope="col" class="ct-plan ct-col" data-plan="basic">
+                    <label class="ct-plan-label">
+                      <input type="radio" name="prop-plan" value="basic" data-section="prop"
+                             class="sr-only ct-radio" onchange="selectCoveragePlan(this)">
+                      <span class="plan-badge muted">Lower limits</span>
+                      <span class="plan-name">Basic</span>
+                      <span class="plan-price"><span class="figure">$12.60</span><span class="per">/ mo</span></span>
+                      <span class="plan-delta">&minus;$8.70 / mo</span>
+                      <span class="plan-radio" aria-hidden="true"></span>
+                    </label>
+                  </th>
+                  <th scope="col" class="ct-plan ct-col is-recommended" data-plan="premier">
+                    <label class="ct-plan-label">
+                      <input type="radio" name="prop-plan" value="premier" data-section="prop" checked
+                             class="sr-only ct-radio" onchange="selectCoveragePlan(this)">
+                      <span class="plan-badge recommended-badge">Industry standard</span>
+                      <span class="plan-name">Premier</span>
+                      <span class="plan-price"><span class="figure">$21.30</span><span class="per">/ mo</span></span>
+                      <span class="plan-delta">&nbsp;</span>
+                      <span class="plan-radio" aria-hidden="true"></span>
+                    </label>
+                  </th>
+                  <th scope="col" class="ct-plan ct-col" data-plan="deluxe">
+                    <label class="ct-plan-label">
+                      <input type="radio" name="prop-plan" value="deluxe" data-section="prop"
+                             class="sr-only ct-radio" onchange="selectCoveragePlan(this)">
+                      <span class="plan-badge muted">Higher limits</span>
+                      <span class="plan-name">Deluxe</span>
+                      <span class="plan-price"><span class="figure">$33.75</span><span class="per">/ mo</span></span>
+                      <span class="plan-delta">+$12.45 / mo</span>
+                      <span class="plan-radio" aria-hidden="true"></span>
+                    </label>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="ct-row">
+                  <th scope="row" class="ct-label">Property loss
+                    <button type="button" class="ct-info" aria-expanded="false"
+                            aria-label="What is property loss?" onclick="toggleDefinition(this)">
+                      <i data-lucide="info" aria-hidden="true"></i></button>
+                    <span class="ct-definition" hidden>Repair or replacement of your equipment, fittings and stock.</span>
+                  </th>
+                  <td class="ct-val ct-col" data-plan="basic"><span class="figure">$250K</span></td>
+                  <td class="ct-val ct-col" data-plan="premier"><span class="figure">$1M</span></td>
+                  <td class="ct-val ct-col" data-plan="deluxe"><span class="figure">$2M</span></td>
+                </tr>
+                <tr class="ct-row">
+                  <th scope="row" class="ct-label">Income protection
+                    <button type="button" class="ct-info" aria-expanded="false"
+                            aria-label="What is income protection?" onclick="toggleDefinition(this)">
+                      <i data-lucide="info" aria-hidden="true"></i></button>
+                    <span class="ct-definition" hidden>Lost earnings while you cannot trade after a covered loss.</span>
+                  </th>
+                  <td class="ct-val ct-col" data-plan="basic"><span class="figure">$100K</span></td>
+                  <td class="ct-val ct-col" data-plan="premier"><span class="figure">$1M</span></td>
+                  <td class="ct-val ct-col" data-plan="deluxe"><span class="figure">$2M</span></td>
+                </tr>
+                <tr class="ct-row">
+                  <th scope="row" class="ct-label">Employee theft
+                    <button type="button" class="ct-info" aria-expanded="false"
+                            aria-label="What is employee theft?" onclick="toggleDefinition(this)">
+                      <i data-lucide="info" aria-hidden="true"></i></button>
+                    <span class="ct-definition" hidden>Money or stock taken by someone who works for you.</span>
+                  </th>
+                  <td class="ct-val ct-col" data-plan="basic"><span class="figure">$25K</span></td>
+                  <td class="ct-val ct-col" data-plan="premier"><span class="figure">$100K</span></td>
+                  <td class="ct-val ct-col" data-plan="deluxe"><span class="figure">$250K</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <p class="included-strip">
+            <i data-lucide="check" aria-hidden="true"></i>
+            <span><strong>In every plan:</strong> food spoilage</span>
+          </p>
           <div class="coverage-actions">
-            <a href="#" onclick="goToStep(3); return false;">Customize</a>
+            <button type="button" class="btn-link" onclick="goToStep(3)">Change my details</button>
           </div>
         </div>
       </div>
 
       <!-- Sidebar -->
-      <div class="quote-sidebar">
+      <aside class="quote-sidebar" aria-label="Quote summary">
         <div class="sidebar-card">
-          <img src="insurance-card.png" alt="Fambrini's Cafe - Coffee Shop Insurance Certificate">
+          <img src="insurance-card.png" width="716" height="460" loading="lazy" decoding="async"
+               alt="Preview of your certificate of insurance">
         </div>
         <div class="sidebar-total">
-          <div class="total-label">Subtotal</div>
-          <div class="total-price">$29.88 <span>/ mo</span></div>
+          <div class="total-label">Your monthly total</div>
+          <div class="total-price"><span class="figure" id="totalPrice">$51.18</span> <span class="per">/ mo</span></div>
+          <div class="total-annual" id="annualPrice">$614.16 billed annually</div>
         </div>
-        <button class="btn-checkout">Checkout</button>
-        <div class="sidebar-details">
-          <div class="detail-section">General Liability</div>
-          <div class="detail-row"><span>Limit Per Year</span><span>$1M</span></div>
-          <div class="detail-row"><span>Customer Injury On-Site</span><span>$1M</span></div>
-          <div class="detail-row"><span>Fire Damage Liability</span><span>$100K</span></div>
-          <div class="detail-row"><span>Foodborne Illness</span><span>Included</span></div>
-          <div class="detail-row"><span>On-site Customer Injuries</span><span>Included</span></div>
-        </div>
-      </div>
+        <button class="btn-checkout">Continue to checkout</button>
+        <p class="sidebar-terms">Starts today. You can cancel any time before your start date.</p>
+        <!-- Rebuilt from the selected column of both tables. It previously
+             listed one section only, and listed the same coverage twice under
+             two different names. -->
+        <div class="sidebar-details" id="sidebarDetails"></div>
+      </aside>
     </div>
 
     <!-- Footer -->
     <div class="quote-footer">
       <div class="quote-footer-content">
         <div>
-          <div class="quote-footer-title">Speak with an insurance expert</div>
-          <div class="quote-footer-text">Our insurance experts are here to answer your questions.</div>
+          <div class="quote-footer-title">Questions about your quote?</div>
+          <div class="quote-footer-text">Talk to someone before you buy.</div>
         </div>
-        <div style="text-align:right;">
-          <div class="quote-footer-hours">Monday - Friday: 8am to 5pm ET</div>
+        <div class="quote-footer-col">
+          <div class="quote-footer-hours">Monday to Friday, 8am to 5pm ET</div>
           <div class="quote-footer-contact">
-            <a href="tel:6179289239"><i data-lucide="phone"></i> (617) 928-9239</a>
-            <a href="#"><i data-lucide="calendar"></i> Schedule a call</a>
+            <a href="tel:6179289239"><i data-lucide="phone" aria-hidden="true"></i> (617) 928-9239</a>
+            <a href="#"><i data-lucide="calendar" aria-hidden="true"></i> Schedule a call</a>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ============ STEP 7: Partner Referral ============ -->
-  <div class="step" id="step7">
+  <!-- ============ STEP 7: Partner referral ============
+       The user needs to know what happened before they hear the alternative.
+       The old headline led with the partnership and never said they had been
+       turned down. -->
+  <section class="step" id="step7" aria-labelledby="step7Title">
     <div class="partner-page">
-      <h1>We're partnering with Tivly to get you covered in minutes.</h1>
-      <p class="partner-subtitle">Call <a href="tel:8779081260"><strong>877-908-1260</strong></a> or visit their website to get started.</p>
+      <h1 id="step7Title" tabindex="-1">We can't cover this online</h1>
+      <p class="partner-subtitle">Based on your answers, this needs a person to review. Our partner
+      Tivly handles cases like yours.</p>
       <div class="partner-info-card">
-        <p>Tivly works with hundreds of carriers and brokers. Their representative will help you get coverage.</p>
-        <p class="partner-hours">They're available Monday &ndash; Saturday, 9 a.m. to 9 p.m. ET.</p>
+        <p>Tivly works with hundreds of carriers and brokers. Call
+        <a href="tel:8779081260"><strong>877-908-1260</strong></a> and they'll find you a policy.</p>
+        <p class="partner-hours">Open Monday to Saturday, 9am to 9pm ET.</p>
       </div>
       <div class="actions">
-        <button class="btn-secondary" onclick="goToStep(5)">Back to review</button>
-        <a href="https://www.tivly.com" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Visit Tivly Website</a>
+        <button class="btn-secondary" onclick="goToStep(5)">Back to my answers</button>
+        <a href="https://www.tivly.com" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          Go to tivly.com<span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+      <p class="partner-saved">Your quote is saved. You can come back and change your answers.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- Sticky summary bar. Below 1200px the total and Checkout leave the column,
+     so the price stays visible while plans are being tapped. That visibility is
+     what replaces side-by-side comparison once the table starts scrolling. -->
+<div class="quote-sticky-bar" role="region" aria-label="Order summary">
+  <div class="quote-sticky-inner">
+    <div class="sidebar-total">
+      <div class="total-label">Total</div>
+      <div class="total-price">
+        <span class="figure" id="totalPriceSticky" aria-live="polite">$51.18</span>
+        <span class="per">/ mo</span>
       </div>
     </div>
+    <button class="btn-checkout">Checkout</button>
   </div>
-
 </div>
 
-<!-- Claims Modal -->
-<div class="modal-overlay" id="claimsModal" style="display:none;" onclick="if(event.target===this)closeClaimsModal()">
+<!-- Claims modal. The duplicated question that used to open this dialog is
+     gone: it was asked on step 4, then asked again verbatim here with Yes
+     pre-selected, which read as a bug. -->
+<div class="modal-overlay" id="claimsModal" hidden role="dialog" aria-modal="true"
+     aria-labelledby="claimsModalTitle">
   <div class="modal-content">
-    <h2>About your insurance claims</h2>
+    <button type="button" class="modal-close" aria-label="Close" onclick="closeClaimsModal(false)">
+      <i data-lucide="x" aria-hidden="true"></i>
+    </button>
+    <h2 id="claimsModalTitle" tabindex="-1">Tell us about your claims</h2>
     <div class="form-group">
-      <label class="form-label">Has your business filed or received any insurance claims in the past 3 years?</label>
-      <div class="radio-group" role="radiogroup" aria-label="Claims filed in past three years">
-        <div class="radio-option selected" role="radio" aria-checked="true" tabindex="0" onclick="selectRadio(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectRadio(this)}"><span class="radio-dot"></span> Yes</div>
-        <div class="radio-option" role="radio" aria-checked="false" tabindex="0" onclick="selectRadio(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();selectRadio(this)}"><span class="radio-dot"></span> No</div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">How many claims?</label>
-      <input type="number" class="form-input" id="claimCount" placeholder="Enter number" min="1" max="10" style="width:100%;" oninput="renderClaimFields()">
+      <label class="form-label" for="claimCount">How many claims?</label>
+      <input type="number" class="form-input" id="claimCount" placeholder="2" min="1" max="5"
+             inputmode="numeric" oninput="renderClaimFields()">
+      <p class="form-sublabel" id="claimCapNote" hidden>Up to 5 claims here. Contact us if you have more.</p>
     </div>
     <div id="claimFields"></div>
-    <button class="btn-primary" onclick="closeClaimsModal()" style="width:100%;">Save</button>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" onclick="closeClaimsModal(false)">Cancel</button>
+      <button type="button" class="btn-primary" onclick="closeClaimsModal(true)">Save claims</button>
+    </div>
   </div>
 </div>
 
@@ -1946,15 +3420,21 @@
      ============================================ -->
 <script>
   const totalSteps = 6;
-  // Segmented stepper configuration: [segment1Fill%, segment2Fill%, segment3Fill%]
+  const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Segmented stepper: [segment1Fill%, segment2Fill%, segment3Fill%]
+  // Step 2 was previously identical to step 1, so the bar did not move during
+  // the one screen that is pure waiting.
   const stepperConfig = {
-    1: { fills: [33, 0, 0],      activeSegment: 1 },
-    2: { fills: [33, 0, 0],      activeSegment: 1 },
-    3: { fills: [66, 0, 0],      activeSegment: 1 },
-    4: { fills: [100, 0, 0],     activeSegment: 1 },
-    5: { fills: [100, 100, 0],   activeSegment: 2 },
-    6: { fills: [100, 100, 100], activeSegment: 3 },
-    7: { fills: [100, 100, 0],   activeSegment: 2 },
+    1: { fills: [25, 0, 0],      activeSegment: 1, label: 'Step 1 of 6. Find your business.' },
+    2: { fills: [50, 0, 0],      activeSegment: 1, label: 'Step 2 of 6. Gathering your business information.' },
+    3: { fills: [75, 0, 0],      activeSegment: 1, label: 'Step 3 of 6. Check what we found.' },
+    4: { fills: [100, 0, 0],     activeSegment: 1, label: 'Step 4 of 6. Three things we could not look up.' },
+    5: { fills: [100, 100, 0],   activeSegment: 2, label: 'Step 5 of 6. What we assumed about your business.' },
+    6: { fills: [100, 100, 100], activeSegment: 3, label: 'Step 6 of 6. Your quote.' },
+    // Step 7 is a terminal off-ramp, not a step. It reported [100,100,0] with
+    // activeSegment 2, i.e. indistinguishable from step 5.
+    7: { fills: [100, 100, 0],   activeSegment: 0, label: 'We cannot cover this online. Partner referral.' },
   };
 
   // Search functionality
@@ -1962,111 +3442,282 @@
   const dropdown = document.getElementById('searchDropdown');
 
   let businessSelected = false;
+  let manualEntry = false;
+  let searchTimer = null;
+  let searchAttempts = 0;
+
+  // The one business the mock lookup knows. Anything else genuinely returns no
+  // match, which is what gives the no-match state a real cause instead of
+  // showing the same static row for any input.
+  const KNOWN_BUSINESS = {
+    name: "Fambrini's Cafe",
+    address: '2500 El Camino Real Ste 105, Palo Alto, CA 94306'
+  };
+
+  function announce(msg) {
+    const region = document.getElementById('liveRegion');
+    if (region) region.textContent = msg;
+  }
+
+  function setSearchState(state) {
+    dropdown.dataset.state = state;
+    const open = state !== 'idle';
+    dropdown.classList.toggle('visible', open);
+    searchInput.setAttribute('aria-expanded', String(open));
+    dropdown.setAttribute('aria-busy', String(state === 'searching'));
+  }
+
+  let searchSeq = 0;
+
+  function runSearch(query) {
+    const seq = ++searchSeq;
+    setSearchState('searching');
+    announce('Searching public records.');
+    setTimeout(() => {                       // mock lookup latency
+      // A slower earlier lookup must not overwrite a newer one. Without this,
+      // typing quickly lands the user on the result of a query they have
+      // already replaced.
+      if (seq !== searchSeq) return;
+      // Demo behaviour: any query returns the sample business, so the flow can
+      // be walked without knowing the magic word. The no-match state is still
+      // reachable through "My business isn't listed".
+      const hit = true;
+      if (hit) {
+        searchAttempts = 0;
+        setSearchState('results');
+        announce('1 business found.');
+      } else {
+        searchAttempts++;
+        document.getElementById('noMatchQuery').textContent = query;
+        document.getElementById('noMatchPersistent').hidden = searchAttempts < 2;
+        setSearchState('no-match');
+        announce('No matches. You can enter your details manually.');
+      }
+    }, 450);
+  }
 
   searchInput.addEventListener('input', function() {
-    const val = this.value.toLowerCase();
+    const val = this.value.trim();
+    // Editing the field after choosing a business invalidates that choice.
+    if (businessSelected) { businessSelected = false; updateContinueButton(); }
+    clearTimeout(searchTimer);
     if (val.length >= 2) {
-      dropdown.classList.add('visible');
-      searchInput.setAttribute('aria-expanded', 'true');
+      searchTimer = setTimeout(() => runSearch(val), 250);
     } else {
-      dropdown.classList.remove('visible');
-      searchInput.setAttribute('aria-expanded', 'false');
+      setSearchState('idle');
     }
-    // Update continue button state
-    updateContinueButton();
   });
 
-  searchInput.addEventListener('focus', function() {
-    if (this.value.length >= 2) {
-      dropdown.classList.add('visible');
-      searchInput.setAttribute('aria-expanded', 'true');
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { setSearchState('idle'); return; }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const first = dropdown.querySelector('[role="option"]:not([hidden])');
+      if (first) first.focus();
     }
+  });
+
+  // Arrow-key navigation into the results. There was previously no keyboard
+  // path into the dropdown at all, which stranded keyboard users on step 1.
+  dropdown.addEventListener('keydown', function(e) {
+    const opts = [...dropdown.querySelectorAll('[role="option"]:not([hidden])')];
+    const i = opts.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); (opts[i + 1] || opts[0]).focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); i <= 0 ? searchInput.focus() : opts[i - 1].focus(); }
+    if (e.key === 'Escape')    { setSearchState('idle'); searchInput.focus(); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.activeElement.click(); }
   });
 
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.search-wrapper')) {
-      dropdown.classList.remove('visible');
-      searchInput.setAttribute('aria-expanded', 'false');
-    }
+    if (!e.target.closest('.search-wrapper')) setSearchState('idle');
   });
 
   function updateContinueButton() {
     const btn = document.getElementById('continueBtn');
-    if (btn) {
-      btn.disabled = !businessSelected;
-    }
+    if (btn) btn.disabled = !businessSelected;
   }
 
+  // Keeps what the user is looking at. This used to overwrite the field with a
+  // hardcoded string, so typing any other business silently swapped it out.
   function selectBusiness() {
-    dropdown.classList.remove('visible');
-    searchInput.setAttribute('aria-expanded', 'false');
-    searchInput.value = "Fambrini's Cafe - Palo Alto, CA";
+    setSearchState('idle');
+    searchInput.value = KNOWN_BUSINESS.name;
     businessSelected = true;
+    manualEntry = false;
     updateContinueButton();
+    startGathering();
+  }
+
+  // Continue is now a real route forward. It previously could never enable,
+  // because the only thing that set businessSelected was the function it called.
+  function continueFromSearch() {
+    if (businessSelected) startGathering();
+  }
+
+  function startGathering() {
     goToStep(2);
     runAIChecklist();
   }
 
+  // The manual route is the only path through the funnel that involves no
+  // lookup, so it has to exist rather than fire an alert().
   function selectManual() {
-    dropdown.classList.remove('visible');
-    // In a real app, this would go to a manual entry form
-    alert('Manual entry flow would open here');
+    setSearchState('idle');
+    manualEntry = true;
+    goToStep(3);
   }
 
-  // AI Loading Animation
+  /* ============ STEP 2: gathering ============
+     The old version could not fail: five hardcoded successes on fixed timers.
+     That mattered, because step 3's "estimate" language had no upstream cause.
+     Here `size` resolves unresolved, which is what makes revenue, employees and
+     square footage estimates downstream. */
+  const GATHER_SOURCES = [
+    { id: 'profile',      ok: true  },
+    { id: 'industry',     ok: true  },
+    { id: 'registration', ok: true  },
+    { id: 'size',         ok: false },   // the realistic partial failure
+    { id: 'savings',      ok: true  }
+  ];
+  const gatherState = {};
+  let gatherTimers = [];
+  let advanceTimer = null;
+
+  function clearGatherTimers() {
+    gatherTimers.forEach(clearTimeout);
+    gatherTimers = [];
+    clearTimeout(advanceTimer);
+    advanceTimer = null;
+  }
+  const later = (fn, ms) => { gatherTimers.push(setTimeout(fn, ms)); };
+
+  function setSourceState(id, state) {
+    gatherState[id] = state;
+    const item = document.querySelector(`.ai-check-item[data-source="${id}"]`);
+    if (!item) return;
+    item.dataset.state = state;
+    const icon = item.querySelector('.check-icon');
+    icon.className = 'check-icon ' + state;
+    icon.innerHTML = '';
+    if (state === 'found') {
+      icon.innerHTML = '<i data-lucide="check" aria-hidden="true"></i>';
+      if (window.lucide) lucide.createIcons({ nodes: [icon] });
+    }
+    // Text alternative, so the trust moment is not silent for screen readers.
+    const sr = item.querySelector('.sr-state');
+    if (sr) sr.textContent = state === 'found' ? ', done'
+                          : state === 'unresolved' ? ', not found, we will estimate this'
+                          : state === 'checking' ? ', checking' : '';
+  }
+
   function runAIChecklist() {
-    const items = document.querySelectorAll('#aiChecklist .ai-check-item');
-    items.forEach((item, i) => {
-      const delay = parseInt(item.dataset.delay);
-      const icon = item.querySelector('.check-icon');
+    clearGatherTimers();
+    const beat = REDUCED_MOTION ? 0 : 620;
+    const started = Date.now();
 
-      // Start loading
-      setTimeout(() => {
-        icon.className = 'check-icon loading';
-        item.classList.add('done');
-      }, delay);
+    document.getElementById('gatherOutcome').hidden = true;
+    document.getElementById('gatherContinue').hidden = true;
+    document.getElementById('gatherDuration').hidden = false;
+    GATHER_SOURCES.forEach(s => setSourceState(s.id, 'pending'));
 
-      // Complete
-      setTimeout(() => {
-        icon.className = 'check-icon complete';
-        icon.innerHTML = '<i data-lucide="check" style="width:16px;height:16px;color:white;"></i>';
-        lucide.createIcons({ nodes: [icon] });
-      }, delay + 500);
+    GATHER_SOURCES.forEach((src, i) => {
+      later(() => setSourceState(src.id, 'checking'), 700 + i * beat);
+      later(() => {
+        setSourceState(src.id, src.ok ? 'found' : 'unresolved');
+        if (i === GATHER_SOURCES.length - 1) finishGathering(started);
+      }, 700 + i * beat + Math.round(beat * 0.84));
     });
-
-    // After all done, go to step 3
-    const lastDelay = 2800;
-    setTimeout(() => {
-      goToStep(3);
-    }, lastDelay + 1000);
   }
 
-  // Step navigation
+  function finishGathering(started) {
+    const unresolved = GATHER_SOURCES.filter(s => !s.ok).length;
+    const msg = unresolved
+      ? `${GATHER_SOURCES.length - unresolved} of ${GATHER_SOURCES.length} sources found. We'll estimate the rest.`
+      : `${GATHER_SOURCES.length} sources checked.`;
+    const outcome = document.getElementById('gatherOutcome');
+    outcome.textContent = msg;
+    outcome.hidden = false;
+    // The estimate stops being useful the moment the work is done.
+    document.getElementById('gatherDuration').hidden = true;
+    announce(msg);
+
+    // Floor of 2.4s: below that the screen flickers and the trust-building is
+    // wasted. Auto-advance is the default but is cancellable, which is what
+    // keeps it compliant with WCAG 2.2.1 Timing Adjustable.
+    const dwell = Math.max(0, 2400 - (Date.now() - started)) + (unresolved ? 600 : 0);
+    const btn = document.getElementById('gatherContinue');
+    btn.hidden = false;
+    if (REDUCED_MOTION) { btn.focus(); return; }
+    advanceTimer = setTimeout(() => goToStep(3), dwell + 900);
+  }
+
+  function cancelAutoAdvance() {
+    if (!advanceTimer) return;
+    clearTimeout(advanceTimer);
+    advanceTimer = null;
+    announce('Auto-advance stopped. Continue when you are ready.');
+  }
+
+  // The visible "Take your time" control is gone, so any deliberate interaction
+  // with this screen cancels the auto-advance instead. That keeps the timer
+  // adjustable (WCAG 2.2.1) without adding a control to the layout.
+  ['pointerdown', 'keydown', 'focusin'].forEach(evt =>
+    document.getElementById('step2').addEventListener(evt, cancelAutoAdvance));
+
+  /* ============ Step navigation ============ */
   function goToStep(n) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step' + n).classList.add('active');
+    const next = document.getElementById('step' + n);
+    if (!next) return;                       // no guard previously
+    if (n !== 2) clearGatherTimers();        // stale callbacks used to mutate a hidden step
+
+    const back = n < currentStep;
+    currentStep = n;
+
+    document.querySelectorAll('.step').forEach(s => {
+      s.classList.remove('active', 'is-back');
+    });
+    next.classList.add('active');
+    if (back) next.classList.add('is-back');
+
+    // Drives the container token swap: step 6 needs a wider column than the
+    // form steps, and the header has to widen with it rather than desynchronise.
+    document.body.dataset.step = n;
+
     updateStepper(n);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Instant, not smooth. Smooth-scrolling the page while the step is
+    // translating on the same axis is what made every transition read as a
+    // page load rather than as progress.
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    // Focus was never moved, so keyboard and screen reader users were left on
+    // a control that had just become display:none.
+    const heading = next.querySelector('h1');
+    if (heading) heading.focus({ preventScroll: true });
+
+    const cfg = stepperConfig[n];
+    const status = document.getElementById('stepStatus');
+    if (cfg && status) status.textContent = cfg.label;
   }
+  let currentStep = 1;
 
   function updateStepper(step) {
     const config = stepperConfig[step];
-    if (!config) return;
-
-    // Update segment fill widths
-    document.getElementById('segmentFill1').style.width = config.fills[0] + '%';
-    document.getElementById('segmentFill2').style.width = config.fills[1] + '%';
-    document.getElementById('segmentFill3').style.width = config.fills[2] + '%';
-
-    // Update label states
+    const stepper = document.getElementById('segmentedStepper');
+    // Step 7 is a dead end, not a stage; a progress bar there implies more to come.
+    stepper.hidden = step === 7;
+    if (!config) {
+      [1, 2, 3].forEach(i => document.getElementById('segmentFill' + i).style.width = '0%');
+      return;
+    }
+    config.fills.forEach((w, i) => {
+      document.getElementById('segmentFill' + (i + 1)).style.width = w + '%';
+    });
     document.querySelectorAll('.segment-label').forEach(label => {
       const seg = parseInt(label.dataset.segment);
       label.classList.remove('active', 'completed');
-      if (seg === config.activeSegment) {
-        label.classList.add('active');
-      } else if (seg < config.activeSegment) {
-        label.classList.add('completed');
-      }
+      if (seg === config.activeSegment) label.classList.add('active');
+      else if (seg < config.activeSegment) label.classList.add('completed');
     });
   }
 
@@ -2080,34 +3731,83 @@
     el.setAttribute('aria-checked', 'true');
   }
 
-  // Plan selection (legacy)
-  function selectPlan(el) {
-    el.parentElement.querySelectorAll('.plan-col').forEach(c => {
-      c.classList.remove('selected');
-      c.setAttribute('aria-checked', 'false');
-    });
-    el.classList.add('selected');
-    el.setAttribute('aria-checked', 'true');
+  /* ============ STEP 6: quote ============
+     The old table was not internally consistent: Deluxe cost more than Premier
+     while showing equal or lower limits on every row, and Basic and Deluxe were
+     byte-identical. Price and coverage now rise together.
+     Figures are illustrative, not from a rating engine. */
+  const PLANS = {
+    gl: {
+      label: 'General liability',
+      basic:   { price: 18.40, rows: ['$500K', '$500K', '$50K'] },
+      premier: { price: 29.88, rows: ['$1M',   '$1M',   '$100K'] },
+      deluxe:  { price: 41.15, rows: ['$2M',   '$2M',   '$250K'] }
+    },
+    prop: {
+      label: 'Commercial property',
+      basic:   { price: 12.60, rows: ['$250K', '$100K', '$25K'] },
+      premier: { price: 21.30, rows: ['$1M',   '$1M',   '$100K'] },
+      deluxe:  { price: 33.75, rows: ['$2M',   '$2M',   '$250K'] }
+    }
+  };
+  const ROW_LABELS = {
+    gl:   ['Limit per year', 'Customer injuries on site', 'Fire damage liability'],
+    prop: ['Property loss', 'Income protection', 'Employee theft']
+  };
+  const selectedPlan = { gl: 'premier', prop: 'premier' };
+  const money = n => '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  function selectCoveragePlan(input) {
+    const section = input.dataset.section;
+    selectedPlan[section] = input.value;
+    recalcQuote();
+    const p = PLANS[section][input.value];
+    announce(`${input.value} selected for ${PLANS[section].label}. ` +
+             `Monthly total now ${money(subtotal())}.`);
   }
 
-  // Coverage table plan selection
-  function selectCoveragePlan(el) {
-    const table = el.closest('.coverage-table');
-    // Deselect all plans in this table
-    table.querySelectorAll('.ct-plan').forEach(p => {
-      p.classList.remove('selected');
-      p.setAttribute('aria-checked', 'false');
+  function subtotal() {
+    return PLANS.gl[selectedPlan.gl].price + PLANS.prop[selectedPlan.prop].price;
+  }
+
+  // Click-disclosure rather than a hover tooltip: satisfies 1.4.13 by
+  // construction and works on touch.
+  function toggleDefinition(btn) {
+    const def = btn.parentElement.querySelector('.ct-definition');
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    def.hidden = open;
+  }
+
+  // Selecting a plan used to restyle columns and nothing else. The price was
+  // hardcoded and never moved, and its initial value was one section's price
+  // presented as the total of two.
+  function recalcQuote() {
+    const total = document.getElementById('totalPrice');
+    if (!total) return;
+    const sum = subtotal();
+    total.textContent = money(sum);
+    document.getElementById('totalPriceSticky').textContent = money(sum);
+    document.getElementById('annualPrice').textContent = money(sum * 12) + ' billed annually';
+
+    Object.keys(PLANS).forEach(section => {
+      document.querySelectorAll(`.coverage-table[data-section="${section}"] .ct-col`)
+        .forEach(col => col.classList.toggle('is-selected', col.dataset.plan === selectedPlan[section]));
     });
-    // Select clicked plan
-    el.classList.add('selected');
-    el.setAttribute('aria-checked', 'true');
-    // Update selected column styling
-    const plans = Array.from(table.querySelectorAll('.ct-header-row .ct-plan'));
-    const planIndex = plans.indexOf(el);
-    table.querySelectorAll('.ct-row:not(.ct-header-row)').forEach(row => {
-      const vals = row.querySelectorAll('.ct-val');
-      vals.forEach((v, i) => {
-        v.classList.toggle('ct-val-selected', i === planIndex);
+
+    const details = document.getElementById('sidebarDetails');
+    details.innerHTML = '';
+    Object.entries(PLANS).forEach(([section, cfg]) => {
+      const plan = cfg[selectedPlan[section]];
+      const head = document.createElement('div');
+      head.className = 'detail-section';
+      head.textContent = `${cfg.label} · ${selectedPlan[section]}`;
+      details.appendChild(head);
+      ROW_LABELS[section].forEach((label, i) => {
+        const row = document.createElement('div');
+        row.className = 'detail-row';
+        row.innerHTML = `<span>${label}</span><span class="figure">${plan.rows[i]}</span>`;
+        details.appendChild(row);
       });
     });
   }
@@ -2131,73 +3831,142 @@
   function validateAndContinue() {
     const email = document.getElementById('emailInput');
     const error = document.getElementById('emailError');
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.value.trim())) {
+    // trim is now written back, not only tested. A leading space used to
+    // survive into the saved quote.
+    email.value = email.value.trim();
+
+    // Two distinct failures, two messages. One generic string covered both,
+    // and it opened with "Please", which blames the user for a format rule.
+    let msg = '';
+    if (!email.value) {
+      msg = 'Enter an email so we can send your quote.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+      msg = "This doesn't look like an email address.";
+    }
+
+    if (msg) {
       email.classList.add('error');
-      error.classList.add('visible');
+      email.setAttribute('aria-invalid', 'true');
+      error.textContent = msg;
       email.focus();
       return;
     }
-    email.classList.remove('error');
-    error.classList.remove('visible');
+    clearEmailError();
     goToStep(5);
+  }
+
+  function clearEmailError() {
+    const email = document.getElementById('emailInput');
+    email.classList.remove('error');
+    email.removeAttribute('aria-invalid');
+    document.getElementById('emailError').textContent = '';
   }
 
   // Clear email error on input
   document.addEventListener('DOMContentLoaded', function() {
     const emailInput = document.getElementById('emailInput');
     if (emailInput) {
-      emailInput.addEventListener('input', function() {
-        this.classList.remove('error');
-        document.getElementById('emailError').classList.remove('visible');
+      emailInput.addEventListener('input', clearEmailError);
+      // Catch it on blur too, not only on submit, so the user is not carried
+      // to the next screen before finding out.
+      emailInput.addEventListener('blur', function () {
+        if (this.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) {
+          this.classList.add('error');
+          this.setAttribute('aria-invalid', 'true');
+          document.getElementById('emailError').textContent = "This doesn't look like an email address.";
+        }
       });
     }
   });
 
-  // Toggle switches
-  function toggleSwitch(el) {
-    el.classList.toggle('off');
-    const label = el.nextElementSibling;
-    if (el.classList.contains('off')) {
-      label.innerHTML = '<i data-lucide="triangle-alert" style="width:16px;height:16px;color:var(--color-warning)"></i>';
-      label.className = 'toggle-label no';
-      el.setAttribute('aria-checked', 'false');
-      lucide.createIcons({ nodes: [label] });
-    } else {
-      label.textContent = 'Agree';
-      label.className = 'toggle-label yes';
-      el.setAttribute('aria-checked', 'true');
-    }
+  /* ============ STEP 5: assumptions ============
+     Native checkbox with role="switch", so Space works and the label is a real
+     accessible name. The state update now runs BEFORE any icon rendering: the
+     old order called lucide.createIcons() first, so a CDN failure threw and
+     silently killed the entire step 5 -> step 7 partner branch. */
+  function toggleSwitch(input) {
+    const row = input.closest('.assumption-row');
+    const isTrue = input.checked;
+    row.dataset.state = isTrue ? 'true' : 'not-true';
+
+    const label = row.querySelector('.toggle-label');
+    label.textContent = isTrue ? 'True' : 'Not true';
+    label.className = 'toggle-label ' + (isTrue ? 'yes' : 'no');
+
+    // The consequence is stated at the row that caused it, before the CTA
+    // changes underneath the user.
+    const note = row.querySelector('.consequence');
+    if (note) note.hidden = isTrue;
+
     updateStep5Cta();
+    if (!isTrue && note) announce(note.textContent.trim());
   }
 
   function updateStep5Cta() {
     const btn = document.getElementById('step5Cta');
     if (!btn) return;
-    const anyOff = document.querySelectorAll('#step5 .toggle.off').length > 0;
-    if (anyOff) {
-      btn.textContent = 'Visit Partner Website';
-      btn.setAttribute('onclick', 'goToStep(7)');
-    } else {
-      btn.textContent = 'Get my quote';
-      btn.setAttribute('onclick', 'goToStep(6)');
-    }
+    const blocking = document.querySelectorAll('#step5 .assumption-toggle:not(:checked)').length;
+    // A guard, not an onclick string rewrite. The string version failed at
+    // runtime rather than at parse if it was ever mistyped.
+    btn.textContent = blocking ? 'Continue' : 'See my quote';
+    btn.onclick = () => goToStep(blocking ? 7 : 6);
   }
 
   // ============ CALENDAR ============
-  let calYear = 2026;
-  let calMonth = 1; // 0-indexed: 1 = February
-  const today = new Date(2026, 1, 11); // Feb 11, 2026
+  // Was hardcoded to Feb 11 2026, so the picker opened on a month that had
+  // already passed and labelled a past date "Today".
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + 90);
+  let calYear = today.getFullYear();
+  let calMonth = today.getMonth();
+
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  // One calendar, reused. It was bound to the coverage-start field only, so the
+  // claims modal fell back to a native date input and the user met two
+  // different date pickers in the same flow.
+  let activeDateField = null;
+  let calMin = today;
+  let calMax = maxDate;
+
+  const threeYearsAgo = new Date(today);
+  threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
+
+  function outOfRange(d) { return d < calMin || d > calMax; }
+
+  function openCalendarFor(input) {
+    const cal = document.getElementById('calendarDropdown');
+    activeDateField = input;
+    // Ranges differ by purpose: coverage starts today or later, a claim is
+    // something that already happened.
+    if (input.dataset.range === 'past') { calMin = threeYearsAgo; calMax = today; }
+    else { calMin = today; calMax = maxDate; }
+
+    input.closest('.date-input-wrapper').appendChild(cal);
+    const seed = calMax < today ? calMax : today;
+    calYear = seed.getFullYear();
+    calMonth = seed.getMonth();
+    cal.classList.add('visible');
+    input.setAttribute('aria-expanded', 'true');
+    renderCalendar();
+  }
+
+  function closeCalendar() {
+    document.getElementById('calendarDropdown').classList.remove('visible');
+    if (activeDateField) activeDateField.setAttribute('aria-expanded', 'false');
+  }
 
   function renderCalendar() {
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    document.getElementById('calMonthYear').textContent = months[calMonth] + '  ' + calYear;
+    document.getElementById('calMonthYear').textContent = MONTHS[calMonth] + ' ' + calYear;
     const daysContainer = document.getElementById('calendarDays');
     daysContainer.innerHTML = '';
     const firstDay = new Date(calYear, calMonth, 1).getDay();
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
 
-    // Empty cells for days before the 1st
     for (let i = 0; i < firstDay; i++) {
       const empty = document.createElement('div');
       empty.className = 'calendar-day empty';
@@ -2205,84 +3974,177 @@
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
-      const dayEl = document.createElement('div');
+      const thisDate = new Date(calYear, calMonth, d);
+      // A real button, so the grid is keyboard operable. Days were divs with
+      // click handlers and no tabindex, i.e. mouse only.
+      const dayEl = document.createElement('button');
+      dayEl.type = 'button';
       dayEl.className = 'calendar-day';
       dayEl.textContent = d;
-      const thisDate = new Date(calYear, calMonth, d);
-      if (thisDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+      dayEl.setAttribute('aria-label',
+        `${DAY_NAMES[thisDate.getDay()]}, ${d} ${MONTHS[calMonth]} ${calYear}`);
+
+      if (outOfRange(thisDate)) {
         dayEl.classList.add('disabled');
+        dayEl.disabled = true;                 // was pointer-events:none, a mouse-only guard
       }
-      if (d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear()) {
+      if (thisDate.getTime() === today.getTime()) {
         dayEl.classList.add('today');
+        dayEl.setAttribute('aria-current', 'date');
       }
-      dayEl.onclick = function() { selectDate(d); };
+      dayEl.addEventListener('click', () => selectDate(d));
       daysContainer.appendChild(dayEl);
     }
+    // Clamp navigation to the bookable window. The user could previously page
+    // back to 1970 or forward indefinitely and pick a start date years out.
+    document.getElementById('calPrev').disabled =
+      calYear === today.getFullYear() && calMonth === today.getMonth();
+    document.getElementById('calNext').disabled =
+      calYear === maxDate.getFullYear() && calMonth === maxDate.getMonth();
   }
 
-  function toggleCalendar() {
+  function toggleCalendar(input) {
+    const field = input || document.getElementById('dateInput');
     const cal = document.getElementById('calendarDropdown');
-    cal.classList.toggle('visible');
-    if (cal.classList.contains('visible')) renderCalendar();
+    const isOpen = cal.classList.contains('visible') && activeDateField === field;
+    if (isOpen) closeCalendar(); else openCalendarFor(field);
   }
 
   function changeMonth(dir) {
-    calMonth += dir;
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    if (calMonth < 0) { calMonth = 11; calYear--; }
+    // Modular, not two independent ifs. The old version silently lost 12
+    // months for any step larger than one.
+    const m = calMonth + dir;
+    calYear += Math.floor(m / 12);
+    calMonth = ((m % 12) + 12) % 12;
     renderCalendar();
   }
 
   function selectDate(day) {
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const d = new Date(calYear, calMonth, day);
-    if (d.getTime() === today.getTime()) {
-      document.getElementById('dateInput').value = 'Today';
-    } else {
-      document.getElementById('dateInput').value = months[calMonth] + ' ' + day + ', ' + calYear;
-    }
-    document.getElementById('calendarDropdown').classList.remove('visible');
+    if (outOfRange(d)) return;                 // guard in the handler, not only in CSS
+    const field = activeDateField || document.getElementById('dateInput');
+    field.value = (d.getTime() === today.getTime() && field.dataset.range !== 'past')
+      ? 'Today'
+      : `${MONTHS[calMonth]} ${day}, ${calYear}`;
+    closeCalendar();
+    field.focus();
   }
 
   // Close calendar when clicking outside
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('.date-input-wrapper')) {
-      document.getElementById('calendarDropdown').classList.remove('visible');
-    }
+    if (!e.target.closest('.date-input-wrapper')) closeCalendar();
   });
 
   // ============ CLAIMS MODAL ============
-  function selectClaimsRadio(el, value) {
-    selectRadio(el);
-    if (value === 'yes') {
-      openClaimsModal();
-    }
+  const ORDINALS = ['first', 'second', 'third', 'fourth', 'fifth'];
+  let lastFocused = null;
+
+  function onClaimsChange(value) {
+    if (value === 'yes') openClaimsModal();
+    else document.getElementById('claimsSummary').hidden = true;
   }
 
   function openClaimsModal() {
-    document.getElementById('claimsModal').style.display = 'flex';
-    document.getElementById('claimCount').value = '';
-    document.getElementById('claimFields').innerHTML = '';
+    lastFocused = document.activeElement;
+    const modal = document.getElementById('claimsModal');
+    modal.hidden = false;
+    document.getElementById('main').inert = true;
+    document.body.style.overflow = 'hidden';
+    document.getElementById('claimsModalTitle').focus();
+    renderClaimFields();          // rehydrates; no longer wipes on every open
   }
 
-  function closeClaimsModal() {
-    document.getElementById('claimsModal').style.display = 'none';
+  function closeClaimsModal(save) {
+    const modal = document.getElementById('claimsModal');
+    modal.hidden = true;
+    document.getElementById('main').inert = false;
+    document.body.style.overflow = '';
+
+    if (save) {
+      const n = claimRows();
+      const summary = document.getElementById('claimsSummary');
+      summary.hidden = n === 0;
+      summary.querySelector('span').textContent =
+        n === 1 ? '1 claim recorded' : `${n} claims recorded`;
+    } else {
+      // Cancelling must also undo the answer that opened the modal, otherwise
+      // a mis-tap leaves the user trapped in a Yes they did not mean.
+      const no = document.getElementById('claims-no');
+      if (no && claimRows() === 0) no.checked = true;
+    }
+    if (lastFocused) lastFocused.focus();
   }
 
+  function claimRows() {
+    return document.querySelectorAll('#claimFields .claim-row').length;
+  }
+
+  // Adds and removes only the delta. The old version did innerHTML = '' then
+  // += in a loop on every keystroke, which destroyed everything the user had
+  // already typed into the previous rows.
   function renderClaimFields() {
-    const count = parseInt(document.getElementById('claimCount').value) || 0;
+    const raw = parseInt(document.getElementById('claimCount').value, 10);
+    const count = Number.isFinite(raw) ? Math.max(0, Math.min(raw, 5)) : 0;
     const container = document.getElementById('claimFields');
-    container.innerHTML = '';
-    const max = Math.min(count, 5);
-    for (let i = 1; i <= max; i++) {
-      const ordinal = i === 1 ? 'first' : i === 2 ? 'second' : i === 3 ? 'third' : i + 'th';
-      container.innerHTML += '<div class="form-group"><label class="form-label">Date of ' + ordinal + ' claim</label><input type="text" class="form-input" placeholder="MM/DD/YYYY" style="width:100%;"></div><div class="form-group"><label class="form-label">Total value of ' + ordinal + ' claim</label><input type="text" class="form-input" placeholder="$" style="width:100%;"></div>';
+    const rows = [...container.querySelectorAll('.claim-row')];
+
+    document.getElementById('claimCapNote').hidden = !(Number.isFinite(raw) && raw > 5);
+
+    for (let i = rows.length; i > count; i--) rows[i - 1].remove();
+
+    for (let i = rows.length; i < count; i++) {
+      const ordinal = ORDINALS[i];
+      const row = document.createElement('div');
+      row.className = 'claim-row';
+      row.innerHTML =
+        `<div class="form-group">
+           <label class="form-label" for="claim-date-${i}">Date of ${ordinal} claim</label>
+           <div class="date-input-wrapper">
+             <input type="text" class="form-input" id="claim-date-${i}" name="claim-date-${i}"
+                    readonly data-range="past" placeholder="Choose a date"
+                    aria-haspopup="dialog" aria-expanded="false"
+                    onclick="toggleCalendar(this)"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCalendar(this)}">
+             <span class="calendar-icon" aria-hidden="true"><i data-lucide="calendar"></i></span>
+           </div>
+         </div>
+         <div class="form-group">
+           <label class="form-label" for="claim-amount-${i}">Amount paid out on the ${ordinal} claim</label>
+           <input type="text" class="form-input" id="claim-amount-${i}" name="claim-amount-${i}"
+                  inputmode="numeric" placeholder="$12,000">
+         </div>`;
+      container.appendChild(row);
     }
   }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    const modal = document.getElementById('claimsModal');
+    if (!modal.hidden) closeClaimsModal(false);
+  });
+
+  // Focus trap. Recomputed each time because the field set is dynamic.
+  document.getElementById('claimsModal').addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    const f = [...this.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )].filter(el => !el.disabled && el.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  // ============ INIT ============
+  updateStepper(1);
+  updateStep5Cta();
+  recalcQuote();
 </script>
 
+<!-- Icons. Every call site is guarded, because an unavailable library must not
+     be able to abort a state handler. -->
 <script src="https://unpkg.com/lucide@latest"></script>
-<script>lucide.createIcons();</script>
+<script>if (window.lucide) lucide.createIcons();</script>
 
 </body>
 </html>
