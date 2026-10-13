@@ -269,7 +269,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-synthesis: none;
-    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .sr-only {
@@ -285,7 +285,15 @@
     box-shadow: var(--focus-ring);
     border-radius: inherit;
   }
-  h1:focus-visible, h2:focus-visible { outline: none; box-shadow: none; }
+  /* Headings take programmatic focus on every step change. After a click
+     :focus-visible stays false, so mouse users never see this; keyboard users
+     get a ring so the focus move is visible. */
+  h1:focus-visible, h2:focus-visible {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 4px;
+    border-radius: 4px;
+    box-shadow: none;
+  }
 
 
   /* ============================================================
@@ -419,13 +427,22 @@
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .search-dropdown > [data-when] { display: none; }
-  .search-dropdown[data-state="searching"] > [data-when="searching"],
-  .search-dropdown[data-state="results"]   > [data-when="results"],
-  .search-dropdown[data-state="no-match"]  > [data-when="no-match"] { display: flex; }
-  .search-dropdown > .search-status[data-when] { display: none; }
-  .search-dropdown[data-state="searching"] > .search-status[data-when="searching"],
-  .search-dropdown[data-state="no-match"]  > .search-status[data-when="no-match"] { display: block; }
+  /* Exit: 120ms, opacity plus 4px of travel, on .is-leaving. JS removes
+     .visible when it ends; reduced motion goes straight to hidden. */
+  .search-dropdown.is-leaving { display: block; animation: dropdownOut var(--dur-exit) var(--ease-accelerate) both; }
+  @keyframes dropdownOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-4px); }
+  }
+  /* Descendant, not child: the status lines sit beside the listbox, not in
+     it, so a screen reader's option count is only ever options. */
+  .search-dropdown [data-when] { display: none; }
+  .search-dropdown[data-state="searching"] [data-when="searching"],
+  .search-dropdown[data-state="results"]   [data-when="results"],
+  .search-dropdown[data-state="no-match"]  [data-when="no-match"] { display: flex; }
+  .search-dropdown .search-status[data-when] { display: none; }
+  .search-dropdown[data-state="searching"] .search-status[data-when="searching"],
+  .search-dropdown[data-state="no-match"]  .search-status[data-when="no-match"] { display: block; }
 
   .search-status {
     padding: var(--space-4) var(--space-5);
@@ -455,8 +472,11 @@
     transition: background var(--t-fast);
     border-top: 1px solid var(--border-subtle);
   }
-  .search-dropdown[data-state="results"] > .search-result:first-of-type { border-top: none; }
+  .search-dropdown[data-state="results"] .search-result:first-of-type { border-top: none; }
   .search-result:hover { background: var(--surface-sunken); }
+  /* Keyboard highlight. Focus stays in the field; aria-activedescendant
+     points here, and the bar makes the highlighted row unmistakable. */
+  .search-result.is-active { background: var(--surface-sunken); box-shadow: inset 3px 0 var(--color-primary); }
   .search-result.manual-entry { align-items: center; }
   .search-result.manual-entry .icon { margin-top: 0; }
 
@@ -516,10 +536,41 @@
     line-height: var(--lh-small);
     color: var(--n-800);
   }
-  .disclosure { margin-bottom: var(--space-6); }
+  /* A <details>. The summary holds the icon and the one-line statement, the
+     body the rest. JS holds it open from 600px; below that it is a working
+     disclosure, because the full notice pushed the field under the fold. */
+  .disclosure { display: block; margin-bottom: var(--space-6); }
+  .disclosure-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+  }
+  .disclosure-summary::-webkit-details-marker { display: none; }
+  .disclosure-lead { flex: 1; min-width: 0; }
+  .disclosure-chevron {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--text-tertiary);
+    transition: transform var(--t-base);
+  }
+  .disclosure-chevron [data-lucide] { width: 18px; height: 18px; }
+  .disclosure[open] .disclosure-chevron { transform: rotate(180deg); }
+  .disclosure-body { padding-left: calc(18px + var(--space-3)); margin-top: var(--space-1); }
   .disclosure p { max-width: var(--measure-prose); text-wrap: pretty; }
   .disclosure-icon { flex-shrink: 0; margin-top: 1px; color: var(--text-tertiary); }
   .disclosure-icon [data-lucide] { width: 18px; height: 18px; }
+  @media (max-width: 599px) {
+    /* 44px target without changing the visual: the row grows into the
+       callout's own padding. */
+    .disclosure-summary { padding-block: var(--space-3); margin-block: calc(-1 * var(--space-3)); }
+  }
+  @media (min-width: 600px) {
+    .disclosure-summary { cursor: default; }
+    .disclosure-chevron { display: none; }
+  }
   .disclosure-link {
     display: inline-block;
     margin-top: var(--space-2);
@@ -594,7 +645,8 @@
     box-shadow: var(--shadow-lg);
     z-index: 50;
   }
-  .calendar-dropdown.visible { display: block; }
+  .calendar-dropdown.visible { display: block; animation: dropdownIn var(--dur-base) var(--ease-decelerate) both; }
+  .calendar-dropdown.is-leaving { display: block; animation: dropdownOut var(--dur-exit) var(--ease-accelerate) both; }
   .calendar-header {
     display: flex;
     align-items: center;
@@ -863,7 +915,7 @@
     text-wrap: balance;
     margin-bottom: var(--stack-display-lead);
   }
-  h1:focus { outline: none; }
+  h1:focus:not(:focus-visible) { outline: none; }
   .subtitle {
     font-size: var(--text-lead);
     line-height: var(--lh-lead);
@@ -942,7 +994,7 @@
     align-items: flex-start;
     gap: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    margin: 0 calc(-1 * var(--space-3));
+    margin: 0;
     border-radius: var(--radius-sm);
     transition: background var(--t-fast);
   }
@@ -952,7 +1004,7 @@
     font-size: var(--text-body);
     line-height: var(--lh-small);
     color: var(--text-tertiary);
-    transition: color var(--t-base);
+    transition: color var(--t-fast);
   }
   .ai-check-item[data-state="checking"] .ai-check-text { color: var(--text-primary); font-weight: var(--weight-bold); }
   .ai-check-item[data-state="found"] .ai-check-text,
@@ -1204,7 +1256,7 @@
     border-radius: 50%;
     background: var(--color-primary);
     transform: scale(0);
-    transition: transform var(--dur-base) var(--ease-standard);
+    transition: transform var(--t-base);
   }
   /* Checked reads as a 2px brand edge: 1px border plus a 1px inset ring,
      so the control does not grow by a pixel when selected. */
@@ -1344,7 +1396,7 @@
     border-radius: 50%;
     background: var(--n-0);
     box-shadow: var(--shadow-sm);
-    transition: transform var(--dur-base) var(--ease-standard);
+    transition: transform var(--t-base);
   }
   .assumption-toggle:checked::after { transform: translateX(20px); }
   .assumption-toggle:not(:checked) { background: var(--warning-fg); }
@@ -1504,7 +1556,7 @@
     border-radius: 50%;
     background: var(--color-primary);
     transform: scale(0);
-    transition: transform var(--dur-base) var(--ease-standard);
+    transition: transform var(--t-base);
   }
   /* The selected column is a column: tinted, with one continuous 1.5px
      outline. Inset shadows stay inside the cell, so the caps come from the
@@ -1698,7 +1750,8 @@
     from { opacity: 1; transform: none; }
     to   { opacity: 0; transform: translateY(8px) scale(.98); }
   }
-  .modal-content h2 { margin-bottom: var(--space-6); outline: none; }
+  .modal-content h2 { margin-bottom: var(--space-6); }
+  .modal-content h2:focus:not(:focus-visible) { outline: none; }
   .modal-close {
     position: absolute;
     top: var(--space-4); right: var(--space-4);
@@ -1717,8 +1770,31 @@
      STEP TRANSITIONS
      ============================================================ */
   .step { display: none; }
-  .step.active { display: block; animation: stepIn var(--dur-enter) var(--ease-decelerate) both; }
-  .step.active.is-back { animation-name: stepInBack; }
+  /* The section only fades. The h1, the lead and the first content block carry
+     the travel, 70ms apart, so a step reads as content arriving rather than a
+     page sliding in. Steps 2, 6 and 7 wrap their heading, so their first block
+     is named explicitly. */
+  .step.active { display: block; animation: stepFade var(--dur-enter) var(--ease-decelerate) both; }
+  .step.active h1,
+  .step.active :is(.subtitle, .partner-subtitle),
+  .step.active > :nth-child(3):not(.quote-footer),
+  .step.active .quote-header + .quote-layout,
+  .step.active .ai-loading > .ai-checklist,
+  .step.active .partner-page > .partner-info-card {
+    animation: stepIn var(--dur-enter) var(--ease-decelerate) both;
+  }
+  .step.active :is(.subtitle, .partner-subtitle) { animation-delay: 70ms; }
+  .step.active > :nth-child(3):not(.quote-footer),
+  .step.active .quote-header + .quote-layout,
+  .step.active .ai-loading > .ai-checklist,
+  .step.active .partner-page > .partner-info-card { animation-delay: 140ms; }
+  .step.active.is-back h1,
+  .step.active.is-back :is(.subtitle, .partner-subtitle),
+  .step.active.is-back > :nth-child(3):not(.quote-footer),
+  .step.active.is-back .quote-header + .quote-layout,
+  .step.active.is-back .ai-loading > .ai-checklist,
+  .step.active.is-back .partner-page > .partner-info-card { animation-name: stepInBack; }
+  @keyframes stepFade { from { opacity: 0; } to { opacity: 1; } }
   @keyframes stepIn     { from { opacity: 0; transform: translateY(12px); }
                           to   { opacity: 1; transform: translateY(0); } }
   @keyframes stepInBack { from { opacity: 0; transform: translateY(-12px); }
@@ -1737,6 +1813,14 @@
       scroll-behavior: auto !important;
     }
     .step.active { animation: rmFade 160ms linear both !important; }
+    /* The children must not travel either: no animation at all, not a 0.01ms one. */
+    .step.active h1,
+    .step.active :is(.subtitle, .partner-subtitle),
+    .step.active > :nth-child(3),
+    .step.active .quote-layout,
+    .step.active .ai-checklist,
+    .step.active .partner-info-card { animation: none !important; }
+    .search-dropdown.is-leaving, .calendar-dropdown.is-leaving { animation: none !important; }
     .ai-check-item { transition: background 160ms linear !important; }
     .segment-fill  { transition: transform 160ms linear !important; }
     .check-icon.checking, .spinner {
@@ -1828,7 +1912,7 @@
   .steps-container {
     max-width: none;
     padding: var(--space-8) 0 var(--space-16);
-    min-height: calc(100vh - var(--header-h));
+    min-height: calc(100dvh - var(--header-h));
   }
 
   /* ---- Step 1 dropdown.
@@ -1920,6 +2004,9 @@
 
   /* ---- Buttons stack on the narrowest band only ---- */
   @media (max-width: 599px) {
+    .segment-label { font-size: var(--text-caption); }
+    .header-inner, .segmented-stepper { padding-block: var(--space-2); }
+    .subtitle { font-size: var(--text-body); }
     .btn-primary, .btn-secondary { width: 100%; min-height: var(--control-h-mobile); }
     .search-input, .form-input, .radio-option { min-height: var(--control-h-mobile); }
     .actions { flex-direction: column-reverse; align-items: stretch; }
@@ -1929,6 +2016,8 @@
   /* Touch: the inline Edit / Add links grow to a 44px target. */
   @media (max-width: 768px) {
     .btn-link, .coverage-actions .btn-link { min-height: 44px; }
+    .calendar-header .cal-nav { width: 44px; height: 44px; }
+    .modal-close { width: 44px; height: 44px; }
   }
 
   /* ============================================================
@@ -1993,6 +2082,16 @@
        plans read as different sizes rather than as a comparison. */
     .ct-plan, .ct-val { width: 132px; min-width: 132px; max-width: 132px; }
     .coverage-table thead .ct-label { background: var(--surface); }
+    /* Scroll cues. Once the table has moved, the sticky label column casts a
+       shadow over the values passing under it; while there is more table to
+       the right, the scroller's edge fades. Both classes are set by JS. */
+    .coverage-scroll.is-scrolled .ct-label {
+      box-shadow: 1px 0 0 var(--border-subtle), 6px 0 10px -4px rgba(35,31,32,0.16);
+    }
+    .coverage-scroll.has-more {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), rgba(0,0,0,0.25));
+      mask-image: linear-gradient(to right, #000 calc(100% - 40px), rgba(0,0,0,0.25));
+    }
   }
 
   /* ---- Sticky summary bar.
@@ -2023,7 +2122,7 @@
     font-weight: var(--weight-regular);
     color: var(--text-tertiary);
   }
-  .quote-sticky-bar .total-price { font-size: var(--text-lead); }
+  .quote-sticky-bar .total-price { font-size: var(--text-heading); }
   .quote-sticky-bar .btn-checkout {
     width: auto; min-width: 132px; min-height: var(--control-h);
     padding-inline: var(--space-6);
@@ -2103,14 +2202,18 @@
          already been triggered by the time the user reads it. It is also its
          own component rather than a lightbulb "tip": a data-processing notice
          styled as a helpful hint reads as marketing. -->
-    <div class="disclosure" id="dataNotice">
-      <span class="disclosure-icon" aria-hidden="true"><i data-lucide="shield"></i></span>
-      <div>
-        <p>We look up your business in public sources: Google, state business registries, and
-        industry data. You see everything we find, and you can change it before we price anything.</p>
-        <a class="disclosure-link" href="#">How we use your data</a>
+    <details class="disclosure" id="dataNotice">
+      <summary class="disclosure-summary">
+        <span class="disclosure-icon" aria-hidden="true"><i data-lucide="shield"></i></span>
+        <span class="disclosure-lead">We look up your business in public sources.</span>
+        <span class="disclosure-chevron" aria-hidden="true"><i data-lucide="chevron-down"></i></span>
+      </summary>
+      <div class="disclosure-body">
+        <p>That means Google, state business registries, and industry data. You see everything
+        we find, and you can change it before we price anything.</p>
+        <a class="disclosure-link" href="#data-use" data-prototype-link>How we use your data</a>
       </div>
-    </div>
+    </details>
 
     <div class="search-wrapper">
       <label class="form-label" for="businessSearch">Business name</label>
@@ -2122,30 +2225,17 @@
           <span class="search-icon" aria-hidden="true"><i data-lucide="search"></i></span>
           <input type="text" class="search-input" id="businessSearch"
                  placeholder="Business name or address" autocomplete="off"
-                 role="combobox" aria-expanded="false" aria-controls="searchDropdown"
+                 role="combobox" aria-expanded="false" aria-controls="searchListbox"
                  aria-autocomplete="list" aria-describedby="dataNotice">
         </div>
-        <div class="search-dropdown" id="searchDropdown" role="listbox"
-             data-state="idle" aria-label="Search results">
+        <!-- The panel is a plain container. Only the options live in the
+             listbox; the status lines are siblings, announced via #liveRegion,
+             so the option count a screen reader hears is only ever options. -->
+        <div class="search-dropdown" id="searchDropdown" data-state="idle">
 
           <!-- searching -->
           <div class="search-status" data-when="searching">
             <span class="spinner" aria-hidden="true"></span> Searching public records
-          </div>
-
-          <!-- results -->
-          <div class="search-result" data-when="results" role="option" tabindex="-1"
-               aria-selected="false" onclick="selectBusiness()">
-            <div class="icon place" aria-hidden="true"><i data-lucide="map-pin"></i></div>
-            <div class="info">
-              <div class="name">Fambrini's Cafe</div>
-              <div class="address">2500 El Camino Real Ste 105, Palo Alto, CA 94306</div>
-              <div class="tags">
-                <span class="tag category">Coffee shop</span>
-                <span class="tag verified"><i data-lucide="check" aria-hidden="true"></i> Verified listing</span>
-              </div>
-            </div>
-            <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
           </div>
 
           <!-- no match -->
@@ -2155,11 +2245,32 @@
             <p class="no-match-hint" id="noMatchPersistent" hidden>Most new businesses aren't in
             public records yet. Entering details yourself takes about 4 minutes.</p>
           </div>
-          <div class="search-result manual-entry" data-when="no-match" role="option" tabindex="-1"
-               aria-selected="false" onclick="selectManual()">
-            <div class="icon manual" aria-hidden="true"><i data-lucide="pencil"></i></div>
-            <div class="info"><div class="name">Enter my details instead</div></div>
-            <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+
+          <!-- Focus never enters here: the input keeps it and points at the
+               highlighted option with aria-activedescendant. -->
+          <div class="search-listbox" id="searchListbox" role="listbox" aria-label="Search results">
+            <!-- results -->
+            <div class="search-result" id="searchOptionMatch" data-when="results" role="option"
+                 aria-selected="false" onclick="selectBusiness()">
+              <div class="icon place" aria-hidden="true"><i data-lucide="map-pin"></i></div>
+              <div class="info">
+                <div class="name">Fambrini's Cafe</div>
+                <div class="address">2500 El Camino Real Ste 105, Palo Alto, CA 94306</div>
+                <div class="tags">
+                  <span class="tag category">Coffee shop</span>
+                  <span class="tag verified"><i data-lucide="check" aria-hidden="true"></i> Verified listing</span>
+                </div>
+              </div>
+              <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+            </div>
+
+            <!-- no match -->
+            <div class="search-result manual-entry" id="searchOptionManual" data-when="no-match" role="option"
+                 aria-selected="false" onclick="selectManual()">
+              <div class="icon manual" aria-hidden="true"><i data-lucide="pencil"></i></div>
+              <div class="info"><div class="name">Enter my details instead</div></div>
+              <span class="arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+            </div>
           </div>
         </div>
       </div>
@@ -2170,8 +2281,8 @@
 
     <div class="actions actions--stacked">
       <button class="btn-primary" id="continueBtn" onclick="continueFromSearch()" disabled>Continue</button>
-      <p class="legal-text">By continuing you agree to the <a href="#">Terms of&nbsp;Use</a> and
-      <a href="#">Privacy&nbsp;Policy</a>.</p>
+      <p class="legal-text">By continuing you agree to the <a href="#terms" data-prototype-link>Terms of&nbsp;Use</a> and
+      <a href="#privacy" data-prototype-link>Privacy&nbsp;Policy</a>.</p>
     </div>
   </section>
 
@@ -2368,7 +2479,7 @@
       <label class="form-label" for="dateInput">When should coverage start?</label>
       <div class="date-input-wrapper">
         <input type="text" class="form-input" value="Today" id="dateInput" readonly
-               aria-haspopup="dialog" aria-expanded="false" onclick="toggleCalendar(this)"
+               aria-haspopup="dialog" onclick="toggleCalendar(this)"
                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCalendar(this)}">
         <span class="calendar-icon" aria-hidden="true"><i data-lucide="calendar"></i></span>
         <div class="calendar-dropdown" id="calendarDropdown" role="dialog" aria-label="Choose a start date">
@@ -2407,7 +2518,7 @@
              value="owner@fambrinis.example" autocomplete="email"
              aria-describedby="emailError">
       <div class="error-message" id="emailError" role="alert"></div>
-      <p class="form-login-link">Already have an account? <a href="#">Log in</a></p>
+      <p class="form-login-link">Already have an account? <a href="#login" data-prototype-link>Log in</a></p>
     </div>
 
     <div class="actions">
@@ -2683,7 +2794,7 @@
       </div>
 
       <!-- Sidebar -->
-      <aside class="quote-sidebar" aria-label="Quote summary">
+      <section class="quote-sidebar" aria-label="Quote summary">
         <!-- insurance-card.png stays in the repo but is no longer rendered: the
              card is HTML so the business name tracks what the user typed. -->
         <div class="sidebar-certificate">
@@ -2696,7 +2807,7 @@
               <div class="sidebar-card-doc">Certificate of insurance</div>
             </div>
           </div>
-          <a href="#" class="btn-link sidebar-card-link" onclick="event.preventDefault()">Preview certificate</a>
+          <a href="#certificate" class="btn-link sidebar-card-link" data-prototype-link>Preview certificate</a>
         </div>
         <div class="sidebar-total">
           <div class="total-label">Your monthly total</div>
@@ -2709,7 +2820,7 @@
              listed one section only, and listed the same coverage twice under
              two different names. -->
         <div class="sidebar-details" id="sidebarDetails"></div>
-      </aside>
+      </section>
     </div>
 
     <!-- Footer -->
@@ -2723,7 +2834,7 @@
           <div class="quote-footer-hours">Monday to Friday, 8am to 5pm ET</div>
           <div class="quote-footer-contact">
             <a href="tel:6179289239"><i data-lucide="phone" aria-hidden="true"></i> (617) 928-9239</a>
-            <a href="#"><i data-lucide="calendar" aria-hidden="true"></i> Schedule a call</a>
+            <a href="#schedule" data-prototype-link><i data-lucide="calendar" aria-hidden="true"></i> Schedule a call</a>
           </div>
         </div>
       </div>
@@ -2839,12 +2950,42 @@
     if (region) region.textContent = msg;
   }
 
+  const listbox = document.getElementById('searchListbox');
+  let leaveTimer = null;
+
   function setSearchState(state) {
-    dropdown.dataset.state = state;
     const open = state !== 'idle';
-    dropdown.classList.toggle('visible', open);
+    clearTimeout(leaveTimer); leaveTimer = null;
+    dropdown.classList.remove('is-leaving');
     searchInput.setAttribute('aria-expanded', String(open));
-    dropdown.setAttribute('aria-busy', String(state === 'searching'));
+    listbox.setAttribute('aria-busy', String(state === 'searching'));
+    setActiveOption(null);
+    if (open) {
+      dropdown.dataset.state = state;
+      dropdown.classList.add('visible');
+      return;
+    }
+    // Close: the panel keeps its content for the 120ms exit, then goes idle.
+    const finish = () => { dropdown.classList.remove('visible', 'is-leaving'); dropdown.dataset.state = 'idle'; };
+    if (!dropdown.classList.contains('visible') || REDUCED_MOTION) { finish(); return; }
+    dropdown.classList.add('is-leaving');
+    leaveTimer = setTimeout(finish, 120);
+  }
+
+  // Combobox with aria-activedescendant: focus never leaves the input. The
+  // highlighted option is the one with aria-selected="true".
+  function visibleOptions() {
+    if (!dropdown.classList.contains('visible') || dropdown.classList.contains('is-leaving')) return [];
+    return [...listbox.querySelectorAll('[role="option"]')]
+      .filter(o => o.dataset.when === dropdown.dataset.state);
+  }
+  function setActiveOption(opt) {
+    listbox.querySelectorAll('[role="option"]').forEach(o => {
+      o.setAttribute('aria-selected', String(o === opt));
+      o.classList.toggle('is-active', o === opt);
+    });
+    if (opt) searchInput.setAttribute('aria-activedescendant', opt.id);
+    else searchInput.removeAttribute('aria-activedescendant');
   }
 
   let searchSeq = 0;
@@ -2889,23 +3030,21 @@
   });
 
   searchInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') { setSearchState('idle'); return; }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const first = dropdown.querySelector('[role="option"]:not([hidden])');
-      if (first) first.focus();
+    if (e.key === 'Escape') {
+      if (dropdown.classList.contains('visible')) { e.preventDefault(); setSearchState('idle'); }
+      return;
     }
+    const opts = visibleOptions();
+    if (!opts.length) return;
+    const i = opts.findIndex(o => o.classList.contains('is-active'));
+    if (e.key === 'ArrowDown')      { e.preventDefault(); setActiveOption(opts[(i + 1) % opts.length]); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); setActiveOption(opts[(i - 1 + opts.length) % opts.length]); }
+    else if (e.key === 'Enter' && i >= 0) { e.preventDefault(); opts[i].click(); }
   });
-
-  // Arrow-key navigation into the results. There was previously no keyboard
-  // path into the dropdown at all, which stranded keyboard users on step 1.
-  dropdown.addEventListener('keydown', function(e) {
-    const opts = [...dropdown.querySelectorAll('[role="option"]:not([hidden])')];
-    const i = opts.indexOf(document.activeElement);
-    if (e.key === 'ArrowDown') { e.preventDefault(); (opts[i + 1] || opts[0]).focus(); }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); i <= 0 ? searchInput.focus() : opts[i - 1].focus(); }
-    if (e.key === 'Escape')    { setSearchState('idle'); searchInput.focus(); }
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.activeElement.click(); }
+  // Pointer and keyboard highlight the same way.
+  listbox.addEventListener('mouseover', function(e) {
+    const opt = e.target.closest('[role="option"]');
+    if (opt && visibleOptions().includes(opt)) setActiveOption(opt);
   });
 
   document.addEventListener('click', function(e) {
@@ -3044,6 +3183,65 @@
   ['pointerdown', 'keydown', 'focusin'].forEach(evt =>
     document.getElementById('step2').addEventListener(evt, cancelAutoAdvance));
 
+  /* ============ Prototype boundaries ============
+     Links that would leave the funnel keep a real-looking href and say, via
+     the live region, that there is nothing behind them. */
+  document.addEventListener('click', function (e) {
+    const link = e.target.closest('[data-prototype-link]');
+    if (!link) return;
+    e.preventDefault();
+    announce('This link is not part of the prototype.');
+  });
+  document.querySelectorAll('.btn-checkout').forEach(btn =>
+    btn.addEventListener('click', () => announce('Checkout is outside this prototype.')));
+
+  /* ============ Step 1 notice ============
+     A working <details> below 600px, held open from 600px up. The summary
+     stays a native button; at desktop it leaves the tab order and its click
+     is cancelled, so the notice cannot be collapsed there. */
+  const dataNotice = document.getElementById('dataNotice');
+  const noticeWide = matchMedia('(min-width: 600px)');
+  function syncDataNotice() {
+    if (!dataNotice) return;
+    if (noticeWide.matches) dataNotice.open = true;
+    dataNotice.querySelector('summary').tabIndex = noticeWide.matches ? -1 : 0;
+  }
+  if (dataNotice) {
+    dataNotice.querySelector('summary').addEventListener('click', e => { if (noticeWide.matches) e.preventDefault(); });
+    noticeWide.addEventListener('change', syncDataNotice);
+    syncDataNotice();
+  }
+
+  /* ============ Step 6 scroll cues ============
+     Below 600 the comparison scrolls sideways. On arrival the chosen column is
+     centred in the part of the scroller not covered by the sticky label column
+     (scrollLeft is set directly: scrollIntoView would also scroll the page
+     vertically for the second table). The cue classes drive the label shadow
+     and the right-edge fade. */
+  const narrowTable = matchMedia('(max-width: 599px)');
+  function updateScrollCues(scroller) {
+    scroller.classList.toggle('is-scrolled', scroller.scrollLeft > 1);
+    scroller.classList.toggle('has-more',
+      scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 1);
+  }
+  document.querySelectorAll('.coverage-scroll').forEach(s =>
+    s.addEventListener('scroll', () => updateScrollCues(s), { passive: true }));
+  window.addEventListener('resize', () =>
+    document.querySelectorAll('.coverage-scroll').forEach(updateScrollCues));
+  function centreSelectedPlans() {
+    document.querySelectorAll('.coverage-scroll').forEach(scroller => {
+      const cell = scroller.querySelector('thead .ct-col.is-selected');
+      if (narrowTable.matches && cell) {
+        const label = scroller.querySelector('thead .ct-label');
+        const labelW = label ? label.getBoundingClientRect().width : 0;
+        const visible = scroller.clientWidth - labelW;
+        const cellLeft = cell.getBoundingClientRect().left - scroller.getBoundingClientRect().left + scroller.scrollLeft;
+        scroller.scrollLeft = Math.max(0, cellLeft - labelW - (visible - cell.getBoundingClientRect().width) / 2);
+      }
+      updateScrollCues(scroller);
+    });
+  }
+
   /* ============ Step navigation ============ */
   function goToStep(n) {
     const next = document.getElementById('step' + n);
@@ -3062,6 +3260,7 @@
     // Drives the container token swap: step 6 needs a wider column than the
     // form steps, and the header has to widen with it rather than desynchronise.
     document.body.dataset.step = n;
+    if (n === 6) centreSelectedPlans();
 
     updateStepper(n);
 
@@ -3351,8 +3550,9 @@
     const seed = calMax < today ? calMax : today;
     calYear = seed.getFullYear();
     calMonth = seed.getMonth();
+    cal.classList.remove('is-leaving');
+    clearTimeout(calLeaveTimer);
     cal.classList.add('visible');
-    input.setAttribute('aria-expanded', 'true');
     renderCalendar();
     // Focus moves into the dialog: the chosen day, else today, else the first
     // bookable day. Keyboard users previously had to tab through the form to reach it.
@@ -3362,9 +3562,15 @@
     if (target) target.focus({ preventScroll: true });
   }
 
+  // Exit animation first, hidden after; reduced motion skips the wait.
+  let calLeaveTimer = null;
   function closeCalendar() {
-    document.getElementById('calendarDropdown').classList.remove('visible');
-    if (activeDateField) activeDateField.setAttribute('aria-expanded', 'false');
+    const cal = document.getElementById('calendarDropdown');
+    if (!cal.classList.contains('visible') || cal.classList.contains('is-leaving')) return;
+    const finish = () => cal.classList.remove('visible', 'is-leaving');
+    if (REDUCED_MOTION) { finish(); return; }
+    cal.classList.add('is-leaving');
+    calLeaveTimer = setTimeout(finish, 120);
   }
 
   function renderCalendar() {
@@ -3419,7 +3625,8 @@
   function toggleCalendar(input) {
     const field = input || document.getElementById('dateInput');
     const cal = document.getElementById('calendarDropdown');
-    const isOpen = cal.classList.contains('visible') && activeDateField === field;
+    const isOpen = cal.classList.contains('visible') && !cal.classList.contains('is-leaving')
+                && activeDateField === field;
     if (isOpen) closeCalendar(); else openCalendarFor(field);
   }
 
@@ -3526,7 +3733,7 @@
            <div class="date-input-wrapper">
              <input type="text" class="form-input" id="claim-date-${i}" name="claim-date-${i}"
                     readonly data-range="past" placeholder="Choose a date"
-                    aria-haspopup="dialog" aria-expanded="false"
+                    aria-haspopup="dialog"
                     onclick="toggleCalendar(this)"
                     onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCalendar(this)}">
              <span class="calendar-icon" aria-hidden="true"><i data-lucide="calendar"></i></span>
