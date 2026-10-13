@@ -44,8 +44,7 @@
   /* ============================================
      DESIGN TOKENS
      Brand anchor #8E0038 (ERGO wine) is --brand-700; fills and links run on
-     --brand-600 via --color-primary (Phase 2, decision D1).
-     Neutral text anchor is --n-900 (#2A2527, retuned from #231F20).
+     --brand-600 via --color-primary. Neutral text anchor is --n-900.
      ============================================ */
   :root {
     /* ---- Primitives: brand ramp, hue 336 ---- */
@@ -99,10 +98,7 @@
     --border-subtle:  var(--n-200);
     --border-default: var(--n-300);
     --border-strong:  var(--n-500);
-    --border-brand:   var(--brand-600);
     --border-focus:   var(--brand-600);
-    --border-width-control: 1px;
-    --border-width-card:    1px;
 
     /* ---- Semantic: text ---- */
     --text-primary:     var(--n-900);   /* 15.1:1 on white */
@@ -113,7 +109,7 @@
     --text-on-brand:    var(--n-0);
     --text-link:        var(--brand-600);
 
-    /* ---- Semantic: brand actions (D1) ---- */
+    /* ---- Semantic: brand actions ---- */
     --color-primary:        var(--brand-600);
     --color-primary-hover:  var(--brand-700);
     --color-primary-active: var(--brand-750);
@@ -122,16 +118,11 @@
     --success-bg: var(--green-50);  --success-border: var(--green-200);  --success-fg: var(--green-700);
     --warning-bg: var(--amber-50);  --warning-border: var(--amber-200);  --warning-fg: var(--amber-700);
     --error-bg:   var(--red-50);    --error-border:   var(--red-200);    --error-fg:   var(--red-700);
-    --info-bg:    var(--blue-50);   --info-border:    var(--blue-200);   --info-fg:    var(--blue-700);
 
     /* ---- Semantic: AI provenance. Violet never marks anything clickable. ---- */
     --ai-bg:     var(--violet-50);
     --ai-border: var(--violet-200);
     --ai-fg:     var(--violet-700);
-
-    /* ---- Semantic: field confidence (step 3 rails) ---- */
-    --confidence-estimate: var(--amber-700);
-    --confidence-edited:   var(--brand-600);
 
     /* ============ TYPE ============
        Ratio 1.2, anchored 17px. All bounds in rem so the scale survives
@@ -175,9 +166,6 @@
     --space-7:  1.75rem;  --space-8:  2rem;     --space-10: 2.5rem;
     --space-12: 3rem;     --space-16: 4rem;     --space-20: 5rem;
 
-    --page-pad-top:    var(--space-12);
-    --page-pad-bottom: 6rem;
-
     --stack-display-lead:  var(--space-3);
     --stack-lead-body:     var(--space-10);
     --stack-section-title: var(--space-3);
@@ -214,8 +202,6 @@
     --shadow-card: 0 1px 2px rgba(42,37,39,0.05), 0 1px 3px rgba(42,37,39,0.04);
 
     --focus-ring: 0 0 0 3px var(--n-0), 0 0 0 5px var(--border-focus);
-    --ring-brand: 0 0 0 3px rgba(166,7,71,0.18);
-    --ring-error: 0 0 0 3px rgba(168,32,28,0.16);
 
     /* ============ MOTION ============ */
     --dur-instant: 80ms;
@@ -233,10 +219,6 @@
     --t-fast:  var(--dur-fast) var(--ease-standard);
     --t-base:  var(--dur-base) var(--ease-standard);
     --t-enter: var(--dur-enter) var(--ease-decelerate);
-    --t-exit:  var(--dur-exit) var(--ease-accelerate);
-
-    --content-width: 680px;
-
   }
 
   /* ============================================
@@ -297,16 +279,9 @@
 
 
   /* ============================================================
-     V2 COMPONENT LAYER
-     The only component layer. The legacy layer it used to override was
-     removed in the Phase 1 cascade cleanup; what it still needed is in the
-     PORTED FROM LEGACY block directly below.
-     ============================================================ */
-
-  /* ============================================================
-     PORTED FROM LEGACY
-     Rules the markup still needs that had no V2 counterpart. Spacing and
-     colours are tokens; weights are 400 or 700 only (the face ships no other).
+     COMPONENTS
+     Spacing and colours are tokens; weights are 400 or 700 only (the face
+     ships no other).
      ============================================================ */
   /* ---- Header ---- */
   .header {
@@ -324,6 +299,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-block: var(--space-3);
   }
   .logo { display: flex; align-items: center; flex-shrink: 0; }
   .logo img { width: auto; display: block; }
@@ -339,7 +315,6 @@
   .stepper-segment { display: flex; flex-direction: column; gap: 6px; }
   .segment-track {
     background: var(--n-200);
-    box-shadow: none;
     height: 3px;
     border-radius: var(--radius-pill);
     width: 100%;
@@ -360,8 +335,6 @@
     font-size: var(--text-small);
     color: var(--text-tertiary);
     font-weight: var(--weight-regular);
-    text-transform: none;
-    letter-spacing: 0;
     transition: color var(--t-fast);
   }
   /* Weight, not only hue, marks the current step. */
@@ -369,7 +342,7 @@
   .segment-label.completed { color: var(--text-secondary); }
 
   /* ---- Search (step 1) ---- */
-  .search-wrapper { margin-bottom: var(--space-6); }
+  .search-wrapper { position: relative; z-index: 60; margin-bottom: var(--space-6); }
   .search-field { position: relative; }
   .search-input-row { position: relative; }
 
@@ -411,13 +384,11 @@
      panel that appeared on any input. ---- */
   .search-dropdown {
     display: none;
-    position: absolute;
     top: calc(100% + var(--space-1));
     left: 0; right: 0;
     background: var(--surface-raised);
     border: 1px solid var(--border-default);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
     overflow: clip;
     overflow-clip-margin: 4px;
     z-index: 50;
@@ -487,7 +458,6 @@
     flex-shrink: 0;
     margin-top: 2px;
   }
-  /* Was #FEE2E2, a pale red — an error tint on a successful match. */
   .search-result .icon.place  { background: var(--brand-100); color: var(--text-link); }
   .search-result .icon.manual { background: var(--surface-sunken-2); color: var(--text-secondary); }
 
@@ -515,9 +485,7 @@
   .search-result .arrow { color: var(--text-tertiary); align-self: center; }
 
   /* ============================================
-     DISCLOSURE (data-processing notice, step 1)
-     Deliberately not .tip-box: a privacy notice with a lightbulb icon reads
-     as a marketing tip rather than as a disclosure.
+     CALLOUTS
      ============================================ */
   /* ---- Callout. One surface for every in-flow note: the step-1 disclosure,
      the step-3 tip, the step-5 consequence, the step-6 included strips and
@@ -529,8 +497,6 @@
     gap: var(--space-3);
     padding: var(--space-4) var(--space-5);
     background: var(--surface-sunken);
-    border: none;
-    border-left: none;
     border-radius: var(--radius-callout);
     font-size: var(--text-small);
     line-height: var(--lh-small);
@@ -634,14 +600,16 @@
     pointer-events: none;
   }
 
-  /* Calendar dropdown. Border, padding and width are set in the responsive layer. */
   .calendar-dropdown {
     display: none;
     position: absolute;
     top: calc(100% + var(--space-1));
     left: 0;
+    width: min(320px, calc(100vw - 2 * var(--page-margin)));
+    padding: var(--space-4);
     background: var(--surface-raised);
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-container);
     box-shadow: var(--shadow-lg);
     z-index: 50;
   }
@@ -682,6 +650,8 @@
   }
   .calendar-weekdays span {
     font-size: var(--text-caption);
+    font-weight: var(--weight-regular);
+    color: var(--text-tertiary);
     padding: var(--space-2) 0;
   }
 
@@ -752,8 +722,6 @@
     justify-content: flex-end;
     gap: var(--space-3);
     margin-top: var(--stack-actions);
-    padding-top: 0;
-    border-top: none;
   }
   /* The primary button used to land at 24 / 76 / 84 / 92 / 92px from the
      preceding block across the five steps, so it jumped on every transition.
@@ -779,7 +747,6 @@
       align-items: center;
       gap: var(--space-4);
     }
-    .legal-text { text-wrap: balance; }
   }
 
   .btn-link {
@@ -803,7 +770,6 @@
     font-size: var(--text-caption);
     line-height: var(--lh-small);
     color: var(--text-tertiary);
-    max-width: none;
     text-align: left;
     text-wrap: pretty;
   }
@@ -813,22 +779,10 @@
   .coverage-actions {
     display: flex;
     gap: var(--space-5);
+    margin-top: var(--space-3);
     padding: var(--space-3) 0;
     font-size: var(--text-small);
   }
-  .coverage-actions a {
-    color: var(--text-link);
-    text-decoration: none;
-    font-weight: var(--weight-regular);
-  }
-  .coverage-actions a:hover { text-decoration: underline; }
-
-  /* Sidebar rhythm. These sat in the legacy layer and the V2 flex gaps were
-     tuned on top of them, so dropping them tightened the column by ~40px. */
-  .sidebar-total { padding: var(--space-4) 0; margin-bottom: var(--space-3); }
-  .sidebar-details { margin-top: var(--space-4); }
-  .sidebar-details .detail-row { padding: var(--space-1) 0; }
-  .sidebar-details .detail-section { margin-bottom: var(--space-1); }
 
   .quote-footer {
     border-top: 1px solid var(--border-subtle);
@@ -862,6 +816,7 @@
     font-size: var(--text-small);
     white-space: nowrap;
   }
+  .quote-footer-col { text-align: right; }
   .quote-footer-contact a {
     color: var(--text-link);
     text-decoration: none;
@@ -869,6 +824,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    min-height: 24px;
+    padding: var(--space-1) 0;
   }
   .quote-footer-contact a:hover { text-decoration: underline; }
   .quote-footer-contact [data-lucide] { width: 16px; height: 16px; }
@@ -905,8 +862,7 @@
   .search-result .arrow [data-lucide] { width: 16px; height: 16px; color: var(--text-secondary); }
   .calendar-icon [data-lucide] { width: 20px; height: 20px; color: var(--text-link); }
 
-  /* ---- Typography normalisation.
-     line-height: 1.6 on body used to inherit into 24, 32 and 48px text. ---- */
+  /* ---- Typography ---- */
   h1 {
     font-size: var(--text-display);
     line-height: var(--lh-display);
@@ -925,9 +881,7 @@
     text-wrap: pretty;
     margin-bottom: var(--stack-lead-body);
   }
-  /* Every step's h1 now lands at the same height. It used to start at 48, 88
-     or 108px depending on which step you were on. */
-  .ai-loading, .quote-header, .partner-page { padding: 0; text-align: left; }
+  .ai-loading, .quote-header, .partner-page { text-align: left; }
   .quote-header { margin-bottom: var(--stack-lead-body); }
   .quote-header .subtitle { margin-bottom: 0; }
 
@@ -935,8 +889,6 @@
     font-size: var(--text-body);
     line-height: var(--lh-heading);
     font-weight: var(--weight-bold);
-    text-transform: none;
-    letter-spacing: 0;
     color: var(--text-primary);
     margin-bottom: var(--stack-section-title);
   }
@@ -947,7 +899,6 @@
     text-wrap: balance;
     margin-bottom: var(--stack-section-title);
   }
-  .modal-content h2 { font-size: var(--text-heading); line-height: var(--lh-heading); text-wrap: balance; }
 
   /* Figures share one advance in FS Me Neue, so a fixed slot aligns the
      column. The declaration is inert in the brand face but corrects the
@@ -971,13 +922,10 @@
     margin: 0 0 var(--space-6);
     padding: var(--space-2) var(--space-3);
     background: var(--ai-bg);
-    border: none;
     border-radius: var(--radius-chip);
     color: var(--ai-fg);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: none;
-    letter-spacing: 0;
   }
   .ai-powered-badge [data-lucide] { width: 14px; height: 14px; }
 
@@ -994,7 +942,6 @@
     align-items: flex-start;
     gap: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    margin: 0;
     border-radius: var(--radius-sm);
     transition: background var(--t-fast);
   }
@@ -1029,7 +976,7 @@
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
   }
-  .check-icon.pending    { border: 2px solid var(--border-strong); background: none; }
+  .check-icon.pending    { border: 2px solid var(--border-strong); }
   .check-icon.checking   { border: 2px solid var(--border-subtle); border-top-color: var(--ai-fg);
                            animation: spin 0.8s linear infinite; }
   .check-icon.found      { background: var(--success-fg); border: none; color: var(--n-0); }
@@ -1037,7 +984,7 @@
   .check-icon.unresolved { border: 2px solid var(--warning-border); background: var(--warning-bg); }
   /* Spinner to check is a class swap, so the handoff is a keyframe rather
      than a transition: the icon fades and settles from 60% to full size.
-     The reduced-motion block above collapses it to 0.01ms with everything else. */
+     The reduced-motion block collapses it to 0.01ms with everything else. */
   @keyframes checkIconIn {
     from { opacity: 0; transform: scale(0.6); }
     to   { opacity: 1; transform: scale(1); }
@@ -1070,16 +1017,12 @@
     padding: var(--space-3) var(--space-5);
     margin-bottom: var(--space-6);
     background: var(--ai-bg);
-    border: none;
     border-radius: var(--radius-callout);
     color: var(--ai-fg);
     font-size: var(--text-small);
     font-weight: var(--weight-regular);
   }
   .provenance-banner [data-lucide] { width: 16px; height: 16px; flex-shrink: 0; color: var(--ai-fg); }
-  /* The only amber on the screen, and it is a live count, so amber means
-     "these need checking" rather than decorating every row. Same chip as the
-     per-row Estimate mark, so the count and the rows read as one system. */
   .provenance-banner .count {
     margin-left: auto;
     display: inline-flex;
@@ -1088,8 +1031,6 @@
     line-height: 20px;
     padding-inline: var(--space-2);
     border-radius: var(--radius-chip);
-    background: transparent;
-    color: inherit;
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
     white-space: nowrap;
@@ -1109,7 +1050,6 @@
   .prefill-row {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-4);
     padding: var(--space-3) var(--space-5);
     min-height: 56px;
     border-bottom: 1px solid var(--border-subtle);
@@ -1120,10 +1060,6 @@
   .prefill-label {
     flex: 0 0 auto;
     min-width: 160px;
-    max-width: 200px;
-    /* Explicit. An inherited padding-left of 18px was pushing every label's
-       text 18px right of its own value, so the two columns never lined up. */
-    padding: var(--space-2) 0 0;
     font-size: var(--text-small);
     line-height: var(--lh-small);
     font-weight: var(--weight-regular);
@@ -1133,7 +1069,6 @@
   .prefill-value {
     flex: 1;
     min-width: 0;
-    padding: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1201,21 +1136,14 @@
     height: 20px;
     line-height: 20px;
     padding-inline: var(--space-2);
-    border: none;
     border-radius: var(--radius-chip);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: none;
-    letter-spacing: 0;
     white-space: nowrap;
   }
   .confidence-chip.estimate {
     background: var(--warning-bg);
     color: var(--warning-fg);
-  }
-  .confidence-chip.edited {
-    background: var(--brand-50);
-    color: var(--text-link);
   }
 
   /* ============================================================
@@ -1325,7 +1253,7 @@
     visibility: hidden;
   }
   .error-message:not(:empty) { visibility: visible; }
-  .date-input-wrapper { position: relative; width: min(260px, 100%); }
+  .date-input-wrapper { position: relative; }
 
   /* ============================================================
      STEP 5 — assumptions
@@ -1349,6 +1277,7 @@
     padding: var(--space-4);
     border-bottom: 1px solid var(--border-subtle);
     transition: background var(--t-fast);
+    min-height: 60px;   /* the whole row is the target, not just the switch */
   }
   .assumption-row:last-child { border-bottom: none; }
   .assumption-row[data-state="not-true"] { background: var(--warning-bg); }
@@ -1413,8 +1342,6 @@
     font-size: var(--text-small);
     font-weight: var(--weight-regular);
     color: var(--text-tertiary);
-    text-transform: none;
-    letter-spacing: 0;
     text-align: right;
   }
   .toggle-label.no { color: var(--warning-fg); }
@@ -1425,15 +1352,6 @@
     flex-basis: 100%;
     margin-top: var(--space-2);
     text-wrap: pretty;
-  }
-  .step5-summary {
-    padding: var(--space-3) var(--space-4);
-    margin-bottom: var(--space-4);
-    background: var(--warning-bg);
-    border: 1px solid var(--warning-border);
-    border-radius: var(--radius-sm);
-    font-size: var(--text-small);
-    color: var(--warning-fg);
   }
 
   /* ============================================================
@@ -1455,6 +1373,7 @@
     overflow: clip;
     overflow-clip-margin: 4px;
     table-layout: fixed;
+    min-width: 0;
     margin-bottom: var(--space-2);
   }
   /* These were flex containers when they were divs. As real cells they must be
@@ -1475,25 +1394,29 @@
   /* Column dividers are inset shadows, not borders, so the selected column's
      outline can replace them without leaving a 1px seam. */
   .coverage-table .ct-col { box-shadow: inset 1px 0 var(--border-subtle); }
+  /* table-layout:fixed sizes columns from the first row's *width*, and ignores
+     min-width. With only a min-width set, the header row and the body rows
+     resolved their columns independently and the plan columns drifted out of
+     alignment with the rows above them. An explicit width on the first column
+     pins it; the remaining three then split what is left, evenly, for every row. */
   .ct-label {
-    width: 34%;
+    width: var(--ct-label-min);
+    min-width: 0;
     font-size: var(--text-small);
     line-height: var(--lh-small);
     font-weight: var(--weight-regular);
     color: var(--text-secondary);
-    vertical-align: middle;
   }
   .ct-val {
     font-size: var(--text-small);
     font-weight: var(--weight-regular);
     color: var(--n-800);
-    vertical-align: middle;
   }
   /* Emphasis follows the selection, not the column: the chosen plan is the
      one whose figures the sidebar repeats. */
   .ct-val.is-selected { font-weight: var(--weight-bold); color: var(--text-primary); }
 
-  .ct-plan { vertical-align: bottom; font-weight: var(--weight-regular); }
+  .ct-plan { font-weight: var(--weight-regular); }
   .ct-plan-label {
     display: flex;
     flex-direction: column;
@@ -1510,8 +1433,6 @@
     border-radius: var(--radius-chip);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: none;
-    letter-spacing: 0;
     white-space: nowrap;
   }
   /* The old placeholder reserved 40px for a 30px badge, so Basic and Deluxe
@@ -1613,7 +1534,6 @@
 
   .included-strip { margin-top: var(--space-3); }
   .included-strip [data-lucide] { width: 18px; height: 18px; margin-top: 1px; color: var(--success-fg); flex-shrink: 0; }
-  .coverage-actions { margin-top: var(--space-3); }
   .coverage-section { margin-bottom: var(--stack-section); }
 
   .quote-sidebar { display: flex; flex-direction: column; gap: var(--space-4); }
@@ -1634,7 +1554,6 @@
     border-radius: var(--radius-container);
     box-shadow: var(--shadow-card);
     overflow: clip;
-    margin-bottom: 0;   /* .quote-sidebar's flex gap owns this spacing */
   }
   .sidebar-card-band {
     flex-shrink: 0;
@@ -1666,7 +1585,11 @@
   .sidebar-card-divider { height: 1px; background: var(--border-subtle); margin-block: var(--space-1); }
   .sidebar-card-doc { font-size: var(--text-caption); line-height: var(--lh-ui); color: var(--text-tertiary); }
   .sidebar-card-link { margin-top: 0; }
-  .sidebar-total { display: flex; flex-direction: column; gap: var(--space-1); }
+  .sidebar-total {
+    display: flex; flex-direction: column; gap: var(--space-1);
+    padding: var(--space-4) 0;
+    margin-bottom: var(--space-3);
+  }
   .total-label { font-size: var(--text-small); font-weight: var(--weight-regular); color: var(--text-tertiary); }
   .total-price {
     display: flex; align-items: baseline; gap: 0.25em;
@@ -1696,13 +1619,11 @@
   }
   .btn-checkout:hover { background: var(--color-primary-hover); }
   .btn-checkout:active { background: var(--color-primary-active); transform: scale(0.96); }
-  .sidebar-details { display: flex; flex-direction: column; gap: var(--space-1); }
+  .sidebar-details { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-4); }
   .detail-section {
     margin-top: var(--space-3);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: none;
-    letter-spacing: 0;
     color: var(--text-tertiary);
   }
   .detail-row {
@@ -1711,9 +1632,8 @@
     color: var(--text-tertiary);
   }
   .detail-row .figure { color: var(--text-primary); }
-  .quote-footer-col { text-align: right; }
-  .quote-footer-contact a { min-height: 24px; padding: var(--space-1) 0; }
-  .coverage-actions a, .coverage-actions .btn-link { min-height: 24px; }
+  .sidebar-details .detail-row { padding: var(--space-1) 0; }
+  .sidebar-details .detail-section { margin-bottom: var(--space-1); }
 
   /* ============================================================
      MODAL
@@ -1726,7 +1646,6 @@
     z-index: 200;
     animation: modalScrimIn var(--t-enter) both;
   }
-  .modal-overlay[hidden] { display: none; }
   .modal-content {
     position: relative;
     width: 100%; max-width: 520px;
@@ -1750,7 +1669,12 @@
     from { opacity: 1; transform: none; }
     to   { opacity: 0; transform: translateY(8px) scale(.98); }
   }
-  .modal-content h2 { margin-bottom: var(--space-6); }
+  .modal-content h2 {
+    font-size: var(--text-heading);
+    line-height: var(--lh-heading);
+    text-wrap: balance;
+    margin-bottom: var(--space-6);
+  }
   .modal-content h2:focus:not(:focus-visible) { outline: none; }
   .modal-close {
     position: absolute;
@@ -1801,44 +1725,11 @@
                           to   { opacity: 1; transform: translateY(0); } }
 
   /* ============================================================
-     REDUCED MOTION
-     Removes movement, not information: the step 2 sequence keeps its pacing
-     and its per-source state changes, only the travel and spin go.
-     ============================================================ */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-    .step.active { animation: rmFade 160ms linear both !important; }
-    /* The children must not travel either: no animation at all, not a 0.01ms one. */
-    .step.active h1,
-    .step.active :is(.subtitle, .partner-subtitle),
-    .step.active > :nth-child(3),
-    .step.active .quote-layout,
-    .step.active .ai-checklist,
-    .step.active .partner-info-card { animation: none !important; }
-    .search-dropdown.is-leaving, .calendar-dropdown.is-leaving { animation: none !important; }
-    .ai-check-item { transition: background 160ms linear !important; }
-    .segment-fill  { transition: transform 160ms linear !important; }
-    .check-icon.checking, .spinner {
-      animation: none !important;
-      border-top-color: var(--ai-fg);
-    }
-    .btn-primary:active:not(:disabled), .btn-secondary:active, .btn-checkout:active { transform: none !important; }
-  }
-  @keyframes rmFade { from { opacity: 0 } to { opacity: 1 } }
-
-  /* ============================================================
      RESPONSIVE LAYER — mobile first
-     Replaces the two `max-width: 768px` blocks the file used to carry.
      Every boundary below is derived from a measured content requirement,
      not from a device name.
      ============================================================ */
   :root {
-    --grid-gutter:    var(--space-3);
     --page-margin:    var(--space-4);
     --container-form: 100%;
     --container-wide: 100%;
@@ -1846,15 +1737,13 @@
     --ct-label-min:   140px;
   }
   @media (min-width: 480px) {
-    :root { --grid-gutter: var(--space-4); --page-margin: var(--space-5); }
+    :root { --page-margin: var(--space-5); }
   }
   @media (min-width: 600px) {
     :root { --page-margin: var(--space-6); }
   }
   @media (min-width: 768px) {
     :root {
-      --grid-gutter: var(--space-6);
-      --page-margin: var(--space-6);
       --container-form: 680px;
       --ct-label-min: 180px;
       --header-h: 104px;
@@ -1868,7 +1757,6 @@
   }
   @media (min-width: 1440px) {
     :root {
-      --grid-gutter: var(--space-8);
       --page-margin: var(--space-12);
       --container-form: 720px;
       --container-wide: 1080px;
@@ -1897,8 +1785,6 @@
   .header-inner,
   .segmented-stepper { transition: max-width var(--dur-base) var(--ease-standard); }
 
-  .header { padding: 0; }
-  .header-inner { padding-block: var(--space-3); }
   .logo img { height: 24px; }
   @media (min-width: 768px) { .logo img { height: 32px; } }
 
@@ -1910,7 +1796,6 @@
   .stepper-segment[data-segment="3"] { flex: 1; }
 
   .steps-container {
-    max-width: none;
     padding: var(--space-8) 0 var(--space-16);
     min-height: calc(100dvh - var(--header-h));
   }
@@ -1919,7 +1804,6 @@
      At phone widths the overlay covered both the data notice and the primary
      action, on a screen where the soft keyboard already owns the bottom half.
      Inline expansion pushes them down instead. ---- */
-  .search-wrapper { position: relative; z-index: 60; }
   .search-dropdown {
     position: static;
     margin-top: var(--space-1);
@@ -1930,8 +1814,6 @@
   @media (min-width: 600px) {
     .search-dropdown {
       position: absolute;
-      top: calc(100% + var(--space-1));
-      left: 0; right: 0;
       box-shadow: var(--shadow-lg);
       max-height: min(60vh, 420px);
     }
@@ -1939,12 +1821,11 @@
 
   /* ---- Step 3 rows stack until there is room for two columns ---- */
   .prefill-row { flex-direction: column; gap: var(--space-1); }
-  .prefill-label { max-width: none; padding-top: 0; }
   @media (min-width: 768px) {
     /* Baseline, not flex-start: the label's text sits on the same line as
        the value's text, with no padding arithmetic to keep in step. */
     .prefill-row { flex-direction: row; align-items: baseline; gap: var(--space-4); }
-    .prefill-label { flex: 0 0 var(--ct-label-min); max-width: 200px; padding-top: 0; }
+    .prefill-label { flex: 0 0 var(--ct-label-min); max-width: 200px; }
   }
 
   /* ---- Step 4 calendar.
@@ -1952,11 +1833,6 @@
      meant they inherited the UA button background and border: every date
      rendered as a grey disc inside a box. Reset to a bare cell and let the
      circle come only from a real state. ---- */
-  .calendar-dropdown {
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-container);
-    padding: var(--space-4);
-  }
   .calendar-day {
     appearance: none;
     background: none;
@@ -1968,7 +1844,10 @@
     border-radius: 50%;
     cursor: pointer;
     transition: background-color var(--t-fast), color var(--t-fast);
+    width: 100%;
+    min-height: 44px;
   }
+  @media (min-width: 768px) { .calendar-day { min-height: 40px; } }
   .calendar-day:hover:not(:disabled) { background: var(--surface-sunken-2); }
   .calendar-day:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   /* Today is a ring, the chosen date is a fill, so the two never read as one. */
@@ -1988,19 +1867,12 @@
     cursor: default;
   }
   .calendar-day.empty { background: none; pointer-events: none; }
-  .calendar-weekdays span { color: var(--text-tertiary); font-weight: var(--weight-regular); }
   .cal-nav:disabled { opacity: 0.35; cursor: default; }
 
   /* ---- Step 4 ---- */
   .date-input-wrapper { width: 100%; }
   @media (min-width: 768px) { .date-input-wrapper { width: min(340px, 100%); } }
-  .calendar-dropdown { width: min(320px, calc(100vw - 2 * var(--page-margin))); }
   .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
-  .calendar-day { width: 100%; min-height: 44px; }
-  @media (min-width: 768px) { .calendar-day { min-height: 40px; } }
-
-  /* ---- Step 5: the whole row is the target, not just the 48x28 switch ---- */
-  .assumption-row { min-height: 60px; }
 
   /* ---- Buttons stack on the narrowest band only ---- */
   @media (max-width: 599px) {
@@ -2011,11 +1883,10 @@
     .search-input, .form-input, .radio-option { min-height: var(--control-h-mobile); }
     .actions { flex-direction: column-reverse; align-items: stretch; }
     .actions--stacked { flex-direction: column; align-items: stretch; }
-    .legal-text { text-align: left; max-width: none; text-wrap: pretty; }
   }
   /* Touch: the inline Edit / Add links grow to a 44px target. */
   @media (max-width: 768px) {
-    .btn-link, .coverage-actions .btn-link { min-height: 44px; }
+    .btn-link { min-height: 44px; }
     .calendar-header .cal-nav { width: 44px; height: 44px; }
     .modal-close { width: 44px; height: 44px; }
   }
@@ -2035,8 +1906,6 @@
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-8);
     align-items: start;
-    max-width: none;
-    padding: 0;
   }
   .quote-main { min-width: 0; }
 
@@ -2045,15 +1914,6 @@
     .quote-sidebar { position: sticky; top: calc(var(--header-h) + var(--space-4)); }
   }
 
-  .coverage-table { min-width: 0; }
-  /* table-layout:fixed sizes columns from the first row's *width*, and ignores
-     min-width. With only a min-width set, the header row and the body rows
-     resolved their columns independently and the plan columns drifted out of
-     alignment with the rows above them. An explicit width on the first column
-     pins it; the remaining three then split what is left, evenly, for every row. */
-  .ct-label { width: var(--ct-label-min); min-width: 0; }
-  .ct-plan, .ct-val { width: auto; }
-
   /* Below 600 the plan columns measured 61px at 320 and 80px at 375, which is
      not a comparison, it is a rendering artefact. A sticky label column plus
      horizontal scroll keeps every value at legible width. */
@@ -2061,7 +1921,6 @@
     /* max-width plus min-width:0 keeps the scroll inside the container instead
        of pushing the whole page sideways. */
     .coverage-scroll {
-      overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       max-width: 100%;
       min-width: 0;
@@ -2145,6 +2004,37 @@
     .quote-footer-col { text-align: left; }
     .quote-footer-contact { flex-wrap: wrap; gap: var(--space-3); }
   }
+
+  /* ============================================================
+     REDUCED MOTION
+     Removes movement, not information: the step 2 sequence keeps its pacing
+     and its per-source state changes, only the travel and spin go.
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .step.active { animation: rmFade 160ms linear both !important; }
+    /* The children must not travel either: no animation at all, not a 0.01ms one. */
+    .step.active h1,
+    .step.active :is(.subtitle, .partner-subtitle),
+    .step.active > :nth-child(3),
+    .step.active .quote-layout,
+    .step.active .ai-checklist,
+    .step.active .partner-info-card { animation: none !important; }
+    .search-dropdown.is-leaving, .calendar-dropdown.is-leaving { animation: none !important; }
+    .ai-check-item { transition: background 160ms linear !important; }
+    .segment-fill  { transition: transform 160ms linear !important; }
+    .check-icon.checking, .spinner {
+      animation: none !important;
+      border-top-color: var(--ai-fg);
+    }
+    .btn-primary:active:not(:disabled), .btn-secondary:active, .btn-checkout:active { transform: none !important; }
+  }
+  @keyframes rmFade { from { opacity: 0 } to { opacity: 1 } }
 </style>
 </head>
 <body>
@@ -3313,16 +3203,6 @@
     });
   }
 
-  // Radio selection
-  function selectRadio(el) {
-    el.parentElement.querySelectorAll('.radio-option').forEach(r => {
-      r.classList.remove('selected');
-      r.setAttribute('aria-checked', 'false');
-    });
-    el.classList.add('selected');
-    el.setAttribute('aria-checked', 'true');
-  }
-
   /* ============ STEP 6: quote ============
      The old table was not internally consistent: Deluxe cost more than Premier
      while showing equal or lower limits on every row, and Basic and Deluxe were
@@ -3409,21 +3289,6 @@
         details.appendChild(row);
       });
     });
-  }
-
-  // Enable editing on pre-filled fields
-  function enableEdit(btn) {
-    const row = btn.closest('.prefill-value');
-    const input = row.querySelector('input');
-    if (input) {
-      input.removeAttribute('readonly');
-      input.focus();
-      input.select();
-    }
-    const select = row.querySelector('select');
-    if (select) {
-      select.focus();
-    }
   }
 
   // Email validation
