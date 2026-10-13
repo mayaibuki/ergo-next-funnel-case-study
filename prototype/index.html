@@ -2015,6 +2015,7 @@
      and its per-source state changes, only the travel and spin go.
      ============================================================ */
   @media (prefers-reduced-motion: reduce) {
+    .check-icon { animation: none !important; }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
@@ -3563,6 +3564,12 @@
     clearTimeout(modalCloseTimer);          // reopening mid-exit must not re-hide it
     modal.classList.remove('is-closing');
     modal.hidden = false;
+    // Once the enter animation settles, clear it: a filled transform (even an
+    // identity one) would make the floating calendar's fixed box resolve
+    // against the modal instead of the viewport.
+    const content = modal.querySelector('.modal-content');
+    content.style.animation = '';
+    content.addEventListener('animationend', () => { content.style.animation = 'none'; }, { once: true });
     document.getElementById('main').inert = true;
     document.body.style.overflow = 'hidden';
     document.getElementById('claimsModalTitle').focus();
@@ -3575,10 +3582,12 @@
     // Exit animation first, hidden after. Reduced motion skips the wait.
     const finish = () => {
       modal.classList.remove('is-closing');
+      modal.querySelector('.modal-content').style.animation = '';
       modal.hidden = true;
     };
     if (REDUCED_MOTION) finish();
     else {
+      modal.querySelector('.modal-content').style.animation = '';   // let the exit keyframes run
       modal.classList.add('is-closing');
       modalCloseTimer = setTimeout(finish, 140);
     }
