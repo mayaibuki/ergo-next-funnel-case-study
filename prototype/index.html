@@ -43,49 +43,55 @@
 
   /* ============================================
      DESIGN TOKENS
-     Brand anchor #8E0038 (ERGO wine) maps to --brand-700.
-     Neutral anchor #231F20 maps to --n-900.
+     Brand anchor #8E0038 (ERGO wine) is --brand-700; fills and links run on
+     --brand-600 via --color-primary (Phase 2, decision D1).
+     Neutral text anchor is --n-900 (#2A2527, retuned from #231F20).
      ============================================ */
   :root {
     /* ---- Primitives: brand ramp, hue 336 ---- */
     --brand-50:  #FCF3F6;
-    --brand-100: #F8E2EA;
+    --brand-100: #F9E6ED;
     --brand-200: #EFC7D6;
     --brand-300: #DE96B2;
     --brand-400: #D04E80;
     --brand-500: #BA1758;
     --brand-600: #A60747;
+    --brand-650: #C2366D;   /* selected-column outline, 4.77:1 on brand-50 */
     --brand-700: #8E0038;   /* ERGO anchor, unchanged */
+    --brand-750: #75002E;   /* primary active */
     --brand-800: #6B002B;
     --brand-900: #47001E;
 
     /* ---- Primitives: warm neutral ramp, hue 340 ---- */
     --n-0:   #FFFFFF;
     --n-25:  #FDFCFC;
-    --n-50:  #FBF9FA;
-    --n-100: #F6F4F4;
-    --n-200: #ECE9EA;
-    --n-300: #DBD6D8;
+    --n-50:  #FAF8F9;   /* page background */
+    --n-100: #F4F1F2;
+    --n-200: #EEEAEC;
+    --n-300: #E6E1E3;
     --n-400: #BCB3B6;
-    --n-500: #938A8D;
+    --n-450: #757073;   /* placeholder, 4.86:1 */
+    --n-500: #938A8D;   /* control borders only, 3.35:1 */
     --n-600: #6E686A;
-    --n-700: #554E51;
+    --n-700: #5C5558;
     --n-800: #3B3537;
-    --n-900: #231F20;   /* ERGO anchor, unchanged */
+    --n-900: #2A2527;
 
     /* ---- Primitives: status ---- */
-    --green-50: #E7F3EB;  --green-200: #8CC2A0;  --green-700: #0A6B39;
-    --amber-50: #FDF6EC;  --amber-100: #FCF0DF;  --amber-200: #DCA75F;  --amber-700: #8A4B00;
-    --red-50:   #FBEAE9;  --red-200:   #E5928D;  --red-700:   #A8201C;
-    --blue-50:  #E6F1F7;  --blue-200:  #8AB8D2;  --blue-700:  #0B5E86;
-    --violet-50:#F1EFFB;  --violet-100:#EFEDFA;  --violet-200:#968CD3;  --violet-700:#443A96;
+    --green-50: #EAF6EF;  --green-200: #8CC2A0;  --green-700: #0F7040;
+    --amber-50: #FEF5E6;  --amber-100: #FCF0DF;  --amber-200: #DCA75F;  --amber-700: #8A4B00;
+    --red-50:   #FDEDEB;  --red-200:   #E5928D;  --red-700:   #B42318;
+    --blue-50:  #EAF4FA;  --blue-200:  #8AB8D2;  --blue-700:  #0B5E86;
+    --violet-50:#F3F1FD;  --violet-100:#F3F1FD;  --violet-200:#D9D4F5;  --violet-700:#4A3FA6;
 
     /* ---- Semantic: surface ---- */
+    --surface-page:     var(--n-50);
     --surface:          var(--n-0);
     --surface-raised:   var(--n-0);
-    --surface-sunken:   var(--n-50);
-    --surface-sunken-2: var(--n-100);
+    --surface-sunken:   var(--n-100);
+    --surface-sunken-2: var(--n-200);
     --surface-brand:    var(--brand-50);
+    --surface-disabled: var(--n-100);
     --surface-scrim:    rgba(35,31,32,0.55);
 
     /* ---- Semantic: border. --border-strong is the only one that may be
@@ -93,16 +99,24 @@
     --border-subtle:  var(--n-200);
     --border-default: var(--n-300);
     --border-strong:  var(--n-500);
-    --border-brand:   var(--brand-700);
-    --border-focus:   var(--n-900);
+    --border-brand:   var(--brand-600);
+    --border-focus:   var(--brand-600);
+    --border-width-control: 1px;
+    --border-width-card:    1px;
 
     /* ---- Semantic: text ---- */
-    --text-primary:     var(--n-900);   /* 16.30:1 on white */
-    --text-secondary:   var(--n-700);   /*  8.09:1 */
+    --text-primary:     var(--n-900);   /* 15.1:1 on white */
+    --text-secondary:   var(--n-700);   /*  7.25:1 */
     --text-tertiary:    var(--n-600);   /*  5.45:1 */
-    --text-placeholder: var(--n-500);   /*  3.35:1, non-content only */
+    --text-placeholder: var(--n-450);   /*  4.86:1 */
+    --text-disabled:    #8A8285;
     --text-on-brand:    var(--n-0);
-    --text-link:        var(--brand-700);
+    --text-link:        var(--brand-600);
+
+    /* ---- Semantic: brand actions (D1) ---- */
+    --color-primary:        var(--brand-600);
+    --color-primary-hover:  var(--brand-700);
+    --color-primary-active: var(--brand-750);
 
     /* ---- Semantic: status ---- */
     --success-bg: var(--green-50);  --success-border: var(--green-200);  --success-fg: var(--green-700);
@@ -111,21 +125,22 @@
     --info-bg:    var(--blue-50);   --info-border:    var(--blue-200);   --info-fg:    var(--blue-700);
 
     /* ---- Semantic: AI provenance. Violet never marks anything clickable. ---- */
-    --ai-bg:     var(--violet-100);
+    --ai-bg:     var(--violet-50);
     --ai-border: var(--violet-200);
     --ai-fg:     var(--violet-700);
 
     /* ---- Semantic: field confidence (step 3 rails) ---- */
     --confidence-estimate: var(--amber-700);
-    --confidence-edited:   var(--brand-700);
+    --confidence-edited:   var(--brand-600);
 
     /* ============ TYPE ============
        Ratio 1.2, anchored 17px. All bounds in rem so the scale survives
        browser text resize to 200%. Never px inside clamp(). */
     --font-family: 'FS Me Neue', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
-    --text-caption:    0.75rem;                                        /* 12 */
+    --text-caption:    0.8125rem;                                      /* 13 */
     --text-small:      0.875rem;                                       /* 14 */
+    --text-label:      0.9375rem;                                      /* 15, field labels */
     --text-body:       clamp(1rem,     0.974rem + 0.110vw, 1.0625rem); /* 16 -> 17 */
     --text-lead:       clamp(1.125rem, 1.073rem + 0.221vw, 1.25rem);   /* 18 -> 20 */
     --text-heading:    clamp(1.25rem,  1.146rem + 0.442vw, 1.5rem);    /* 20 -> 24 */
@@ -135,16 +150,17 @@
     --lh-display:    1.10;
     --lh-display-sm: 1.15;
     --lh-heading:    1.25;
-    --lh-lead:       1.35;
+    --lh-lead:       1.45;
     --lh-body:       1.55;
-    --lh-ui:         1.20;
+    --lh-label:      1.35;
+    --lh-ui:         1.20;   /* single-line controls only */
     --lh-small:      1.45;
     --lh-caption:    1.35;
 
     --tracking-display: -0.02em;
     --tracking-heading: -0.01em;
     --tracking-lead:    -0.005em;
-    --tracking-caps:     0.06em;
+    --tracking-caps:     0.04em;
 
     /* Only 400 and 700 exist in FS Me Neue. There is no 500 and no 600. */
     --weight-regular: 400;
@@ -162,13 +178,14 @@
     --page-pad-top:    var(--space-12);
     --page-pad-bottom: 6rem;
 
-    --stack-display-lead:  var(--space-2);
-    --stack-lead-body:     var(--space-8);
+    --stack-display-lead:  var(--space-3);
+    --stack-lead-body:     var(--space-10);
     --stack-section-title: var(--space-3);
-    --stack-section:       var(--space-8);
-    --stack-group:         var(--space-6);
-    --stack-label:         var(--space-2);
-    --stack-actions:       var(--space-8);
+    --stack-section:       var(--space-10);
+    --stack-group:         var(--space-8);
+    --stack-label:         var(--space-3);   /* label/sublabel -> control */
+    --stack-sublabel:      var(--space-1);   /* label -> sublabel */
+    --stack-actions:       var(--space-10);
 
     /* ============ RADIUS ============ */
     --radius-2xs: 2px;
@@ -177,6 +194,16 @@
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-pill: 100px;
+    --radius-chip:      999px;   /* chips are pills */
+    --radius-control:   12px;    /* inputs, search, selects, radio cards */
+    --radius-callout:   12px;
+    --radius-container: 16px;    /* cards, tables, dropdown, modal */
+
+    /* ============ CONTROL SIZING ============ */
+    --control-h:        48px;
+    --control-h-mobile: 52px;
+    --control-h-lg:     56px;    /* checkout */
+    --btn-pad-x:        var(--space-6);
 
     /* ============ ELEVATION ============ warm-tinted, keyed to n-900 */
     --shadow-xs: 0 1px 2px rgba(35,31,32,0.06);
@@ -184,9 +211,10 @@
     --shadow-md: 0 4px 12px rgba(35,31,32,0.08), 0 1px 3px rgba(35,31,32,0.06);
     --shadow-lg: 0 12px 28px rgba(35,31,32,0.12), 0 2px 6px rgba(35,31,32,0.06);
     --shadow-xl: 0 24px 60px rgba(35,31,32,0.20);
+    --shadow-card: 0 1px 2px rgba(42,37,39,0.05), 0 1px 3px rgba(42,37,39,0.04);
 
     --focus-ring: 0 0 0 3px var(--n-0), 0 0 0 5px var(--border-focus);
-    --ring-brand: 0 0 0 3px rgba(142,0,56,0.18);
+    --ring-brand: 0 0 0 3px rgba(166,7,71,0.18);
     --ring-error: 0 0 0 3px rgba(168,32,28,0.16);
 
     /* ============ MOTION ============ */
@@ -232,11 +260,14 @@
     font-family: var(--font-family);
     font-size: var(--text-body);
     color: var(--text-primary);
-    background: var(--surface);
+    background: var(--surface-page);
     line-height: var(--lh-body);
-    /* No -webkit-font-smoothing: antialiased. FS Me Neue is a legibility-first
-       face; antialiasing thins its stems and only applies on WebKit/macOS, so
-       the artifact would render at two different weights. Deliberate. */
+    /* Phase 2 trial (D5): compared step 1 and step 6 at 1280 with and without
+       antialiasing. Body and table text read slightly lighter; the display h1
+       and button labels held their weight, so the rule stays. Re-check in
+       Safari, where the effect is stronger than in Chromium. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-synthesis: none;
     min-height: 100vh;
   }
@@ -303,7 +334,7 @@
   .segment-fill {
     width: 0;                 /* JS owns this; the markup no longer does */
     height: 100%;
-    background: var(--brand-700);
+    background: var(--color-primary);
     border-radius: var(--radius-2xs);
     transition: width var(--dur-slow) var(--ease-standard);
   }
@@ -316,7 +347,7 @@
     transition: color var(--t-fast);
   }
   /* Weight, not only hue, marks the current step. */
-  .segment-label.active { color: var(--brand-700); font-weight: var(--weight-bold); }
+  .segment-label.active { color: var(--text-link); font-weight: var(--weight-bold); }
   .segment-label.completed { color: var(--text-secondary); }
 
   /* ---- Search (step 1) ---- */
@@ -425,7 +456,7 @@
     margin-top: 2px;
   }
   /* Was #FEE2E2, a pale red — an error tint on a successful match. */
-  .search-result .icon.place  { background: var(--brand-100); color: var(--brand-700); }
+  .search-result .icon.place  { background: var(--brand-100); color: var(--text-link); }
   .search-result .icon.manual { background: var(--surface-sunken-2); color: var(--text-secondary); }
 
   .search-result .info { flex: 1; min-width: 0; }
@@ -618,7 +649,7 @@
     font-weight: var(--weight-bold);
     font-family: var(--font-family);
     color: var(--text-on-brand);
-    background: var(--brand-700);
+    background: var(--color-primary);
     border: none;
     border-radius: var(--radius-pill);
     cursor: pointer;
@@ -628,7 +659,7 @@
     text-decoration: none;
   }
   .btn-primary:hover:not(:disabled) {
-    background: var(--brand-800);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
   }
@@ -704,7 +735,7 @@
     text-underline-offset: 2px;
     cursor: pointer;
   }
-  .btn-link:hover { color: var(--brand-800); }
+  .btn-link:hover { color: var(--color-primary-hover); }
 
   .legal-text {
     font-size: var(--text-small);
@@ -809,7 +840,7 @@
   .search-icon [data-lucide] { width: 20px; height: 20px; color: var(--text-secondary); }
   .search-result .icon [data-lucide] { width: 20px; height: 20px; }
   .search-result .arrow [data-lucide] { width: 16px; height: 16px; color: var(--text-secondary); }
-  .calendar-icon [data-lucide] { width: 20px; height: 20px; color: var(--brand-700); }
+  .calendar-icon [data-lucide] { width: 20px; height: 20px; color: var(--text-link); }
 
   /* ---- Typography normalisation.
      line-height: 1.6 on body used to inherit into 24, 32 and 48px text. ---- */
@@ -1096,7 +1127,7 @@
   }
   .confidence-chip.edited {
     background: var(--brand-50);
-    color: var(--brand-700);
+    color: var(--text-link);
     border: 1px solid var(--brand-200);
   }
 
@@ -1135,15 +1166,15 @@
     content: '';
     width: 10px; height: 10px;
     border-radius: 50%;
-    background: var(--brand-700);
+    background: var(--color-primary);
     transform: scale(0);
     transition: transform var(--dur-base) var(--ease-emphasized);
   }
   input[type="radio"]:checked + .radio-option {
-    border-color: var(--brand-700);
+    border-color: var(--color-primary);
     background: var(--surface-brand);
   }
-  input[type="radio"]:checked + .radio-option .radio-dot { border-color: var(--brand-700); }
+  input[type="radio"]:checked + .radio-option .radio-dot { border-color: var(--color-primary); }
   input[type="radio"]:checked + .radio-option .radio-dot::after { transform: scale(1); }
   input[type="radio"]:focus-visible + .radio-option { box-shadow: var(--focus-ring); }
 
@@ -1368,7 +1399,7 @@
   /* The old placeholder reserved 40px for a 30px badge, so Basic and Deluxe
      sat 10px below Premier on both tables. These are real labels now. */
   .plan-badge.muted { background: var(--surface-sunken-2); color: var(--text-tertiary); }
-  .plan-badge.recommended-badge { background: var(--brand-700); color: var(--text-on-brand); }
+  .plan-badge.recommended-badge { background: var(--color-primary); color: var(--text-on-brand); }
   .plan-name { font-weight: var(--weight-bold); font-size: var(--text-body); }
   .plan-price {
     font-size: var(--text-lead);
@@ -1403,12 +1434,12 @@
   }
   /* The recommended column is a column, not a 1.04:1 tint that was invisible. */
   .ct-col.is-selected { background: var(--surface-brand); }
-  thead .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--brand-700), inset -2px 0 0 var(--brand-700); }
-  tbody .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--brand-700), inset -2px 0 0 var(--brand-700); }
+  thead .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--color-primary), inset -2px 0 0 var(--color-primary); }
+  tbody .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--color-primary), inset -2px 0 0 var(--color-primary); }
   .ct-radio:checked + .plan-badge ~ .plan-radio,
   .ct-plan-label:has(.ct-radio:checked) .plan-radio {
-    border-color: var(--brand-700);
-    background: var(--brand-700);
+    border-color: var(--color-primary);
+    background: var(--color-primary);
   }
   .ct-plan-label:has(.ct-radio:checked) .plan-radio::after { transform: scale(1); }
   /* Colour only. A size jump on selection re-flowed the header row. */
@@ -1488,13 +1519,13 @@
     font-size: var(--text-body);
     font-weight: var(--weight-bold);
     color: var(--text-on-brand);
-    background: var(--brand-700);
+    background: var(--color-primary);
     border: none;
     border-radius: var(--radius-pill);
     cursor: pointer;
     transition: background var(--t-fast);
   }
-  .btn-checkout:hover { background: var(--brand-800); }
+  .btn-checkout:hover { background: var(--color-primary-hover); }
   .sidebar-details { display: flex; flex-direction: column; gap: var(--space-1); }
   .detail-section {
     margin-top: var(--space-3);
@@ -1716,7 +1747,7 @@
   }
   .calendar-day:hover:not(:disabled) { background: var(--surface-sunken-2); }
   .calendar-day.today,
-  .calendar-day.selected { background: var(--brand-700); color: var(--text-on-brand); font-weight: var(--weight-bold); }
+  .calendar-day.selected { background: var(--color-primary); color: var(--text-on-brand); font-weight: var(--weight-bold); }
   .calendar-day:disabled {
     background: none;
     color: var(--text-placeholder);
