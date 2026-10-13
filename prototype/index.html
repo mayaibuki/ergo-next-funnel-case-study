@@ -2919,13 +2919,14 @@
     if (val.length >= 2) {
       searchTimer = setTimeout(() => runSearch(val), 250);
     } else {
+      searchSeq++;                           // cancels an in-flight lookup
       setSearchState('idle');
     }
   });
 
   searchInput.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-      if (dropdown.classList.contains('visible')) { e.preventDefault(); setSearchState('idle'); }
+      if (dropdown.classList.contains('visible')) { e.preventDefault(); searchSeq++; setSearchState('idle'); }
       return;
     }
     const opts = visibleOptions();
@@ -3154,7 +3155,7 @@
     // Drives the container token swap: step 6 needs a wider column than the
     // form steps, and the header has to widen with it rather than desynchronise.
     document.body.dataset.step = n;
-    if (n === 6) centreSelectedPlans();
+    if (n === 6) { recalcQuote(); centreSelectedPlans(); }
 
     updateStepper(n);
 
@@ -3507,9 +3508,9 @@
     // Clamp navigation to the bookable window. The user could previously page
     // back to 1970 or forward indefinitely and pick a start date years out.
     document.getElementById('calPrev').disabled =
-      calYear === today.getFullYear() && calMonth === today.getMonth();
+      calYear === calMin.getFullYear() && calMonth === calMin.getMonth();
     document.getElementById('calNext').disabled =
-      calYear === maxDate.getFullYear() && calMonth === maxDate.getMonth();
+      calYear === calMax.getFullYear() && calMonth === calMax.getMonth();
   }
 
   function toggleCalendar(input) {
@@ -3555,9 +3556,12 @@
     else document.getElementById('claimsSummary').hidden = true;
   }
 
+  let modalCloseTimer = null;
   function openClaimsModal() {
     lastFocused = document.activeElement;
     const modal = document.getElementById('claimsModal');
+    clearTimeout(modalCloseTimer);          // reopening mid-exit must not re-hide it
+    modal.classList.remove('is-closing');
     modal.hidden = false;
     document.getElementById('main').inert = true;
     document.body.style.overflow = 'hidden';
@@ -3576,7 +3580,7 @@
     if (REDUCED_MOTION) finish();
     else {
       modal.classList.add('is-closing');
-      setTimeout(finish, 140);
+      modalCloseTimer = setTimeout(finish, 140);
     }
     document.getElementById('main').inert = false;
     document.body.style.overflow = '';
@@ -3611,7 +3615,16 @@
 
     document.getElementById('claimCapNote').hidden = !(Number.isFinite(raw) && raw > 5);
 
-    for (let i = rows.length; i > count; i--) rows[i - 1].remove();
+    // The shared calendar may live inside a row about to go; park it back on
+    // step 4 first, otherwise it is deleted with the row.
+    const cal = document.getElementById('calendarDropdown');
+    for (let i = rows.length; i > count; i--) {
+      if (cal && rows[i - 1].contains(cal)) {
+        closeCalendar();
+        document.querySelector('#step4 .date-input-wrapper').appendChild(cal);
+      }
+      rows[i - 1].remove();
+    }
 
     for (let i = rows.length; i < count; i++) {
       const ordinal = ORDINALS[i];
