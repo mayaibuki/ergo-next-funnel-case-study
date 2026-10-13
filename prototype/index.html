@@ -613,6 +613,9 @@
     box-shadow: var(--shadow-lg);
     z-index: 50;
   }
+  /* Inside the scrolling claims modal the dropdown would be clipped by
+     overflow-y: auto, so it floats on a fixed layer positioned from the field. */
+  .calendar-dropdown.is-floating { position: fixed; top: auto; left: auto; z-index: 1100; }
   .calendar-dropdown.visible { display: block; animation: dropdownIn var(--dur-base) var(--ease-decelerate) both; }
   .calendar-dropdown.is-leaving { display: block; animation: dropdownOut var(--dur-exit) var(--ease-accelerate) both; }
   .calendar-header {
@@ -3420,6 +3423,7 @@
     clearTimeout(calLeaveTimer);
     cal.classList.add('visible');
     renderCalendar();
+    positionFloatingCalendar(input);
     // Focus moves into the dialog: the chosen day, else today, else the first
     // bookable day. Keyboard users previously had to tab through the form to reach it.
     const target = cal.querySelector('.calendar-day.selected')
@@ -3428,12 +3432,32 @@
     if (target) target.focus({ preventScroll: true });
   }
 
+  // A calendar opened inside the modal escapes the modal's scroll clipping by
+  // switching to fixed positioning, anchored to the field's viewport rect and
+  // flipped above the field when there is no room below.
+  let floatingAnchor = null;
+  function positionFloatingCalendar(input) {
+    const cal = document.getElementById('calendarDropdown');
+    const scroller = input.closest('.modal-content');
+    if (!scroller) { cal.classList.remove('is-floating'); cal.style.cssText = ''; floatingAnchor = null; return; }
+    floatingAnchor = input;
+    cal.classList.add('is-floating');
+    const r = input.getBoundingClientRect();
+    const h = cal.offsetHeight || 360;
+    const below = r.bottom + 4 + h <= window.innerHeight - 8;
+    cal.style.left = Math.max(8, Math.min(r.left, window.innerWidth - cal.offsetWidth - 8)) + 'px';
+    cal.style.top = (below ? r.bottom + 4 : Math.max(8, r.top - 4 - h)) + 'px';
+  }
+  function repositionFloatingCalendar() { if (floatingAnchor) positionFloatingCalendar(floatingAnchor); }
+  window.addEventListener('resize', repositionFloatingCalendar);
+  document.addEventListener('scroll', repositionFloatingCalendar, true);
+
   // Exit animation first, hidden after; reduced motion skips the wait.
   let calLeaveTimer = null;
   function closeCalendar() {
     const cal = document.getElementById('calendarDropdown');
     if (!cal.classList.contains('visible') || cal.classList.contains('is-leaving')) return;
-    const finish = () => cal.classList.remove('visible', 'is-leaving');
+    const finish = () => { cal.classList.remove('visible', 'is-leaving', 'is-floating'); cal.style.cssText = ''; floatingAnchor = null; };
     if (REDUCED_MOTION) { finish(); return; }
     cal.classList.add('is-leaving');
     calLeaveTimer = setTimeout(finish, 120);
