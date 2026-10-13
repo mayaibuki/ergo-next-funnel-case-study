@@ -251,7 +251,7 @@
   /* Instant by default. Smooth scrolling is opt-in and motion-gated, because
      `scroll-behavior: smooth` on html is a common vestibular trigger and it
      also fights the step-enter animation. */
-  html { scroll-behavior: auto; }
+  html { scroll-behavior: auto; scrollbar-gutter: stable; }
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
@@ -307,6 +307,7 @@
     align-items: center;
     justify-content: center;
     background: var(--surface);
+    box-shadow: 0 1px 0 var(--border-subtle);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -320,34 +321,43 @@
   .logo img { width: auto; display: block; }
 
   /* ---- Segmented stepper ---- */
-  .segmented-stepper { display: flex; gap: var(--space-2); }
+  .segmented-stepper-list {
+    list-style: none;
+    display: flex;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+  }
   .stepper-segment { display: flex; flex-direction: column; gap: 6px; }
   .segment-track {
-    background: var(--surface-sunken-2);
-    /* A 4px light-grey bar on white is otherwise imperceptible. */
-    box-shadow: inset 0 0 0 1px var(--border-subtle);
-    height: 4px;
-    border-radius: var(--radius-2xs);
+    background: var(--n-200);
+    box-shadow: none;
+    height: 3px;
+    border-radius: var(--radius-pill);
     width: 100%;
     overflow: hidden;
   }
+  /* Full-width bar scaled on the compositor. JS sets scaleX(), never width,
+     so the fill never triggers layout mid-transition. */
   .segment-fill {
-    width: 0;                 /* JS owns this; the markup no longer does */
+    width: 100%;
     height: 100%;
     background: var(--color-primary);
-    border-radius: var(--radius-2xs);
-    transition: width var(--dur-slow) var(--ease-standard);
+    border-radius: var(--radius-pill);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-slow) var(--ease-standard);
   }
   .segment-label {
     font-size: var(--text-small);
     color: var(--text-tertiary);
     font-weight: var(--weight-regular);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    text-transform: none;
+    letter-spacing: 0;
     transition: color var(--t-fast);
   }
   /* Weight, not only hue, marks the current step. */
-  .segment-label.active { color: var(--text-link); font-weight: var(--weight-bold); }
+  .segment-label.active { color: var(--text-primary); font-weight: var(--weight-bold); }
   .segment-label.completed { color: var(--text-secondary); }
 
   /* ---- Search (step 1) ---- */
@@ -366,19 +376,21 @@
   }
   .search-input {
     width: 100%;
-    min-height: 60px;
+    min-height: var(--control-h);
     /* 20px gutter + 20px icon + 12px gap. Decided as a pair with .search-icon. */
     padding: 0 var(--space-5) 0 3.25rem;
     font-size: var(--text-body);
     line-height: var(--lh-ui);
     font-family: var(--font-family);
-    border: 1.5px solid var(--border-strong);
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
     outline: none;
     transition: border-color var(--t-fast), box-shadow var(--t-fast);
     color: var(--text-primary);
+    caret-color: var(--color-primary);
     background: var(--surface);
   }
+  .search-input:hover { border-color: var(--text-secondary); }
   .search-input:focus-visible {
     border-color: var(--border-focus);
     box-shadow: var(--focus-ring);
@@ -487,21 +499,26 @@
      Deliberately not .tip-box: a privacy notice with a lightbulb icon reads
      as a marketing tip rather than as a disclosure.
      ============================================ */
-  .disclosure {
+  /* ---- Callout. One surface for every in-flow note: the step-1 disclosure,
+     the step-3 tip, the step-5 consequence, the step-6 included strips and
+     the claims summary. No border and no left rail; the sunken fill is the
+     whole signal, and the icon carries the semantic colour. ---- */
+  .disclosure, .tip-box, .consequence, .included-strip, .claims-summary {
     display: flex;
+    align-items: flex-start;
     gap: var(--space-3);
-    padding: var(--space-4);
-    margin-bottom: var(--space-6);
-    background: var(--surface);
-    border: 1px solid var(--border-default);
-    border-left: 3px solid var(--text-secondary);
-    border-radius: var(--radius-sm);
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-sunken);
+    border: none;
+    border-left: none;
+    border-radius: var(--radius-callout);
     font-size: var(--text-small);
     line-height: var(--lh-small);
-    color: var(--text-secondary);
+    color: var(--n-800);
   }
-  .disclosure p { max-width: var(--measure-prose); }
-  .disclosure-icon { flex-shrink: 0; color: var(--text-secondary); }
+  .disclosure { margin-bottom: var(--space-6); }
+  .disclosure p { max-width: var(--measure-prose); text-wrap: pretty; }
+  .disclosure-icon { flex-shrink: 0; margin-top: 1px; color: var(--text-tertiary); }
   .disclosure-icon [data-lucide] { width: 18px; height: 18px; }
   .disclosure-link {
     display: inline-block;
@@ -536,19 +553,9 @@
   .prefill-section { margin-bottom: var(--stack-section); }
   .prefill-value input::placeholder { color: var(--text-placeholder); font-weight: var(--weight-regular); }
 
-  .tip-box {
-    display: flex;
-    gap: var(--space-3);
-    padding: 14px 18px;
-    background: var(--surface-sunken-2);
-    border-radius: var(--radius-md);
-    font-size: var(--text-small);
-    color: var(--text-secondary);
-    line-height: var(--lh-body);
-    margin-top: 14px;
-    align-items: flex-start;
-  }
-  .tip-box .tip-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+  /* Surface and type come from the shared callout rule above. */
+  .tip-box { margin-top: var(--space-4); text-wrap: pretty; }
+  .tip-box .tip-icon { flex-shrink: 0; margin-top: 1px; }
 
   /* ---- Step 4 ---- */
   .form-group { margin-bottom: var(--stack-group); }
@@ -564,12 +571,12 @@
   }
 
   .date-input-wrapper .form-input {
-    padding-right: 44px;
+    padding-right: var(--space-12);
     cursor: pointer;
   }
   .date-input-wrapper .calendar-icon {
     position: absolute;
-    right: 14px;
+    right: var(--space-4);
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-secondary);
@@ -595,19 +602,21 @@
     margin-bottom: var(--space-3);
   }
   .calendar-header .cal-nav {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border: none;
     background: transparent;
-    font-size: 18px;
     color: var(--text-secondary);
     cursor: pointer;
-    border-radius: 50%;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color var(--t-fast);
   }
-  .calendar-header .cal-nav:hover { background: var(--surface-sunken); }
+  .calendar-header .cal-nav [data-lucide] { width: 16px; height: 16px; }
+  .calendar-header .cal-nav:hover:not(:disabled) { background: var(--surface-sunken); }
+  .calendar-header .cal-nav:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   .calendar-header .cal-title {
     font-size: var(--text-body);
     font-weight: var(--weight-bold);
@@ -621,19 +630,10 @@
   }
   .calendar-weekdays span {
     font-size: var(--text-caption);
-    padding: 6px 0;
+    padding: var(--space-2) 0;
   }
 
   /* ---- Step 5 ---- */
-  /* Legacy placement of the TRUE / NOT TRUE label: centred in its 62px slot
-     with an 8px gutter from the switch. Kept for parity; Phase 3 may drop it. */
-  .toggle-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: var(--space-2);
-  }
-
   .modal-content .form-group { margin-bottom: var(--space-5); }
   .modal-content .form-group:last-of-type { margin-bottom: var(--space-6); }
 
@@ -642,8 +642,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 52px;              /* min-, so it survives increased text spacing */
-    padding: 0 var(--space-10);
+    min-height: var(--control-h);  /* min-, so it survives increased text spacing */
+    padding: 0 var(--btn-pad-x);
     font-size: var(--text-body);
     line-height: var(--lh-ui);
     font-weight: var(--weight-bold);
@@ -653,54 +653,55 @@
     border: none;
     border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: background-color var(--t-fast), transform var(--dur-instant) var(--ease-standard),
-                box-shadow var(--t-fast);
+    /* Hover is a colour change only; the press is the one movement. */
+    transition: background-color var(--t-fast), transform var(--dur-instant) var(--ease-standard);
     gap: var(--space-2);
     text-decoration: none;
   }
-  .btn-primary:hover:not(:disabled) {
-    background: var(--color-primary-hover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+  .btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+  .btn-primary:active:not(:disabled) {
+    background: var(--color-primary-active);
+    transform: scale(0.96);
   }
-  /* Reads as a press rather than as settling back. */
-  .btn-primary:active:not(:disabled) { transform: scale(0.975); }
   .btn-primary:disabled {
     /* Was white on #C9C5C7 at 70% opacity: 1.44:1, unreadable, and it is the
        default state of the first CTA in the funnel. */
-    background: var(--n-200);
-    color: var(--text-tertiary);
+    background: var(--surface-disabled);
+    color: var(--text-disabled);
     cursor: not-allowed;
   }
 
-  /* Phase 3 restyles this. Ported as-is apart from token conversion. */
   .btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 52px;
-    padding: 0 var(--space-10);
+    min-height: var(--control-h);
+    padding: 0 var(--btn-pad-x);
     font-size: var(--text-body);
+    line-height: var(--lh-ui);
     font-weight: var(--weight-bold);
     font-family: var(--font-family);
     color: var(--text-primary);
     background: transparent;
-    border: 2px solid var(--border-strong);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: border-color var(--t-fast), background-color var(--t-fast), color var(--t-fast);
-    gap: 6px;
+    transition: border-color var(--t-fast), background-color var(--t-fast),
+                transform var(--dur-instant) var(--ease-standard);
+    gap: var(--space-2);
   }
-  .btn-secondary:hover { border-color: var(--text-primary); }
+  .btn-secondary:hover { border-color: var(--border-strong); background: var(--surface); }
+  .btn-secondary:active { transform: scale(0.96); }
 
+  /* No divider above the actions: the --stack-actions gap is the separator. */
   .actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: var(--space-3);
     margin-top: var(--stack-actions);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--border-subtle);
+    padding-top: 0;
+    border-top: none;
   }
   /* The primary button used to land at 24 / 76 / 84 / 92 / 92px from the
      preceding block across the five steps, so it jumped on every transition.
@@ -713,11 +714,20 @@
   /* Step 1 stacks its CTA over the legal line. Was five inline properties on
      the element; now it is in the cascade where media queries can reach it. */
   .actions--stacked {
-    border-top: none;
-    padding-top: 0;
     flex-direction: column;
-    align-items: flex-end;
-    gap: var(--space-2);
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  /* From 600px the legal line sits left of the CTA on one row, so the step
+     ends on the button rather than on a paragraph of small print. */
+  @media (min-width: 600px) {
+    .actions--stacked {
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .legal-text { text-wrap: balance; }
   }
 
   .btn-link {
@@ -738,11 +748,12 @@
   .btn-link:hover { color: var(--color-primary-hover); }
 
   .legal-text {
-    font-size: var(--text-small);
+    font-size: var(--text-caption);
     line-height: var(--lh-small);
-    color: var(--text-secondary);
-    max-width: var(--measure-tight);
-    text-align: right;
+    color: var(--text-tertiary);
+    max-width: none;
+    text-align: left;
+    text-wrap: pretty;
   }
   .legal-text a { color: var(--text-link); text-decoration: underline; text-underline-offset: 2px; }
 
@@ -750,7 +761,7 @@
   .coverage-actions {
     display: flex;
     gap: var(--space-5);
-    padding: 14px 0;
+    padding: var(--space-3) 0;
     font-size: var(--text-small);
   }
   .coverage-actions a {
@@ -836,7 +847,7 @@
     display: inline-block;
     vertical-align: middle;
   }
-  .tip-icon [data-lucide] { width: 20px; height: 20px; color: var(--warning-fg); }
+  .tip-icon [data-lucide] { width: 18px; height: 18px; color: var(--ai-fg); }
   .search-icon [data-lucide] { width: 20px; height: 20px; color: var(--text-secondary); }
   .search-result .icon [data-lucide] { width: 20px; height: 20px; }
   .search-result .arrow [data-lucide] { width: 16px; height: 16px; color: var(--text-secondary); }
@@ -869,20 +880,22 @@
   .quote-header .subtitle { margin-bottom: 0; }
 
   .prefill-section-title {
-    font-size: var(--text-small);
+    font-size: var(--text-body);
+    line-height: var(--lh-heading);
     font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
-    color: var(--text-tertiary);
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text-primary);
     margin-bottom: var(--stack-section-title);
   }
   .coverage-title {
-    font-size: var(--text-lead);
+    font-size: var(--text-body);
     line-height: var(--lh-lead);
     font-weight: var(--weight-bold);
+    text-wrap: balance;
     margin-bottom: var(--stack-section-title);
   }
-  .modal-content h2 { font-size: var(--text-heading); line-height: var(--lh-heading); }
+  .modal-content h2 { font-size: var(--text-heading); line-height: var(--lh-heading); text-wrap: balance; }
 
   /* Figures share one advance in FS Me Neue, so a fixed slot aligns the
      column. The declaration is inert in the brand face but corrects the
@@ -906,13 +919,13 @@
     margin: 0 0 var(--space-6);
     padding: var(--space-2) var(--space-3);
     background: var(--ai-bg);
-    border: 1px solid var(--ai-border);
-    border-radius: var(--radius-pill);
+    border: none;
+    border-radius: var(--radius-chip);
     color: var(--ai-fg);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    text-transform: none;
+    letter-spacing: 0;
   }
   .ai-powered-badge [data-lucide] { width: 14px; height: 14px; }
 
@@ -937,8 +950,8 @@
   .ai-check-item[data-state="checking"] { background: var(--ai-bg); }
   .ai-check-text {
     font-size: var(--text-body);
-    line-height: var(--lh-ui);
-    color: var(--text-placeholder);
+    line-height: var(--lh-small);
+    color: var(--text-tertiary);
     transition: color var(--t-base);
   }
   .ai-check-item[data-state="checking"] .ai-check-text { color: var(--text-primary); font-weight: var(--weight-bold); }
@@ -970,6 +983,17 @@
   .check-icon.found      { background: var(--success-fg); border: none; color: var(--n-0); }
   .check-icon.found [data-lucide] { width: 14px; height: 14px; }
   .check-icon.unresolved { border: 2px solid var(--warning-border); background: var(--warning-bg); }
+  /* Spinner to check is a class swap, so the handoff is a keyframe rather
+     than a transition: the icon fades and settles from 60% to full size.
+     The reduced-motion block above collapses it to 0.01ms with everything else. */
+  @keyframes checkIconIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .ai-check-item[data-state="found"] .check-icon,
+  .ai-check-item[data-state="unresolved"] .check-icon {
+    animation: checkIconIn var(--dur-base) var(--ease-standard) both;
+  }
 
   .gather-outcome {
     font-size: var(--text-body);
@@ -991,50 +1015,55 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-5);
     margin-bottom: var(--space-6);
     background: var(--ai-bg);
-    border: 1px solid var(--ai-border);
-    border-radius: var(--radius-md);
+    border: none;
+    border-radius: var(--radius-callout);
     color: var(--ai-fg);
     font-size: var(--text-small);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-regular);
   }
-  .provenance-banner [data-lucide] { width: 16px; height: 16px; flex-shrink: 0; }
+  .provenance-banner [data-lucide] { width: 16px; height: 16px; flex-shrink: 0; color: var(--ai-fg); }
   /* The only amber on the screen, and it is a live count, so amber means
-     "these need checking" rather than decorating every row. */
+     "these need checking" rather than decorating every row. Same chip as the
+     per-row Estimate mark, so the count and the rows read as one system. */
   .provenance-banner .count {
     margin-left: auto;
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-pill);
-    background: var(--warning-bg);
-    color: var(--warning-fg);
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    line-height: 20px;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-chip);
+    background: transparent;
+    color: inherit;
     font-size: var(--text-caption);
+    font-weight: var(--weight-bold);
     white-space: nowrap;
   }
 
   .prefill-card {
-    border: 1.5px solid var(--border-default);
-    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-container);
     /* clip, not hidden, so focus rings are not cropped by the card. */
     overflow: clip;
     overflow-clip-margin: 4px;
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-card);
   }
+  /* No left rails. Confidence is carried by the Estimate chip and the dashed
+     underline, and edits by weight; a third, colour-only channel added noise. */
   .prefill-row {
     display: flex;
     align-items: flex-start;
     gap: var(--space-4);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-5);
     min-height: 56px;
     border-bottom: 1px solid var(--border-subtle);
-    border-left: 3px solid transparent;
-    transition: background var(--t-fast), border-left-color var(--t-base);
+    transition: background var(--t-fast);
   }
   .prefill-row:last-child { border-bottom: none; }
-  .prefill-row:hover { background: var(--surface-sunken); }
-  .prefill-row[data-confidence="estimate"] { border-left-color: var(--confidence-estimate); }
-  .prefill-row[data-edited="true"]         { border-left-color: var(--confidence-edited); }
 
   .prefill-label {
     flex: 0 0 auto;
@@ -1045,6 +1074,7 @@
     padding: var(--space-2) 0 0;
     font-size: var(--text-small);
     line-height: var(--lh-small);
+    font-weight: var(--weight-regular);
     color: var(--text-tertiary);
     cursor: pointer;
   }
@@ -1069,10 +1099,10 @@
     -webkit-appearance: none;
     text-indent: 0;
     font-family: var(--font-family);
-    /* The value now outweighs the label. Both used to be 16px at the same
-       rendered weight, separated only by colour. */
+    /* Label and value differ by size and colour; weight is reserved for the
+       fields the user has changed, so an edit is visible at a glance. */
     font-size: var(--text-body);
-    font-weight: var(--weight-bold);
+    font-weight: var(--weight-regular);
     line-height: var(--lh-ui);
     color: var(--text-primary);
     background: none;
@@ -1081,6 +1111,9 @@
     padding: var(--space-2) 0;
     resize: vertical;
   }
+  .prefill-row[data-edited="true"] .prefill-value input,
+  .prefill-row[data-edited="true"] .prefill-value textarea,
+  .prefill-row[data-edited="true"] .prefill-select { font-weight: var(--weight-bold); }
   .prefill-value textarea { resize: none; }
   .prefill-value input[readonly] { cursor: default; }
   .prefill-row[data-confidence="estimate"] .prefill-value input {
@@ -1096,6 +1129,7 @@
   /* Chevron redrawn as a background so the select's text box starts at the
      same x as every input in the column. */
   .prefill-select {
+    max-width: 360px;
     padding-right: var(--space-6);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236E686A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -1112,23 +1146,24 @@
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-xs);
+    height: 20px;
+    line-height: 20px;
+    padding-inline: var(--space-2);
+    border: none;
+    border-radius: var(--radius-chip);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    text-transform: none;
+    letter-spacing: 0;
     white-space: nowrap;
   }
   .confidence-chip.estimate {
     background: var(--warning-bg);
     color: var(--warning-fg);
-    border: 1px solid var(--warning-border);
   }
   .confidence-chip.edited {
     background: var(--brand-50);
     color: var(--text-link);
-    border: 1px solid var(--brand-200);
   }
 
   /* ============================================================
@@ -1146,18 +1181,19 @@
     align-items: center;
     user-select: none;
     gap: var(--space-2);
-    min-height: 52px;
+    min-height: var(--control-h);
     padding: 0 var(--space-5);
-    border: 1.5px solid var(--border-strong);
-    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
     font-size: var(--text-body);
+    line-height: var(--lh-ui);
     cursor: pointer;
-    transition: border-color var(--t-fast), background var(--t-fast);
+    transition: border-color var(--t-fast), background-color var(--t-fast), box-shadow var(--t-fast);
   }
   .radio-option:hover { border-color: var(--text-secondary); background: var(--surface-sunken); }
   .radio-dot {
     width: 20px; height: 20px;
-    border: 2px solid var(--border-strong);
+    border: 1.5px solid var(--border-strong);
     border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
     transition: border-color var(--t-fast);
@@ -1168,52 +1204,62 @@
     border-radius: 50%;
     background: var(--color-primary);
     transform: scale(0);
-    transition: transform var(--dur-base) var(--ease-emphasized);
+    transition: transform var(--dur-base) var(--ease-standard);
   }
+  /* Checked reads as a 2px brand edge: 1px border plus a 1px inset ring,
+     so the control does not grow by a pixel when selected. */
   input[type="radio"]:checked + .radio-option {
     border-color: var(--color-primary);
+    box-shadow: inset 0 0 0 1px var(--color-primary);
     background: var(--surface-brand);
   }
   input[type="radio"]:checked + .radio-option .radio-dot { border-color: var(--color-primary); }
   input[type="radio"]:checked + .radio-option .radio-dot::after { transform: scale(1); }
   input[type="radio"]:focus-visible + .radio-option { box-shadow: var(--focus-ring); }
-
-  .claims-summary {
-    margin-top: var(--space-3);
-    font-size: var(--text-small);
-    color: var(--text-secondary);
+  input[type="radio"]:checked:focus-visible + .radio-option {
+    box-shadow: inset 0 0 0 1px var(--color-primary), var(--focus-ring);
   }
+
+  /* Inline text plus an Edit link: block, not flex, or the separator becomes
+     its own flex item. */
+  .claims-summary { display: block; margin-top: var(--space-3); }
   .claims-summary .btn-link { margin-top: 0; }
 
   .form-label {
     display: block;
-    font-size: var(--text-body);
+    font-size: var(--text-label);
     font-weight: var(--weight-bold);
-    line-height: var(--lh-ui);
+    line-height: var(--lh-label);
     margin-bottom: var(--stack-label);
   }
+  /* Label -> sublabel is --stack-sublabel (4px); sublabel -> control is
+     --stack-label (12px). The negative top margin eats the label's own gap. */
   .form-sublabel {
     display: block;
     font-size: var(--text-small);
     line-height: var(--lh-small);
     color: var(--text-tertiary);
-    max-width: var(--measure-tight);
-    margin: calc(-1 * var(--space-1)) 0 var(--stack-label);
+    max-width: var(--measure-prose);
+    text-wrap: pretty;
+    margin: calc(-1 * var(--stack-label) + var(--stack-sublabel)) 0 var(--stack-label);
   }
   .form-input {
     width: 100%;
-    min-height: 52px;
+    min-height: var(--control-h);
     padding: 0 var(--space-4);
     font-family: var(--font-family);
     font-size: var(--text-body);
     line-height: var(--lh-ui);
     color: var(--text-primary);
+    caret-color: var(--color-primary);
     background: var(--surface);
-    border: 1.5px solid var(--border-strong);
-    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
     outline: none;
     transition: border-color var(--t-fast), box-shadow var(--t-fast);
   }
+  .form-input::placeholder { color: var(--text-placeholder); }
+  .form-input:hover { border-color: var(--text-secondary); }
   .form-input:focus-visible { box-shadow: var(--focus-ring); border-color: var(--border-focus); }
   .form-input.error { border-color: var(--error-fg); }
   /* Reserved, so revealing an error does not shift the layout. */
@@ -1233,11 +1279,12 @@
      STEP 5 — assumptions
      ============================================================ */
   .assumption-card {
-    border: 1.5px solid var(--border-default);
-    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-container);
     overflow: clip;
     overflow-clip-margin: 4px;
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-card);
     margin-bottom: var(--stack-section);
   }
   /* Flex, not grid. Each row is its own grid container, so `1fr auto auto`
@@ -1259,26 +1306,35 @@
     font-size: var(--text-body);
     line-height: var(--lh-body);
     color: var(--text-primary);
+    text-wrap: pretty;
     cursor: pointer;
   }
   .assumption-text strong { font-weight: var(--weight-bold); }
+  /* Eligibility is stated in words on the row it applies to, not as a
+     colour-only rail that a third of users could not read. */
+  .assumption-text .confidence-chip {
+    margin-inline-start: var(--space-2);
+    vertical-align: middle;
+  }
 
   /* Native checkbox styled as a switch: Space works, the label is a real
      accessible name, and :checked drives the visual with no JS. */
+  /* Switch polarity follows the platform convention: on (true) = knob right,
+     off (not true) = knob left. The earlier build had it mirrored. */
   .assumption-toggle {
     appearance: none;
-    order: 2;
+    order: 3;
     width: 44px; height: 24px;
     flex-shrink: 0;
     border-radius: var(--radius-pill);
     /* Agreement is the resting state, so it is neutral. Six saturated green
        toggles made agreeing look like six achievements and spent the screen's
        only colour on its default. */
-    background: var(--n-700);
+    background: var(--text-tertiary);
     border: none;
     position: relative;
     cursor: pointer;
-    transition: background var(--t-fast);
+    transition: background var(--t-fast), filter var(--t-fast);
   }
   .assumption-toggle::after {
     content: '';
@@ -1288,38 +1344,36 @@
     border-radius: 50%;
     background: var(--n-0);
     box-shadow: var(--shadow-sm);
-    transition: transform var(--dur-base) var(--ease-emphasized);
+    transition: transform var(--dur-base) var(--ease-standard);
   }
+  .assumption-toggle:checked::after { transform: translateX(20px); }
   .assumption-toggle:not(:checked) { background: var(--warning-fg); }
-  .assumption-toggle:not(:checked)::after { transform: translateX(20px); }
+  /* Hover darkens the track one step. The amber scale has no step below
+     700, so the off state deepens by filter instead. */
+  .assumption-toggle:hover:checked { background: var(--n-700); }
+  .assumption-toggle:hover:not(:checked) { filter: brightness(0.9); }
   .assumption-toggle:focus-visible { box-shadow: var(--focus-ring); }
 
+  /* The word sits left of the switch it describes, in the reading direction. */
   .toggle-label {
-    order: 3;
-    flex: 0 0 62px;
-    font-size: var(--text-caption);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    order: 2;
+    flex: 0 0 64px;
+    font-size: var(--text-small);
+    font-weight: var(--weight-regular);
+    color: var(--text-tertiary);
+    text-transform: none;
+    letter-spacing: 0;
     text-align: right;
   }
-  .toggle-label.yes { color: var(--text-tertiary); }
-  .toggle-label.no  { color: var(--warning-fg); }
+  .toggle-label.no { color: var(--warning-fg); }
 
   /* Stated at the row that caused it, before the CTA changes underneath. */
   .consequence {
     order: 4;
     flex-basis: 100%;
     margin-top: var(--space-2);
-    padding: var(--space-3);
-    background: var(--surface);
-    border: 1px solid var(--warning-border);
-    border-radius: var(--radius-sm);
-    font-size: var(--text-small);
-    line-height: var(--lh-small);
-    color: var(--warning-fg);
+    text-wrap: pretty;
   }
-  .assumption-row.is-eligibility { border-left: 3px solid var(--warning-border); }
   .step5-summary {
     padding: var(--space-3) var(--space-4);
     margin-bottom: var(--space-4);
@@ -1333,13 +1387,19 @@
   /* ============================================================
      STEP 6 — quote
      ============================================================ */
-  .coverage-scroll { overflow-x: auto; }
+  /* position:relative makes this the containing block for the sr-only
+     radios in the plan headers. Unpositioned, those 1px absolute inputs sat at
+     their static position inside the scrolled-off columns and widened the
+     page to 496px at 375. */
+  .coverage-scroll { position: relative; overflow-x: auto; }
   .coverage-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    border: 1.5px solid var(--border-default);
-    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-container);
+    box-shadow: var(--shadow-card);
     overflow: clip;
     overflow-clip-margin: 4px;
     table-layout: fixed;
@@ -1358,7 +1418,11 @@
   .coverage-table .ct-val, .coverage-table .ct-plan { text-align: center; }
   .coverage-table .ct-plan { vertical-align: bottom; }
   .coverage-table tbody .ct-row > * { border-top: 1px solid var(--border-subtle); }
-  .coverage-table thead .ct-row > * { border-bottom: 1px solid var(--border-strong); }
+  .coverage-table tbody .ct-row:first-child > * { border-top: 0; }
+  .coverage-table thead .ct-row > * { border-bottom: 1px solid var(--border-subtle); }
+  /* Column dividers are inset shadows, not borders, so the selected column's
+     outline can replace them without leaving a 1px seam. */
+  .coverage-table .ct-col { box-shadow: inset 1px 0 var(--border-subtle); }
   .ct-label {
     width: 34%;
     font-size: var(--text-small);
@@ -1369,13 +1433,13 @@
   }
   .ct-val {
     font-size: var(--text-small);
-    color: var(--text-secondary);
+    font-weight: var(--weight-regular);
+    color: var(--n-800);
     vertical-align: middle;
   }
-  /* Weight tracks magnitude, so scanning a row shows the coverage ladder. */
-  .ct-col[data-plan="deluxe"].ct-val  { color: var(--text-primary); font-weight: var(--weight-bold); }
-  .ct-col[data-plan="premier"].ct-val { color: var(--text-primary); }
-  .ct-col[data-plan="basic"].ct-val   { color: var(--text-tertiary); }
+  /* Emphasis follows the selection, not the column: the chosen plan is the
+     one whose figures the sidebar repeats. */
+  .ct-val.is-selected { font-weight: var(--weight-bold); color: var(--text-primary); }
 
   .ct-plan { vertical-align: bottom; font-weight: var(--weight-regular); }
   .ct-plan-label {
@@ -1386,20 +1450,27 @@
     cursor: pointer;
   }
   .plan-badge {
-    display: inline-block;
-    min-height: 22px;
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-xs);
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    line-height: 1;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-chip);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    text-transform: none;
+    letter-spacing: 0;
     white-space: nowrap;
   }
   /* The old placeholder reserved 40px for a 30px badge, so Basic and Deluxe
-     sat 10px below Premier on both tables. These are real labels now. */
-  .plan-badge.muted { background: var(--surface-sunken-2); color: var(--text-tertiary); }
-  .plan-badge.recommended-badge { background: var(--color-primary); color: var(--text-on-brand); }
+     sat 10px below Premier on both tables. These are real labels now.
+     Outlined, not filled: a solid brand chip competed with the checkout button. */
+  .plan-badge.muted { background: var(--surface-sunken); color: var(--text-tertiary); }
+  .plan-badge.recommended-badge {
+    background: var(--surface-brand);
+    color: var(--color-primary);
+    border: 1px solid var(--brand-200);
+  }
   .plan-name { font-weight: var(--weight-bold); font-size: var(--text-body); }
   .plan-price {
     font-size: var(--text-lead);
@@ -1413,33 +1484,51 @@
   /* The single change that makes the value difference legible at a glance. */
   .plan-delta {
     font-size: var(--text-caption);
+    font-weight: var(--weight-regular);
     color: var(--text-tertiary);
     min-height: 1.2em;
   }
+  /* Same control as the step 4 radio: brand dot on white. */
   .plan-radio {
     width: 20px; height: 20px;
     margin-top: var(--space-2);
-    border: 2px solid var(--border-strong);
+    border: 1.5px solid var(--border-strong);
     border-radius: 50%;
+    background: var(--n-0);
     display: flex; align-items: center; justify-content: center;
-    transition: border-color var(--t-fast), background var(--t-fast);
+    transition: border-color var(--t-fast);
   }
   .plan-radio::after {
     content: '';
-    width: 8px; height: 8px;
+    width: 10px; height: 10px;
     border-radius: 50%;
-    background: var(--n-0);
+    background: var(--color-primary);
     transform: scale(0);
-    transition: transform var(--dur-base) var(--ease-emphasized);
+    transition: transform var(--dur-base) var(--ease-standard);
   }
-  /* The recommended column is a column, not a 1.04:1 tint that was invisible. */
+  /* The selected column is a column: tinted, with one continuous 1.5px
+     outline. Inset shadows stay inside the cell, so the caps come from the
+     header cell (top) and the last body cell (bottom); the row rule inside
+     the column is redrawn as a shadow because a border would cut the line. */
   .ct-col.is-selected { background: var(--surface-brand); }
-  thead .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--color-primary), inset -2px 0 0 var(--color-primary); }
-  tbody .ct-col.is-selected { box-shadow: inset 2px 0 0 var(--color-primary), inset -2px 0 0 var(--color-primary); }
+  .ct-col.is-selected + .ct-col { box-shadow: none; }
+  thead .ct-col.is-selected {
+    border-bottom: 0;
+    box-shadow: inset 1.5px 0 var(--brand-650), inset -1.5px 0 var(--brand-650),
+                inset 0 1.5px var(--brand-650), inset 0 -1px var(--border-subtle);
+  }
+  tbody .ct-col.is-selected {
+    border-top: 0;
+    box-shadow: inset 1.5px 0 var(--brand-650), inset -1.5px 0 var(--brand-650),
+                inset 0 1px var(--border-subtle);
+  }
+  tbody .ct-row:last-child .ct-col.is-selected {
+    box-shadow: inset 1.5px 0 var(--brand-650), inset -1.5px 0 var(--brand-650),
+                inset 0 -1.5px var(--brand-650), inset 0 1px var(--border-subtle);
+  }
   .ct-radio:checked + .plan-badge ~ .plan-radio,
   .ct-plan-label:has(.ct-radio:checked) .plan-radio {
     border-color: var(--color-primary);
-    background: var(--color-primary);
   }
   .ct-plan-label:has(.ct-radio:checked) .plan-radio::after { transform: scale(1); }
   /* Colour only. A size jump on selection re-flowed the header row. */
@@ -1449,11 +1538,18 @@
   /* Was an inert icon shaped like a control. Now it discloses a definition,
      which is what the screen's stated purpose needs. */
   .ct-info {
-    background: none; border: none; padding: 2px; cursor: pointer;
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 24px; min-height: 24px;
+    background: none; border: none; padding: 0; cursor: pointer;
     color: var(--text-placeholder);
-    vertical-align: -3px;
+    vertical-align: middle;
+    border-radius: var(--radius-xs);
   }
+  /* 24px glyph box, 44px hit area. */
+  .ct-info::before { content: ''; position: absolute; inset: -10px; }
   .ct-info:hover { color: var(--text-secondary); }
+  .ct-info[aria-expanded="true"] { color: var(--color-primary); }
   .ct-info [data-lucide] { width: 14px; height: 14px; }
   .ct-definition {
     display: block;
@@ -1463,42 +1559,61 @@
     color: var(--text-tertiary);
   }
 
-  .included-strip {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
-    padding: var(--space-3) var(--space-4);
-    background: var(--surface-sunken);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
-    font-size: var(--text-small);
-    color: var(--text-secondary);
-  }
-  .included-strip [data-lucide] { width: 16px; height: 16px; color: var(--success-fg); flex-shrink: 0; }
+  .included-strip { margin-top: var(--space-3); }
+  .included-strip [data-lucide] { width: 18px; height: 18px; margin-top: 1px; color: var(--success-fg); flex-shrink: 0; }
   .coverage-actions { margin-top: var(--space-3); }
   .coverage-section { margin-bottom: var(--stack-section); }
 
   .quote-sidebar { display: flex; flex-direction: column; gap: var(--space-4); }
-  /* No frame. The certificate image already reads as a card, so wrapping it in
-     a second bordered, shadowed box was a card inside a card. The wrapper is
-     now only a centring context: below 1200 the sidebar is full width, and a
-     300px-capped image in a full-width box otherwise sits stranded at the left. */
+  /* The certificate is an HTML card now, not the dark insurance-card.png
+     bitmap, so the business name stays live and the card follows the tokens.
+     Below 1200 the sidebar is full width, so the card centres itself rather
+     than sitting stranded at the left. */
+  .sidebar-certificate {
+    display: flex; flex-direction: column; align-items: center;
+    gap: var(--space-2);
+  }
   .sidebar-card {
-    display: flex;
-    justify-content: center;
-    border: none;
-    border-radius: 0;
-    overflow: visible;
-    box-shadow: none;
+    width: 100%; max-width: 300px;
+    aspect-ratio: 300 / 176;
+    display: flex; flex-direction: column;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-container);
+    box-shadow: var(--shadow-card);
+    overflow: clip;
     margin-bottom: 0;   /* .quote-sidebar's flex gap owns this spacing */
   }
-  .sidebar-card img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-md);
+  .sidebar-card-band {
+    flex-shrink: 0;
+    height: 56px;
+    display: flex; align-items: center;
+    padding-inline: var(--space-4);
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
   }
+  .sidebar-card-mark {
+    font-size: 0.75rem;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.04em;
+    color: var(--n-0);
+  }
+  .sidebar-card-body {
+    flex: 1;
+    display: flex; flex-direction: column; justify-content: center;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+  }
+  .sidebar-card-name {
+    font-size: var(--text-body);
+    line-height: var(--lh-ui);
+    font-weight: var(--weight-bold);
+    color: var(--text-primary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sidebar-card-product { font-size: var(--text-small); line-height: var(--lh-ui); color: var(--text-tertiary); }
+  .sidebar-card-divider { height: 1px; background: var(--border-subtle); margin-block: var(--space-1); }
+  .sidebar-card-doc { font-size: var(--text-caption); line-height: var(--lh-ui); color: var(--text-tertiary); }
+  .sidebar-card-link { margin-top: 0; }
   .sidebar-total { display: flex; flex-direction: column; gap: var(--space-1); }
   .total-label { font-size: var(--text-small); font-weight: var(--weight-regular); color: var(--text-tertiary); }
   .total-price {
@@ -1511,35 +1626,39 @@
   }
   .total-price .per { font-size: var(--text-small); font-weight: var(--weight-regular); color: var(--text-tertiary); }
   .total-annual { font-size: var(--text-small); color: var(--text-tertiary); }
-  .sidebar-terms { font-size: var(--text-caption); line-height: var(--lh-caption); color: var(--text-tertiary); }
+  .sidebar-terms { font-size: var(--text-caption); line-height: var(--lh-caption); color: var(--text-tertiary); text-wrap: pretty; }
   .btn-checkout {
     width: 100%;
-    min-height: 56px;
+    min-height: var(--control-h-lg);
+    padding: 0 var(--btn-pad-x);
     font-family: var(--font-family);
     font-size: var(--text-body);
+    line-height: var(--lh-ui);
     font-weight: var(--weight-bold);
     color: var(--text-on-brand);
     background: var(--color-primary);
     border: none;
     border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: background var(--t-fast);
+    transition: background-color var(--t-fast), transform var(--dur-instant) var(--ease-standard);
   }
   .btn-checkout:hover { background: var(--color-primary-hover); }
+  .btn-checkout:active { background: var(--color-primary-active); transform: scale(0.96); }
   .sidebar-details { display: flex; flex-direction: column; gap: var(--space-1); }
   .detail-section {
     margin-top: var(--space-3);
     font-size: var(--text-caption);
     font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    text-transform: none;
+    letter-spacing: 0;
     color: var(--text-tertiary);
   }
   .detail-row {
     display: flex; justify-content: space-between; gap: var(--space-3);
     font-size: var(--text-small);
-    color: var(--text-secondary);
+    color: var(--text-tertiary);
   }
+  .detail-row .figure { color: var(--text-primary); }
   .quote-footer-col { text-align: right; }
   .quote-footer-contact a { min-height: 24px; padding: var(--space-1) 0; }
   .coverage-actions a, .coverage-actions .btn-link { min-height: 24px; }
@@ -1553,16 +1672,31 @@
     padding: var(--space-4);
     background: var(--surface-scrim);
     z-index: 200;
+    animation: modalScrimIn var(--t-enter) both;
   }
   .modal-overlay[hidden] { display: none; }
   .modal-content {
     position: relative;
     width: 100%; max-width: 520px;
-    max-height: 90vh; overflow-y: auto;
+    max-height: 90dvh; overflow-y: auto;
     padding: var(--space-8);
     background: var(--surface-raised);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-container);
     box-shadow: var(--shadow-xl);
+    animation: modalIn var(--t-enter) both;
+  }
+  /* Exit runs on .is-closing for one --dur-fast, then the JS sets hidden. */
+  .modal-overlay.is-closing { animation: modalScrimOut var(--dur-fast) var(--ease-accelerate) both; }
+  .modal-overlay.is-closing .modal-content { animation: modalOut var(--dur-fast) var(--ease-accelerate) both; }
+  @keyframes modalScrimIn  { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes modalScrimOut { from { opacity: 1 } to { opacity: 0 } }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes modalOut {
+    from { opacity: 1; transform: none; }
+    to   { opacity: 0; transform: translateY(8px) scale(.98); }
   }
   .modal-content h2 { margin-bottom: var(--space-6); outline: none; }
   .modal-close {
@@ -1604,12 +1738,12 @@
     }
     .step.active { animation: rmFade 160ms linear both !important; }
     .ai-check-item { transition: background 160ms linear !important; }
-    .segment-fill  { transition: width 160ms linear !important; }
+    .segment-fill  { transition: transform 160ms linear !important; }
     .check-icon.checking, .spinner {
       animation: none !important;
       border-top-color: var(--ai-fg);
     }
-    .btn-primary:hover:not(:disabled) { transform: none !important; }
+    .btn-primary:active:not(:disabled), .btn-secondary:active, .btn-checkout:active { transform: none !important; }
   }
   @keyframes rmFade { from { opacity: 0 } to { opacity: 1 } }
 
@@ -1673,6 +1807,11 @@
   }
   body { --container-current: var(--container-form); }
   body[data-step="6"] { --container-current: var(--container-wide); }
+  /* The header and stepper follow the content column so the logo stays on
+     the h1's left edge on every step, including the wider quote step. The
+     width change is eased so it reads as a reflow, not a jump. */
+  .header-inner,
+  .segmented-stepper { transition: max-width var(--dur-base) var(--ease-standard); }
 
   .header { padding: 0; }
   .header-inner { padding-block: var(--space-3); }
@@ -1731,6 +1870,7 @@
      circle come only from a real state. ---- */
   .calendar-dropdown {
     border: 1px solid var(--border-default);
+    border-radius: var(--radius-container);
     padding: var(--space-4);
   }
   .calendar-day {
@@ -1746,8 +1886,18 @@
     transition: background-color var(--t-fast), color var(--t-fast);
   }
   .calendar-day:hover:not(:disabled) { background: var(--surface-sunken-2); }
-  .calendar-day.today,
-  .calendar-day.selected { background: var(--color-primary); color: var(--text-on-brand); font-weight: var(--weight-bold); }
+  .calendar-day:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  /* Today is a ring, the chosen date is a fill, so the two never read as one. */
+  .calendar-day.today {
+    box-shadow: inset 0 0 0 1.5px var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    font-weight: var(--weight-bold);
+  }
+  .calendar-day.today:focus-visible { box-shadow: inset 0 0 0 1.5px var(--color-primary), var(--focus-ring); }
+  .calendar-day.selected,
+  .calendar-day.selected.today { background: var(--color-primary); color: var(--text-on-brand); font-weight: var(--weight-bold); box-shadow: none; }
+  .calendar-day.selected:focus-visible { box-shadow: var(--focus-ring); }
   .calendar-day:disabled {
     background: none;
     color: var(--text-placeholder);
@@ -1770,10 +1920,15 @@
 
   /* ---- Buttons stack on the narrowest band only ---- */
   @media (max-width: 599px) {
-    .btn-primary, .btn-secondary { width: 100%; }
+    .btn-primary, .btn-secondary { width: 100%; min-height: var(--control-h-mobile); }
+    .search-input, .form-input, .radio-option { min-height: var(--control-h-mobile); }
     .actions { flex-direction: column-reverse; align-items: stretch; }
     .actions--stacked { flex-direction: column; align-items: stretch; }
-    .legal-text { text-align: left; max-width: none; }
+    .legal-text { text-align: left; max-width: none; text-wrap: pretty; }
+  }
+  /* Touch: the inline Edit / Add links grow to a 44px target. */
+  @media (max-width: 768px) {
+    .btn-link, .coverage-actions .btn-link { min-height: 44px; }
   }
 
   /* ============================================================
@@ -1795,7 +1950,6 @@
     padding: 0;
   }
   .quote-main { min-width: 0; }
-  .sidebar-card img { max-width: 300px; }
 
   @media (min-width: 1200px) {
     .quote-layout { grid-template-columns: minmax(0, 1fr) 300px; }
@@ -1865,15 +2019,13 @@
     height: 72px;
   }
   .quote-sticky-bar .total-label {
-    font-size: var(--text-caption);
-    font-weight: var(--weight-bold);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-caps);
+    font-size: var(--text-small);
+    font-weight: var(--weight-regular);
     color: var(--text-tertiary);
   }
   .quote-sticky-bar .total-price { font-size: var(--text-lead); }
   .quote-sticky-bar .btn-checkout {
-    width: auto; min-width: 132px; min-height: 48px;
+    width: auto; min-width: 132px; min-height: var(--control-h);
     padding-inline: var(--space-6);
     flex-shrink: 0;
   }
@@ -1910,24 +2062,26 @@
     </div>
   </div>
   <nav class="segmented-stepper" id="segmentedStepper" aria-label="Progress">
-    <div class="stepper-segment" data-segment="1">
-      <div class="segment-track">
-        <div class="segment-fill" id="segmentFill1"></div>
-      </div>
-      <span class="segment-label active" data-segment="1">Business</span>
-    </div>
-    <div class="stepper-segment" data-segment="2">
-      <div class="segment-track">
-        <div class="segment-fill" id="segmentFill2"></div>
-      </div>
-      <span class="segment-label" data-segment="2">Policy</span>
-    </div>
-    <div class="stepper-segment" data-segment="3">
-      <div class="segment-track">
-        <div class="segment-fill" id="segmentFill3"></div>
-      </div>
-      <span class="segment-label" data-segment="3">Quote</span>
-    </div>
+    <ol class="segmented-stepper-list">
+      <li class="stepper-segment" data-segment="1" aria-current="step">
+        <div class="segment-track">
+          <div class="segment-fill" id="segmentFill1"></div>
+        </div>
+        <span class="segment-label active" data-segment="1">Business<span class="sr-only segment-state"></span></span>
+      </li>
+      <li class="stepper-segment" data-segment="2">
+        <div class="segment-track">
+          <div class="segment-fill" id="segmentFill2"></div>
+        </div>
+        <span class="segment-label" data-segment="2">Policy<span class="sr-only segment-state"></span></span>
+      </li>
+      <li class="stepper-segment" data-segment="3">
+        <div class="segment-track">
+          <div class="segment-fill" id="segmentFill3"></div>
+        </div>
+        <span class="segment-label" data-segment="3">Quote<span class="sr-only segment-state"></span></span>
+      </li>
+    </ol>
   </nav>
 </header>
 
@@ -2016,8 +2170,8 @@
 
     <div class="actions actions--stacked">
       <button class="btn-primary" id="continueBtn" onclick="continueFromSearch()" disabled>Continue</button>
-      <p class="legal-text">By continuing you agree to the <a href="#">Terms of Use</a> and
-      <a href="#">Privacy Policy</a>.</p>
+      <p class="legal-text">By continuing you agree to the <a href="#">Terms of&nbsp;Use</a> and
+      <a href="#">Privacy&nbsp;Policy</a>.</p>
     </div>
   </section>
 
@@ -2219,9 +2373,9 @@
         <span class="calendar-icon" aria-hidden="true"><i data-lucide="calendar"></i></span>
         <div class="calendar-dropdown" id="calendarDropdown" role="dialog" aria-label="Choose a start date">
           <div class="calendar-header">
-            <button type="button" class="cal-nav" id="calPrev" onclick="changeMonth(-1)" aria-label="Previous month">&lt;</button>
+            <button type="button" class="cal-nav" id="calPrev" onclick="changeMonth(-1)" aria-label="Previous month"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
             <span class="cal-title" id="calMonthYear"></span>
-            <button type="button" class="cal-nav" id="calNext" onclick="changeMonth(1)" aria-label="Next month">&gt;</button>
+            <button type="button" class="cal-nav" id="calNext" onclick="changeMonth(1)" aria-label="Next month"><i data-lucide="chevron-right" aria-hidden="true"></i></button>
           </div>
           <div class="calendar-weekdays" aria-hidden="true">
             <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
@@ -2302,7 +2456,7 @@
         <input type="checkbox" role="switch" class="assumption-toggle" id="asm-owned"
                checked onchange="toggleSwitch(this)">
         <label class="assumption-text" for="asm-owned"><strong>You own your space</strong>
-          rather than rent it</label>
+          rather than rent it <span class="confidence-chip estimate">Affects eligibility</span></label>
         <span class="toggle-label yes">True</span>
         <p class="consequence" hidden>Renting means we can't quote this online. We'll pass you to a
         partner who can.</p>
@@ -2362,7 +2516,7 @@
                       <span class="plan-badge muted">Lower limits</span>
                       <span class="plan-name">Basic</span>
                       <span class="plan-price"><span class="figure">$18.40</span><span class="per">/ mo</span></span>
-                      <span class="plan-delta">&minus;$11.48 / mo</span>
+                      <span class="plan-delta"><span class="figure">&minus;$11.48</span> / mo</span>
                       <span class="plan-radio" aria-hidden="true"></span>
                     </label>
                   </th>
@@ -2384,7 +2538,7 @@
                       <span class="plan-badge muted">Higher limits</span>
                       <span class="plan-name">Deluxe</span>
                       <span class="plan-price"><span class="figure">$41.15</span><span class="per">/ mo</span></span>
-                      <span class="plan-delta">+$11.27 / mo</span>
+                      <span class="plan-delta"><span class="figure">+$11.27</span> / mo</span>
                       <span class="plan-radio" aria-hidden="true"></span>
                     </label>
                   </th>
@@ -2453,7 +2607,7 @@
                       <span class="plan-badge muted">Lower limits</span>
                       <span class="plan-name">Basic</span>
                       <span class="plan-price"><span class="figure">$12.60</span><span class="per">/ mo</span></span>
-                      <span class="plan-delta">&minus;$8.70 / mo</span>
+                      <span class="plan-delta"><span class="figure">&minus;$8.70</span> / mo</span>
                       <span class="plan-radio" aria-hidden="true"></span>
                     </label>
                   </th>
@@ -2475,7 +2629,7 @@
                       <span class="plan-badge muted">Higher limits</span>
                       <span class="plan-name">Deluxe</span>
                       <span class="plan-price"><span class="figure">$33.75</span><span class="per">/ mo</span></span>
-                      <span class="plan-delta">+$12.45 / mo</span>
+                      <span class="plan-delta"><span class="figure">+$12.45</span> / mo</span>
                       <span class="plan-radio" aria-hidden="true"></span>
                     </label>
                   </th>
@@ -2530,9 +2684,19 @@
 
       <!-- Sidebar -->
       <aside class="quote-sidebar" aria-label="Quote summary">
-        <div class="sidebar-card">
-          <img src="insurance-card.png" width="716" height="460" loading="lazy" decoding="async"
-               alt="Preview of your certificate of insurance">
+        <!-- insurance-card.png stays in the repo but is no longer rendered: the
+             card is HTML so the business name tracks what the user typed. -->
+        <div class="sidebar-certificate">
+          <div class="sidebar-card" role="img" aria-label="Preview of your certificate of insurance">
+            <div class="sidebar-card-band"><span class="sidebar-card-mark">ERGO | NEXT</span></div>
+            <div class="sidebar-card-body">
+              <div class="sidebar-card-name" id="certBusinessName">Fambrini's Cafe</div>
+              <div class="sidebar-card-product">Coffee shop insurance</div>
+              <div class="sidebar-card-divider"></div>
+              <div class="sidebar-card-doc">Certificate of insurance</div>
+            </div>
+          </div>
+          <a href="#" class="btn-link sidebar-card-link" onclick="event.preventDefault()">Preview certificate</a>
         </div>
         <div class="sidebar-total">
           <div class="total-label">Your monthly total</div>
@@ -2922,18 +3086,31 @@
     const stepper = document.getElementById('segmentedStepper');
     // Step 7 is a dead end, not a stage; a progress bar there implies more to come.
     stepper.hidden = step === 7;
+    // scaleX on a full-width bar, not width: the fill animates on the
+    // compositor and never reflows the header.
+    const setFill = (i, pct) => {
+      document.getElementById('segmentFill' + i).style.transform = 'scaleX(' + (pct / 100) + ')';
+    };
     if (!config) {
-      [1, 2, 3].forEach(i => document.getElementById('segmentFill' + i).style.width = '0%');
+      [1, 2, 3].forEach(i => setFill(i, 0));
       return;
     }
-    config.fills.forEach((w, i) => {
-      document.getElementById('segmentFill' + (i + 1)).style.width = w + '%';
-    });
+    config.fills.forEach((w, i) => setFill(i + 1, w));
     document.querySelectorAll('.segment-label').forEach(label => {
       const seg = parseInt(label.dataset.segment);
+      const item = label.closest('.stepper-segment');
+      const state = label.querySelector('.segment-state');
       label.classList.remove('active', 'completed');
+      let completed = false;
       if (seg === config.activeSegment) label.classList.add('active');
-      else if (seg < config.activeSegment) label.classList.add('completed');
+      else if (seg < config.activeSegment) { label.classList.add('completed'); completed = true; }
+      // aria-current names the step for assistive tech; the sr-only suffix
+      // says which steps are already behind the user.
+      if (item) {
+        if (seg === config.activeSegment) item.setAttribute('aria-current', 'step');
+        else item.removeAttribute('aria-current');
+      }
+      if (state) state.textContent = completed ? ' (completed)' : '';
     });
   }
 
@@ -3006,6 +3183,12 @@
     document.getElementById('totalPriceSticky').textContent = money(sum);
     document.getElementById('annualPrice').textContent = money(sum * 12) + ' billed annually';
 
+    // Certificate card. Same source as the step 2/3 business name: the
+    // editable field, falling back to the mock lookup's record.
+    const cert = document.getElementById('certBusinessName');
+    const nameField = document.getElementById('f-name');
+    if (cert) cert.textContent = (nameField && nameField.value.trim()) || KNOWN_BUSINESS.name;
+
     Object.keys(PLANS).forEach(section => {
       document.querySelectorAll(`.coverage-table[data-section="${section}"] .ct-col`)
         .forEach(col => col.classList.toggle('is-selected', col.dataset.plan === selectedPlan[section]));
@@ -3017,7 +3200,8 @@
       const plan = cfg[selectedPlan[section]];
       const head = document.createElement('div');
       head.className = 'detail-section';
-      head.textContent = `${cfg.label} · ${selectedPlan[section]}`;
+      const planKey = selectedPlan[section];
+      head.textContent = `${cfg.label} · ${planKey.charAt(0).toUpperCase()}${planKey.slice(1)}`;
       details.appendChild(head);
       ROW_LABELS[section].forEach((label, i) => {
         const row = document.createElement('div');
@@ -3153,6 +3337,7 @@
   threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
 
   function outOfRange(d) { return d < calMin || d > calMax; }
+  function isoDay(d) { return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
 
   function openCalendarFor(input) {
     const cal = document.getElementById('calendarDropdown');
@@ -3169,6 +3354,12 @@
     cal.classList.add('visible');
     input.setAttribute('aria-expanded', 'true');
     renderCalendar();
+    // Focus moves into the dialog: the chosen day, else today, else the first
+    // bookable day. Keyboard users previously had to tab through the form to reach it.
+    const target = cal.querySelector('.calendar-day.selected')
+      || cal.querySelector('.calendar-day.today:not(:disabled)')
+      || cal.querySelector('.calendar-day:not(:disabled):not(.empty)');
+    if (target) target.focus({ preventScroll: true });
   }
 
   function closeCalendar() {
@@ -3208,6 +3399,12 @@
         dayEl.classList.add('today');
         dayEl.setAttribute('aria-current', 'date');
       }
+      // The field remembers its pick as an ISO day stamp, so reopening the
+      // calendar shows the chosen date filled rather than only today ringed.
+      if (activeDateField && activeDateField.dataset.selected === isoDay(thisDate)) {
+        dayEl.classList.add('selected');
+        dayEl.setAttribute('aria-selected', 'true');
+      }
       dayEl.addEventListener('click', () => selectDate(d));
       daysContainer.appendChild(dayEl);
     }
@@ -3242,6 +3439,7 @@
     field.value = (d.getTime() === today.getTime() && field.dataset.range !== 'past')
       ? 'Today'
       : `${MONTHS[calMonth]} ${day}, ${calYear}`;
+    field.dataset.selected = isoDay(d);
     closeCalendar();
     field.focus();
   }
@@ -3272,7 +3470,17 @@
 
   function closeClaimsModal(save) {
     const modal = document.getElementById('claimsModal');
-    modal.hidden = true;
+    if (modal.hidden || modal.classList.contains('is-closing')) return;
+    // Exit animation first, hidden after. Reduced motion skips the wait.
+    const finish = () => {
+      modal.classList.remove('is-closing');
+      modal.hidden = true;
+    };
+    if (REDUCED_MOTION) finish();
+    else {
+      modal.classList.add('is-closing');
+      setTimeout(finish, 140);
+    }
     document.getElementById('main').inert = false;
     document.body.style.overflow = '';
 
